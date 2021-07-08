@@ -1,5 +1,6 @@
 package com.example.zyyschedule.activity;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.NavController;
@@ -18,6 +19,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide(); //隐藏标题栏
+        }
         binding = DataBindingUtil.setContentView(this,R.layout.activity_main);
         NavController navController = Navigation.findNavController(this,R.id.fragment);
         AppBarConfiguration configuration = new AppBarConfiguration.Builder(binding.bottomNavigationView.getMenu()).build();

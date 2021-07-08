@@ -22,19 +22,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navGraph="@navigation/main_navigation" />
+            app:navGraph="@navigation/main_navigation" >
+        </fragment>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:backgroundTint="@android:color/darker_gray"
-            app:itemIconTint="@color/white"
-            app:itemTextColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/main_menu" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
