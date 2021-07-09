@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="app_color">#15AEC1</color>
     <color name="icon">#3D81E2</color>
+    <color name="calendar_background">#D9E9F4</color>
 </resources>
