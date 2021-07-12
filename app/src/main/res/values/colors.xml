@@ -68,4 +68,5 @@
     <color name="color_input_location_text_hint">#AAA8B3</color>
     <color name="color_input_location_text">#272E3E</color>
 
+    <color name="calendar_background">#D9E9F4</color>
 </resources>
