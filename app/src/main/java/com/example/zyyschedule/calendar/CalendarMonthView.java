@@ -9,6 +9,10 @@ import android.text.TextUtils;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.MonthView;
 
+/**
+ * 自定义日历月视图
+ */
+
 public class CalendarMonthView extends MonthView {
 
     private int mRadius;
@@ -112,22 +116,22 @@ public class CalendarMonthView extends MonthView {
             canvas.drawText(calendar.getScheme(), x + mItemWidth - mPadding*19 - mCircleRadius, y + mPadding + mSchemeBaseLine,  dateTextPaint);
         }
 
-        //当然可以换成其它对应的画笔就不麻烦，
+
         if (calendar.isWeekend() && calendar.isCurrentMonth()) {
             mCurMonthTextPaint.setColor(0xFF489dff);
             mCurMonthLunarTextPaint.setColor(0xFF489dff);
             mSchemeTextPaint.setColor(0xFF489dff);
-            mSchemeLunarTextPaint.setColor(0xFF489dff);
-            mOtherMonthLunarTextPaint.setColor(0xFF489dff);
-            mOtherMonthTextPaint.setColor(0xFF489dff);
+            mSchemeLunarTextPaint.setColor(0xFF489dff);//周末日历天数颜色
+            mOtherMonthLunarTextPaint.setColor(0xFFE89176);
+            mOtherMonthTextPaint.setColor(0xFFE89176);
         } else {
             mCurMonthTextPaint.setColor(0xff333333);
             mCurMonthLunarTextPaint.setColor(0xffffffff);
             mSchemeTextPaint.setColor(0xff333333);
-            mSchemeLunarTextPaint.setColor(0xffCFCFCF);
+            mSchemeLunarTextPaint.setColor(0xffCFCFCF);//工作日日历天数颜色
 
-            mOtherMonthTextPaint.setColor(0xFFe1e1e1);
-            mOtherMonthLunarTextPaint.setColor(0xFFe1e1e1);
+            mOtherMonthTextPaint.setColor(0xFFE89176);
+            mOtherMonthLunarTextPaint.setColor(0xFFE89176);
         }
 
         if (isSelected) {
