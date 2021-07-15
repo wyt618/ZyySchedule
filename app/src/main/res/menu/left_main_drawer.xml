@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:tooltipText="30sp"
+            android:id="@+id/todayFragment"
+            android:icon="@drawable/ic_inbox"
+            android:title="@string/main_menu_today" />
+        <item
+            android:tooltipText="30sp"
+            android:id="@+id/inboxFragment"
+            android:icon="@drawable/ic_today"
+            android:title="@string/main_menu_inbox" />
+        <item
+            android:tooltipText="30sp"
+            android:id="@+id/datesFragment"
+            android:icon="@drawable/ic_add"
+            android:title="@string/main_menu_dates" />
+
+</menu>
