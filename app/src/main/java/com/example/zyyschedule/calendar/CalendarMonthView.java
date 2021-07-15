@@ -113,7 +113,7 @@ public class CalendarMonthView extends MonthView {
             canvas.drawCircle(x + mItemWidth - mPadding - mCircleRadius / 2, y + mPadding + mCircleRadius, mCircleRadius, mSchemeBasicPaint);
             dateTextPaint.setColor(calendar.getSchemeColor());
             dateTextPaint.setTextSize(15);
-            canvas.drawText(calendar.getScheme(), x + mItemWidth - mPadding*19 - mCircleRadius, y + mPadding + mSchemeBaseLine,  dateTextPaint);
+            canvas.drawText(calendar.getScheme(), x + mItemWidth - mPadding*19 - mCircleRadius, y + mPadding + mSchemeBaseLine,dateTextPaint);
         }
 
 
@@ -126,7 +126,7 @@ public class CalendarMonthView extends MonthView {
             mOtherMonthTextPaint.setColor(0xFFE89176);
         } else {
             mCurMonthTextPaint.setColor(0xff333333);
-            mCurMonthLunarTextPaint.setColor(0xffffffff);
+            mCurMonthLunarTextPaint.setColor(0xff141414);
             mSchemeTextPaint.setColor(0xff333333);
             mSchemeLunarTextPaint.setColor(0xffCFCFCF);//工作日日历天数颜色
 

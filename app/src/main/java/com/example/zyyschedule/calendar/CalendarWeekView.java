@@ -126,7 +126,7 @@ public class CalendarWeekView extends WeekView {
             mOtherMonthTextPaint.setColor(0xFF489dff);  //周末周视图日期颜色显示
         } else {
             mCurMonthTextPaint.setColor(0xff333333);
-            mCurMonthLunarTextPaint.setColor(0xffffffff);
+            mCurMonthLunarTextPaint.setColor(0xff141414);
             mSchemeTextPaint.setColor(0xff333333);
             mSchemeLunarTextPaint.setColor(0xffCFCFCF);
 
