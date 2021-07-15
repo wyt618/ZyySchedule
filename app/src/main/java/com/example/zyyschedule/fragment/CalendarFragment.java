@@ -3,6 +3,8 @@ package com.example.zyyschedule.fragment;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,6 +15,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.Toast;
 
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.databinding.CalendarFragmentBinding;
@@ -24,6 +28,8 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
 
     private CalendarViewModel vm;
     private CalendarFragmentBinding binding;
+    private View dialog;
+    private DatePicker datePicker;
 
     public static CalendarFragment newInstance() {
         return new CalendarFragment();
@@ -32,7 +38,40 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         binding = DataBindingUtil.inflate(inflater,R.layout.calendar_fragment, container, false);
+        dialog = inflater.inflate(R.layout.dialog_date,null);
+        datePicker = dialog.findViewById(R.id.date_picker);
+        /**
+         * 实现长按日期跳转
+         */
+        binding.tvMonthDay.setOnLongClickListener(new View.OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View v) {
+                if(dialog.getParent()!=null){
+                    ViewGroup vg = (ViewGroup)dialog.getParent();
+                    vg.removeView(dialog);
+                }
+                builder.setView(dialog)
+                        .setTitle(R.string.clendar_dialog_title)
+                        .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                binding.calendarView.scrollToCalendar(datePicker.getYear(),datePicker.getMonth()+1,datePicker.getDayOfMonth());
+                                Toast.makeText(getContext(),datePicker.getYear()+"年"+String.valueOf(datePicker.getMonth()+1)+"月"+datePicker.getDayOfMonth()+"日",Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNeutralButton(R.string.dialog_button_cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.create().show();
+                return true;
+            }
+        });
+
         return binding.getRoot();
 
     }
@@ -72,4 +111,6 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         binding.tvYear.setText(String.valueOf(calendar.getYear()));
         binding.tvLunar.setText(calendar.getLunar());
     }
+
+
 }

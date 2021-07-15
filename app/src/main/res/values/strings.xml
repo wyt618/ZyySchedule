@@ -1,20 +1,9 @@
 <resources>
     <string name="app_name">ZyySchedule</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="main_menu_schedule">schedule</string>
-    <string name="main_menu_calendar">calendar</string>
-    <string name="main_menu_setting">setting</string>
-    <string name="menu_schedule">Schedule</string>
-    <string name="menu_event_set">Events</string>
-    <string name="menu_add_event_set">Add event list</string>
-    <string name="menu_no_category">Unclassified </string>
-
-    <string name="menu_home">今天</string>
-    <string name="menu_gallery">收集箱</string>
-    <string name="menu_slideshow">添加日程清单</string>
-    <string name="main_menu_today">today</string>
-    <string name="main_menu_inbox">inbox</string>
-    <string name="main_menu_dates">dates</string>
-
+    <string name="main_menu_schedule">Schedule</string>
+    <string name="main_menu_calendar">Calendar</string>
+    <string name="main_menu_setting">Setting</string>
+    <string name="dialog_button_ok">Ok</string>
+    <string name="dialog_button_cancel">Cancel</string>
+    <string name="clendar_dialog_title" translatable="false">Jump To</string>
 </resources>

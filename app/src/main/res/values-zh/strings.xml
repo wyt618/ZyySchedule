@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">中育日程</string>
+    <string name="main_menu_schedule">日程</string>
+    <string name="main_menu_calendar">日历</string>
+    <string name="main_menu_setting">设置</string>
+    <string name="dialog_button_ok">确定</string>
+    <string name="dialog_button_cancel">取消</string>
+    <string name="clendar_dialog_title">跳转到</string>
+</resources>
