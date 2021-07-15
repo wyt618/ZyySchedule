@@ -54,5 +54,11 @@
 
 
 
+
+
+    <include layout="@layout/main_menu"
+        android:id="@+id/main_menu"/>
+
+
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>
