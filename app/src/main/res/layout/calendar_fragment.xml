@@ -10,7 +10,7 @@
 
     </data>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/calendar_background"
@@ -97,6 +97,9 @@
                     android:textSize="12sp" />
             </FrameLayout>
         </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
         <com.haibin.calendarview.CalendarLayout
             android:id="@+id/calendarLayout"
             android:layout_width="match_parent"
@@ -136,6 +139,22 @@
                 app:year_view_week_text_color="#e1e1e1"
                 app:year_view_week_text_size="6sp" />
 
+        </com.haibin.calendarview.CalendarLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="0dp"
+                android:src="@drawable/fab_add"
+                app:backgroundTint="@color/color_schedule_blue"
+                app:rippleColor="@color/color_schedule_start" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
@@ -143,27 +162,15 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
+                android:layout_marginStart="2dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="328dp"
                 android:orientation="vertical"
                 android:overScrollMode="never"
                 android:paddingTop="6dp" />
+        </RelativeLayout>
 
-        </com.haibin.calendarview.CalendarLayout>
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="@dimen/space_16dp"
-            android:layout_marginTop="@dimen/space_16dp"
-            android:layout_marginEnd="@dimen/space_16dp"
-            android:layout_marginRight="29dp"
-            android:layout_marginBottom="26dp"
-            android:src="@drawable/fab_add"
-            app:backgroundTint="@color/color_schedule_blue"
-            app:rippleColor="@color/color_schedule_start" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
 </layout>
 
