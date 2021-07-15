@@ -9,6 +9,9 @@ import android.text.TextUtils;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.WeekView;
 
+/**
+ * 自定义周视图
+ */
 public class CalendarWeekView extends WeekView {
 
     private int mRadius;
@@ -120,15 +123,15 @@ public class CalendarWeekView extends WeekView {
             mSchemeTextPaint.setColor(0xFF489dff);
             mSchemeLunarTextPaint.setColor(0xFF489dff);
             mOtherMonthLunarTextPaint.setColor(0xFF489dff);
-            mOtherMonthTextPaint.setColor(0xFF489dff);
+            mOtherMonthTextPaint.setColor(0xFF489dff);  //周末周视图日期颜色显示
         } else {
             mCurMonthTextPaint.setColor(0xff333333);
-            mCurMonthLunarTextPaint.setColor(0xffffffff);
+            mCurMonthLunarTextPaint.setColor(0xff141414);
             mSchemeTextPaint.setColor(0xff333333);
             mSchemeLunarTextPaint.setColor(0xffCFCFCF);
 
             mOtherMonthTextPaint.setColor(0xFFe1e1e1);
-            mOtherMonthLunarTextPaint.setColor(0xFFe1e1e1);
+            mOtherMonthLunarTextPaint.setColor(0xFFe1e1e1); //工作日周视图自定义显示
         }
 
         if (isSelected) {
