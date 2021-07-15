@@ -10,7 +10,7 @@
 
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/calendar_background"
@@ -136,15 +136,33 @@
                 app:year_view_week_text_size="6sp" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/recyclerView"/>
-
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:orientation="vertical"
+                android:overScrollMode="never"
+                android:paddingTop="6dp" />
 
         </com.haibin.calendarview.CalendarLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/space_16dp"
+            android:layout_marginTop="@dimen/space_16dp"
+            android:layout_marginEnd="@dimen/space_16dp"
+            android:layout_marginRight="29dp"
+            android:layout_marginBottom="26dp"
+            android:src="@drawable/fab_add"
+            app:backgroundTint="@color/color_schedule_blue"
+            app:rippleColor="@color/color_schedule_start" />
 
+    </RelativeLayout>
 
-
-    </LinearLayout>
 </layout>
 

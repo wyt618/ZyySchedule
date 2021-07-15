@@ -8,8 +8,7 @@
     <fragment
         android:id="@+id/scheduleFragment"
         android:name="com.example.zyyschedule.fragment.ScheduleFragment"
-        android:label="@string/main_menu_schedule"
-        tools:layout="@layout/schedule_fragment" />
+        android:label="@string/main_menu_schedule" />
     <fragment
         android:id="@+id/calendarFragment"
         android:name="com.example.zyyschedule.fragment.CalendarFragment"
@@ -20,4 +19,6 @@
         android:name="com.example.zyyschedule.fragment.SettingFragment"
         android:label="@string/main_menu_setting"
         tools:layout="@layout/setting_fragment" />
+
+
 </navigation>

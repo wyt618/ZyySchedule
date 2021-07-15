@@ -16,7 +16,7 @@
     <color name="colorWrite">#FFFFFF</color>
     <color name="colorTranslate">#00FFFFFF</color>
     <color name="colorRed">#FF0000</color>
-
+    <color name="textColor">#454545</color>
     <color name="color_schedule_purple">#9082BD</color>
     <color name="color_schedule_orange">#f6af80</color>
     <color name="color_schedule_pink">#E67986</color>
@@ -29,7 +29,7 @@
     <color name="color_schedule_title_text">#272E3E</color>
     <color name="color_schedule_finish_title_text">#7F838F</color>
     <color name="color_schedule_line">#E3E1EE</color>
-
+    <color name="E">#EEEEEE</color>
     <color name="color_schedule_normal">#9E9DC9</color>
     <color name="color_schedule_focus">#9082BD</color>
 
