@@ -10,7 +10,7 @@
 
     </data>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/calendar_background"
@@ -162,7 +162,7 @@
             app:backgroundTint="@color/color_schedule_blue"
             app:rippleColor="@color/color_schedule_start" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </layout>
 
