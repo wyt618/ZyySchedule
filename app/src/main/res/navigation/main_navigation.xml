@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
+    android:label="@string/title_today"
     app:startDestination="@id/calendarFragment">
     <fragment
         android:id="@+id/calendarFragment"
         android:name="com.example.zyyschedule.fragment.CalendarFragment"
-        android:label="@string/main_menu_calendar"
-        tools:layout="@layout/calendar_fragment" />
+        android:label="@string/main_menu_calendar" />
     <fragment
         android:id="@+id/scheduleFragment"
         android:name="com.example.zyyschedule.fragment.ScheduleFragment"
@@ -19,4 +19,5 @@
         android:name="com.example.zyyschedule.fragment.SettingFragment"
         android:label="@string/main_menu_setting"
         tools:layout="@layout/setting_fragment" />
+
 </navigation>
