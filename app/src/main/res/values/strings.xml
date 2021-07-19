@@ -6,4 +6,7 @@
     <string name="dialog_button_ok">Ok</string>
     <string name="dialog_button_cancel">Cancel</string>
     <string name="clendar_dialog_title" translatable="false">Jump To</string>
+    <string name="schedule_hint">What are you going to do ? </string>
+    <string name="add_schedule_title">Create Schedule</string>
+    <string name="add_schedule_timepicker">To choose time</string>
 </resources>

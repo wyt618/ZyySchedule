@@ -51,5 +51,7 @@
     <integer name="small_calendar_text_size">10</integer>
     <dimen name="small_week_bar_height">28dp</dimen>
     <dimen name="small_month_calendar_height">224dp</dimen>
+    <dimen name="text_size_10sp">10sp</dimen>
+    <dimen name="button_size_40dp">40dp</dimen>
 
 </resources>

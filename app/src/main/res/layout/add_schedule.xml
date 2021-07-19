@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+        <variable
+            name="vm"
+            type="com.example.zyyschedule.viewmodel.CalendarViewModel" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.001">
+
+            <EditText
+                android:id="@+id/edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/schedule_hint" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:layout_constraintVertical_bias="0.038">
+
+            <TextView
+                android:id="@+id/textDateAgo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_schedule_start"
+                android:text="@{vm.addScheduleDateAgo}" />
+
+
+            <Button
+                android:id="@+id/add_schedule_selectTime"
+                android:layout_width="@dimen/button_size_40dp"
+                android:layout_height="@dimen/button_size_40dp"
+                android:background="@drawable/ic_baseline_query_builder_24" />
+
+            <TextView
+                android:id="@+id/textTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_schedule_start"
+                android:text="@{vm.addScheduleTime}" />
+
+            <Button
+                android:layout_width="@dimen/button_size_40dp"
+                android:layout_height="@dimen/button_size_40dp"
+                android:background="@drawable/ic_baseline_flag_24" />
+
+            <Button
+                android:layout_width="@dimen/button_size_40dp"
+                android:layout_height="@dimen/button_size_40dp"
+                android:background="@drawable/ic_baseline_local_offer_24" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:layout_width="@dimen/button_size_40dp"
+                android:layout_height="@dimen/button_size_40dp"
+                android:background="@drawable/ic_baseline_send_24"
+                android:layout_gravity="end" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>
