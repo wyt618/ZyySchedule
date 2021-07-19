@@ -168,6 +168,12 @@
                 android:src="@drawable/fab_add"
                 app:backgroundTint="@color/color_schedule_blue"
                 app:rippleColor="@color/color_schedule_start" />
+            <FrameLayout
+                android:id="@+id/add_schedule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </FrameLayout>
         </RelativeLayout>
 
     </LinearLayout>
