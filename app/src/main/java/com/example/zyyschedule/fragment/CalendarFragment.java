@@ -173,7 +173,19 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        vm.AddScheduleTime.setValue(String.valueOf(timepickerbinding.hourPicker.getValue())+":"+String.valueOf(timepickerbinding.minePicker.getValue()));
+                        String hour;
+                        String time;
+                        if(timepickerbinding.hourPicker.getValue()<10){
+                            hour  = String.valueOf("0"+timepickerbinding.hourPicker.getValue());
+                        }else{
+                            hour = String.valueOf(timepickerbinding.hourPicker.getValue());
+                        }
+                        if(timepickerbinding.minePicker.getValue()<10){
+                            time = String.valueOf("0"+timepickerbinding.minePicker.getValue());
+                        }else{
+                            time = String.valueOf(timepickerbinding.minePicker.getValue());
+                        }
+                        vm.AddScheduleTime.setValue(hour+":"+time);
                     }
                 });
 

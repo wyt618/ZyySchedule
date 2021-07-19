@@ -22,6 +22,7 @@ public class CalendarViewModel extends AndroidViewModel {
         day = calendar.get(Calendar.DAY_OF_MONTH);
         AddScheduleDateAgo = new MutableLiveData<>();
         AddScheduleTime  = new MutableLiveData<>();
+        AddScheduleTime.setValue("00:00");
     }
 
 
