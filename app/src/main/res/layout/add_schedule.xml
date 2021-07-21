@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="vm"
             type="com.example.zyyschedule.viewmodel.CalendarViewModel" />
@@ -50,8 +50,9 @@
                 android:id="@+id/textDateAgo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@{vm.addScheduleDateAgo}"
                 android:textColor="@color/color_schedule_start"
-                android:text="@{vm.addScheduleDateAgo}" />
+                android:textSize="@dimen/text_size_18sp" />
 
 
             <Button
@@ -64,18 +65,44 @@
                 android:id="@+id/textTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@{vm.addScheduleTime}"
                 android:textColor="@color/color_schedule_start"
-                android:text="@{vm.addScheduleTime}" />
+                android:textSize="@dimen/text_size_18sp" />
+
+            <ImageView
+                android:id="@+id/priority_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/priority_flag_null" />
+
+            <TextView
+                android:id="@+id/text_priority"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.priority}"
+                android:textColor="@color/priority_null"
+                android:textSize="@dimen/text_size_18sp" />
 
             <Button
-                android:layout_width="@dimen/button_size_40dp"
-                android:layout_height="@dimen/button_size_40dp"
-                android:background="@drawable/ic_baseline_flag_24" />
-
-            <Button
+                android:id="@+id/label_button"
                 android:layout_width="@dimen/button_size_40dp"
                 android:layout_height="@dimen/button_size_40dp"
                 android:background="@drawable/ic_baseline_local_offer_24" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxEms="5"
+                android:singleLine="true"
+                android:textColor="@color/color_schedule_start"
+                android:textSize="@dimen/text_size_18sp" />
+
+            <Button
+                android:id="@+id/remind_button"
+                android:layout_width="@dimen/button_size_40dp"
+                android:layout_height="@dimen/button_size_40dp"
+                android:background="@drawable/ic_baseline_add_alert_24" />
 
             <TextView
                 android:layout_width="0dp"
@@ -83,10 +110,10 @@
                 android:layout_weight="1" />
 
             <Button
-                android:layout_width="@dimen/button_size_40dp"
+                android:layout_width="@dimen/button_size_50dp"
                 android:layout_height="@dimen/button_size_40dp"
-                android:background="@drawable/ic_baseline_send_24"
-                android:layout_gravity="end" />
+                android:layout_gravity="end"
+                android:background="@drawable/ic_baseline_send_24" />
 
         </LinearLayout>
 

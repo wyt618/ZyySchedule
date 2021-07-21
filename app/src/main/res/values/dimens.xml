@@ -16,6 +16,7 @@
     <dimen name="text_size_16sp">16sp</dimen>
     <dimen name="text_size_18sp">18sp</dimen>
     <dimen name="text_size_20sp">20sp</dimen>
+    <dimen name="text_size_24sp">24sp</dimen>
 
     <dimen name="schedule_item_size">50dp</dimen>
     <dimen name="schedule_radius_size">4dp</dimen>
@@ -53,5 +54,6 @@
     <dimen name="small_month_calendar_height">224dp</dimen>
     <dimen name="text_size_10sp">10sp</dimen>
     <dimen name="button_size_40dp">40dp</dimen>
+    <dimen name="button_size_50dp">50dp</dimen>
 
 </resources>
