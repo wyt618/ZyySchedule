@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,14 +16,21 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.example.zyyschedule.PriorityBean;
 import com.example.zyyschedule.R;
+import com.example.zyyschedule.adapter.PriorityListAdapter;
 import com.example.zyyschedule.databinding.AddScheduleBinding;
 import com.example.zyyschedule.databinding.CalendarFragmentBinding;
+import com.example.zyyschedule.databinding.PriorityDialogBinding;
 import com.example.zyyschedule.databinding.TimepickerDialogBinding;
 import com.example.zyyschedule.viewmodel.CalendarViewModel;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
+
+import java.util.ArrayList;
 
 public class CalendarFragment extends Fragment implements View.OnClickListener, CalendarView.OnCalendarSelectListener {
 
@@ -32,10 +41,14 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     private AlertDialog.Builder builder;
     private AddScheduleBinding addScheduleBinding;
     private TimepickerDialogBinding timepickerbinding;
+    private PriorityDialogBinding priorityDialogBinding;
     private int selectYear;
     private int selectMonth;
     private int selectDay;
     private java.util.Calendar time;
+    private PriorityBean priorityBean;
+    private PriorityListAdapter priorityListAdapter;
+    private AlertDialog prioritydialog;
 
 
     public static CalendarFragment newInstance() {
@@ -51,6 +64,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         dialog = inflater.inflate(R.layout.dialog_date, null);
         addScheduleBinding = DataBindingUtil.inflate(inflater, R.layout.add_schedule, container, false);
         timepickerbinding = DataBindingUtil.inflate(inflater, R.layout.timepicker_dialog, container, false);
+        priorityDialogBinding = DataBindingUtil.inflate(inflater, R.layout.priority_dialog, container, false);
         datePicker = dialog.findViewById(R.id.date_picker);
         /**
          * 实现长按日期跳转
@@ -102,6 +116,9 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         binding.setVm(vm);
         binding.setLifecycleOwner(this);
         addScheduleBinding.addScheduleSelectTime.setOnClickListener(this);
+        addScheduleBinding.textTime.setOnClickListener(this);
+        addScheduleBinding.priorityButton.setOnClickListener(this);
+        addScheduleBinding.textPriority.setOnClickListener(this);
         addScheduleBinding.setVm(vm);
         addScheduleBinding.setLifecycleOwner(this);
         timepickerbinding.hourPicker.setMaxValue(23);
@@ -110,6 +127,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         timepickerbinding.minePicker.setMinValue(00);
         timepickerbinding.minePicker.setMaxValue(59);
         timepickerbinding.minePicker.setValue(time.get(java.util.Calendar.MINUTE));
+
     }
 
 
@@ -125,6 +143,16 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 break;
             case R.id.add_schedule_selectTime:
                 gotoGetTime();
+                break;
+            case R.id.textTime:
+                gotoGetTime();
+                break;
+            case R.id.priority_button:
+                gotoPriority();
+                break;
+            case R.id.text_priority:
+                gotoPriority();
+                break;
         }
     }
 
@@ -175,21 +203,72 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                     public void onClick(DialogInterface dialog, int which) {
                         String hour;
                         String time;
-                        if(timepickerbinding.hourPicker.getValue()<10){
-                            hour  = String.valueOf("0"+timepickerbinding.hourPicker.getValue());
-                        }else{
+                        if (timepickerbinding.hourPicker.getValue() < 10) {
+                            hour = String.valueOf("0" + timepickerbinding.hourPicker.getValue());
+                        } else {
                             hour = String.valueOf(timepickerbinding.hourPicker.getValue());
                         }
-                        if(timepickerbinding.minePicker.getValue()<10){
-                            time = String.valueOf("0"+timepickerbinding.minePicker.getValue());
-                        }else{
+                        if (timepickerbinding.minePicker.getValue() < 10) {
+                            time = String.valueOf("0" + timepickerbinding.minePicker.getValue());
+                        } else {
                             time = String.valueOf(timepickerbinding.minePicker.getValue());
                         }
-                        vm.AddScheduleTime.setValue(hour+":"+time);
+                        vm.AddScheduleTime.setValue(hour + ":" + time);
                     }
                 });
 
         builder.create().show();
+    }
+
+    private void gotoPriority() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        priorityDialogBinding.priorityList.setLayoutManager(layoutManager);
+        ArrayList prioritydata = PriorityListData();
+        priorityListAdapter = new PriorityListAdapter(R.layout.priority_item, prioritydata);
+        priorityListAdapter.setContext(getContext());
+        priorityListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                TextView text = view.findViewById(R.id.priority_title);
+                ImageView flag = view.findViewById(R.id.priority_flag);
+                addScheduleBinding.textPriority.setTextColor(text.getTextColors());
+                addScheduleBinding.textPriority.setText(text.getText());
+                addScheduleBinding.priorityButton.setImageDrawable((flag.getDrawable()));
+                prioritydialog.dismiss();
+            }
+        });
+        priorityDialogBinding.priorityList.setAdapter(priorityListAdapter);
+        if (priorityDialogBinding.getRoot().getParent() != null) {
+            ViewGroup vg = (ViewGroup) priorityDialogBinding.getRoot().getParent();
+            vg.removeView(priorityDialogBinding.getRoot());
+        }
+        builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("设置优先级")
+                .setView(priorityDialogBinding.getRoot());
+        prioritydialog = builder.create();
+        prioritydialog.show();
+    }
+
+    private ArrayList PriorityListData() {
+        ArrayList ary = new ArrayList<>();
+        priorityBean = new PriorityBean();
+        priorityBean.setPrioritytitle("！无优先级");
+        priorityBean.setPrioritytype(1);
+        ary.add(priorityBean);
+        priorityBean = new PriorityBean();
+        priorityBean.setPrioritytitle("！低优先级");
+        priorityBean.setPrioritytype(2);
+        ary.add(priorityBean);
+        priorityBean = new PriorityBean();
+        priorityBean.setPrioritytitle("！中优先级");
+        priorityBean.setPrioritytype(3);
+        ary.add(priorityBean);
+        priorityBean = new PriorityBean();
+        priorityBean.setPrioritytitle("！高优先级");
+        priorityBean.setPrioritytype(4);
+        ary.add(priorityBean);
+        return ary;
     }
 
 
