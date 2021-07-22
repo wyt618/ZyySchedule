@@ -17,7 +17,7 @@
         android:icon="@drawable/ic_round_event_note"
         android:title="@string/title_dates" />
     <item
-        android:id="@+id/plus_list"
+        android:id="@+id/add_list"
         android:icon="@drawable/ic_baseline_library_add_check_24"
         android:title="@string/title_plus_list" />
 </menu>
