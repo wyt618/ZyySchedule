@@ -5,7 +5,7 @@ plugins {
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
-
+    android.defaultConfig.vectorDrawables.useSupportLibrary = true
     defaultConfig {
         applicationId "com.example.zyyschedule"
         minSdkVersion 19
@@ -51,6 +51,6 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$room_version"
     implementation "android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha04"
     implementation "android.arch.navigation:navigation-ui-ktx:1.0.0-alpha04"
-    compile 'com.android.support:design:25.3.1'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
 
 }

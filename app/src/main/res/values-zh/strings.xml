@@ -14,4 +14,11 @@
     <string name="title_inbox">收集箱</string>
     <string name="title_dates">个人备忘</string>
     <string name="title_plus_list">添加标签</string>
+    <string name="cancel">返回</string>
+    <string name="schedule_setting">添加标签</string>
+    <string name="finish">完成</string>
+    <string name="event_set_list_name">标签名称</string>
+    <string name="event_set_color">颜色</string>
+    <string name="event_set_select_color">选择颜色</string>
+    <string name="confirm">确定</string>
 </resources>
