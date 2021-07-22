@@ -13,5 +13,15 @@
     <string name="title_inbox">Inbox</string>
     <string name="title_dates">Personal memo</string>
     <string name="title_plus_list">Add a label</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="cancel">Clear</string>
+    <string name="schedule_setting">Add labels</string>
+    <string name="finish">Complete</string>
+    <string name="event_set_list_name">Label name</string>
+    <string name="event_set_color">Color</string>
+    <string name="event_set_select_color">Choose  color</string>
+    <string name="confirm">Determine</string>
+    <string name="add_label_colorpicker">Choose a color</string>
+    <string name="add_label_dialog_messgae">The label name cannot be empty</string>
+    <string name="add_label_dialog_neturl">I see</string>
+    <string name="check_labeltitle_messgae">Duplicate label names</string>
 </resources>
