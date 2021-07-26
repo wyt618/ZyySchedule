@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:colorpicker="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.example.zyyschedule.widget.ColorPickView
+            android:id="@+id/colorPickView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            colorpicker:center_color="#ffffff"
+            colorpicker:center_radius="10dp"
+            colorpicker:circle_radius="150dp"
+            colorpicker:layout_constraintBottom_toBottomOf="parent"
+            colorpicker:layout_constraintEnd_toEndOf="parent"
+            colorpicker:layout_constraintStart_toStartOf="parent"
+            colorpicker:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txt_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textSize="18sp"
+            colorpicker:layout_constraintBottom_toBottomOf="parent"
+            colorpicker:layout_constraintEnd_toEndOf="parent"
+            colorpicker:layout_constraintStart_toStartOf="parent"
+            colorpicker:layout_constraintTop_toBottomOf="@+id/colorPickView"
+            colorpicker:layout_constraintVertical_bias="0.146" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
