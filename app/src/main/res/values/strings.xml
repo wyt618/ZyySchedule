@@ -9,9 +9,9 @@
     <string name="schedule_hint">What are you going to do ? </string>
     <string name="add_schedule_title">Create Schedule</string>
     <string name="add_schedule_timepicker">To choose time</string>
-    <string name="title_today">Today Schedule</string>
-    <string name="title_inbox">Inbox</string>
-    <string name="title_dates">Personal memo</string>
+    <string name="title_today">Today</string>
+    <string name="title_local_schedule">Local schedule</string>
+    <string name="title_not_classified">Not classified</string>
     <string name="title_plus_list">Add a label</string>
     <string name="cancel">Clear</string>
     <string name="schedule_setting">Add labels</string>

@@ -90,7 +90,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         ft.setTransition(FragmentTransaction.TRANSIT_NONE);
         ft.replace(R.id.scheduleFragment, new InboxFragment(), null)
                 .commit();
-        binding.scheduleTitleBarTitle.setText(R.string.title_inbox);
+        binding.scheduleTitleBarTitle.setText(R.string.title_local_schedule);
         binding.drawerLayout.closeDrawer(Gravity.START);
     }
     @SuppressLint("WrongConstant")
@@ -99,10 +99,10 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         ft.setTransition(FragmentTransaction.TRANSIT_NONE);
         ft.replace(R.id.scheduleFragment, new PersonFragment(), null)
                 .commit();
-        binding.scheduleTitleBarTitle.setText(R.string.title_dates);
+        binding.scheduleTitleBarTitle.setText(R.string.title_not_classified);
         binding.drawerLayout.closeDrawer(Gravity.START);
     }
-    @SuppressLint("WrongConstant")
+
     private void gotoAddLabelActivity(){
         Intent intent = new Intent(getActivity(), AddLabelActivity.class);
         startActivity(intent);
