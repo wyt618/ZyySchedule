@@ -13,5 +13,5 @@ public interface LabelDao {
     void insertLabel(Label ...labels);
 
     @Query("SELECT * FROM Label WHERE title =:title")
-    LiveData<List<Label>> CheckLabel(String title);
+    LiveData<List<Label>> checkLabel(String title);
 }

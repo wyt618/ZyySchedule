@@ -58,10 +58,10 @@ public class EditTextWithClear extends AppCompatEditText {
         if (event != null) {
             if (cleardrawable != null) {
                 if (event.getAction() == MotionEvent.ACTION_UP
-                        && event.getX() > cleardrawable.getIntrinsicWidth()
-                        && event.getX() < getWidth()
-                        && event.getY() > getHeight() / 2 - cleardrawable.getIntrinsicHeight() / 2
-                        && event.getY() < getHeight() / 2 + cleardrawable.getIntrinsicHeight() / 2){
+                        && event.getX() > getWidth()-cleardrawable.getIntrinsicWidth()-20
+                        && event.getX() < getWidth()+20
+                        && event.getY() > getHeight() / 2 - cleardrawable.getIntrinsicHeight() / 2-20
+                        && event.getY() < getHeight() / 2 + cleardrawable.getIntrinsicHeight() / 2+20){
                     setText("");
                 }
             }

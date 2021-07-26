@@ -96,7 +96,7 @@ public class AddLabelActivity extends AppCompatActivity implements View.OnClickL
     private void AddLabel(){
         if(binding.LabelTitle.getText().length()>0){
             String title =  binding.LabelTitle.getText().toString();
-            vm.CheckLabelTitle(title).observe(this, new Observer<List<Label>>() {
+            vm.checkLabelTitle(title).observe(this, new Observer<List<Label>>() {
                 @Override
                 public void onChanged(List<Label> labels) {
                     if(labels.size()!=0){

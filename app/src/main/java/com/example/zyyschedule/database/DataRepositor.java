@@ -24,8 +24,8 @@ public class DataRepositor {
     public void insertLabel(Label ...labels){
         new InsertLabelAsyncTask(labelDao).execute(labels);
     }
-    public LiveData<List<Label>> CheckLabel(String title){
-        return labelDao.CheckLabel(title);
+    public LiveData<List<Label>> checkLabel(String title){
+        return labelDao.checkLabel(title);
     }
 
 

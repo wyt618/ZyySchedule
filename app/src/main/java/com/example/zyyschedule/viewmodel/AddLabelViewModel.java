@@ -17,8 +17,8 @@ public class AddLabelViewModel extends AndroidViewModel {
         super(application);
         dataRepositor = new DataRepositor(application);
     }
-    public LiveData<List<Label>> CheckLabelTitle(String title){
-        return dataRepositor.CheckLabel(title);
+    public LiveData<List<Label>> checkLabelTitle(String title){
+        return dataRepositor.checkLabel(title);
     }
 
     public void insertLabel(Label ...labels){
