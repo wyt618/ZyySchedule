@@ -3,9 +3,13 @@ package com.example.zyyschedule.fragment;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -158,7 +163,6 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onCalendarOutOfRange(Calendar calendar) {
-
     }
 
     @Override
@@ -179,9 +183,17 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
             vg.removeView(addScheduleBinding.getRoot());
         }
         builder = new AlertDialog.Builder(getContext());
-        builder.setView(addScheduleBinding.getRoot())
-                .setTitle(R.string.add_schedule_title);
-        builder.create().show();
+        builder.setView(addScheduleBinding.getRoot());
+        AlertDialog addscheule = builder.create();
+        addscheule.show();
+        Window window = addscheule.getWindow();
+        window.setGravity(Gravity.BOTTOM);
+        WindowManager m = getActivity().getWindowManager();
+        Display d = m.getDefaultDisplay();
+        WindowManager.LayoutParams p = addscheule.getWindow().getAttributes();
+        p.width = d.getWidth();
+        addscheule.getWindow().setAttributes(p);
+        addscheule.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(getContext(),R.drawable.add_schedule));
     }
 
     private void gotoGetTime() {
