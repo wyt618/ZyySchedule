@@ -14,4 +14,15 @@
     <string name="title_inbox">收集箱</string>
     <string name="title_dates">个人备忘</string>
     <string name="title_plus_list">添加标签</string>
+    <string name="cancel">返回</string>
+    <string name="schedule_setting">添加标签</string>
+    <string name="finish">完成</string>
+    <string name="event_set_list_name">标签名称</string>
+    <string name="event_set_color">颜色</string>
+    <string name="event_set_select_color">选择颜色</string>
+    <string name="confirm">确定</string>
+    <string name="add_label_colorpicker">选择颜色</string>
+    <string name="add_label_dialog_messgae">标签名称不能为空</string>
+    <string name="add_label_dialog_neturl">我知道了</string>
+    <string name="check_labeltitle_messgae">标签名称重复</string>
 </resources>
