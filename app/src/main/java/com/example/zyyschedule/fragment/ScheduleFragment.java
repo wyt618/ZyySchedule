@@ -1,6 +1,7 @@
 package com.example.zyyschedule.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.zyyschedule.R;
+import com.example.zyyschedule.activity.AddLabelActivity;
 import com.example.zyyschedule.databinding.ScheduleFragmentBinding;
 import com.example.zyyschedule.viewmodel.ScheduleViewModel;
 import com.google.android.material.navigation.NavigationView;
@@ -47,12 +49,12 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
                         gotoPersonFragment();
                         break;
                     case R.id.add_list:
-                        gotoAdd_list_Fragment();
-
+                        gotoAddLabelActivity();
                 }
                 return true;
             }
         });
+        gotoTodayScheduleFragment();
         return binding.getRoot();
     }
 
@@ -61,7 +63,6 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
-
     }
 
     @SuppressLint("WrongConstant")
@@ -80,6 +81,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         ft.setTransition(FragmentTransaction.TRANSIT_NONE);
         ft.replace(R.id.scheduleFragment, new TodayScheduleFragment(), null)
                 .commit();
+        binding.scheduleTitleBarTitle.setText(R.string.title_today);
         binding.drawerLayout.closeDrawer(Gravity.START);
     }
     @SuppressLint("WrongConstant")
@@ -88,6 +90,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         ft.setTransition(FragmentTransaction.TRANSIT_NONE);
         ft.replace(R.id.scheduleFragment, new InboxFragment(), null)
                 .commit();
+        binding.scheduleTitleBarTitle.setText(R.string.title_local_schedule);
         binding.drawerLayout.closeDrawer(Gravity.START);
     }
     @SuppressLint("WrongConstant")
@@ -96,14 +99,12 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         ft.setTransition(FragmentTransaction.TRANSIT_NONE);
         ft.replace(R.id.scheduleFragment, new PersonFragment(), null)
                 .commit();
+        binding.scheduleTitleBarTitle.setText(R.string.title_not_classified);
         binding.drawerLayout.closeDrawer(Gravity.START);
     }
-    @SuppressLint("WrongConstant")
-    private void gotoAdd_list_Fragment(){
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.setTransition(FragmentTransaction.TRANSIT_NONE);
-        ft.replace(R.id.scheduleFragment, new Add_list_Fragment(), null)
-                .commit();
-        binding.drawerLayout.closeDrawer(Gravity.START);
+
+    private void gotoAddLabelActivity(){
+        Intent intent = new Intent(getActivity(), AddLabelActivity.class);
+        startActivity(intent);
     }
 }

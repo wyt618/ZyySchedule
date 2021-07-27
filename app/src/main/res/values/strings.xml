@@ -9,16 +9,19 @@
     <string name="schedule_hint">What are you going to do ? </string>
     <string name="add_schedule_title">Create Schedule</string>
     <string name="add_schedule_timepicker">To choose time</string>
-    <string name="title_today">Today Schedule</string>
-    <string name="title_inbox">Inbox</string>
-    <string name="title_dates">Personal memo</string>
+    <string name="title_today">Today</string>
+    <string name="title_local_schedule">Local schedule</string>
+    <string name="title_not_classified">Not classified</string>
     <string name="title_plus_list">Add a label</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="cancel">返回</string>
-    <string name="schedule_setting">添加标签</string>
-    <string name="finish">完成</string>
-    <string name="event_set_list_name">标签名称</string>
-    <string name="event_set_color">颜色</string>
-    <string name="event_set_select_color">选择颜色</string>
-    <string name="confirm">确定</string>
+    <string name="cancel">Clear</string>
+    <string name="schedule_setting">Add labels</string>
+    <string name="finish">Complete</string>
+    <string name="event_set_list_name">Label name</string>
+    <string name="event_set_color">Color</string>
+    <string name="event_set_select_color">Choose  color</string>
+    <string name="confirm">Determine</string>
+    <string name="add_label_colorpicker">Choose a color</string>
+    <string name="add_label_dialog_messgae">The label name cannot be empty</string>
+    <string name="add_label_dialog_neturl">I see</string>
+    <string name="check_labeltitle_messgae">Duplicate label names</string>
 </resources>

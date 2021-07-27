@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activity.AddLabelActivity">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorWrite"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginBottom="@dimen/space_10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="@dimen/space_30dp">
+
+                <ImageView
+                    android:id="@+id/add_label_exit"
+                    android:layout_width="@dimen/space_70dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/space_3dp"
+                    app:srcCompat="@drawable/ic_baseline_clear_30" />
+
+                <TextView
+                    android:id="@+id/add_label_title"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_plus_list"
+                    android:textSize="@dimen/text_size_24sp"
+                    android:textColor="@color/black"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content" />
+                <ImageView
+                    android:id="@+id/add_label_button"
+                    android:layout_width="@dimen/space_70dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/space_3dp"
+                    app:srcCompat="@drawable/ic_baseline_done_30"
+                    android:layout_marginEnd="@dimen/dp_4"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/space_18dp"
+                android:layout_marginTop="@dimen/space_12dp"
+                android:layout_marginRight="@dimen/space_18dp"
+                android:gravity="center_vertical"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_baseline_view_comfy" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/space_18dp"
+                    android:background="@drawable/bg_add_event_set_item">
+
+                    <com.example.zyyschedule.widget.EditTextWithClear
+                        android:id="@+id/Label_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/space_30dp"
+                        android:background="@color/colorTranslate"
+                        android:ellipsize="start"
+                        android:hint="@string/event_set_list_name"
+                        android:padding="@dimen/space_12dp"
+                        android:singleLine="true"
+                        android:textColor="@color/color_add_event_text"
+                        android:textColorHint="@color/color_schedule_finish_title_text"
+                        android:textSize="@dimen/text_size_16sp" />
+
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/space_18dp"
+                android:layout_marginTop="@dimen/space_12dp"
+                android:layout_marginRight="@dimen/space_18dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_baseline_color_lens_24" />
+
+                <RelativeLayout
+                    android:id="@+id/LabelSetColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/space_18dp"
+                    android:background="@drawable/bg_add_event_set_item">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/space_12dp"
+                        android:background="@color/colorTranslate"
+                        android:text="@string/event_set_color"
+                        android:textColor="@color/color_add_event_text"
+                        android:textSize="@dimen/text_size_16sp" />
+
+                    <LinearLayout
+                        android:id="@+id/vLabelSetColor"
+                        android:layout_width="@dimen/button_size_50dp"
+                        android:layout_height="@dimen/space_30dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="10dp"
+                        android:background="@color/color_schedule_blue"
+                        android:elevation="4dp"
+                        android:orientation="horizontal" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@color/color_schedule_blue"
@@ -30,21 +30,39 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <TextView
+                    android:id="@+id/schedule_titleBar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="中育清单"
+                    android:textSize="@dimen/text_size_18sp"/>
+
                 <ImageButton
                     android:id="@+id/ivMainMenu"
                     android:layout_width="@dimen/action_bar_height"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="5dp"
                     android:background="@color/colorTranslate"
-                    android:src="@drawable/menu_more" />
+                    app:srcCompat="@drawable/menu_more"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <FrameLayout
                 android:id="@+id/scheduleFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="3dp">
+
             </FrameLayout>
 
         </LinearLayout>

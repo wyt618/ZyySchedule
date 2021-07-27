@@ -1,10 +1,11 @@
 package com.example.zyyschedule.database;
 
-import android.content.AsyncQueryHandler;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import androidx.loader.content.AsyncTaskLoader;
+import androidx.lifecycle.LiveData;
+
+import java.util.List;
 
 public class DataRepositor {
     private LabelDao labelDao;
@@ -22,6 +23,14 @@ public class DataRepositor {
 
     public void insertLabel(Label ...labels){
         new InsertLabelAsyncTask(labelDao).execute(labels);
+    }
+
+    public LiveData<List<Label>> checkLabel(String title){
+        return labelDao.checkLabel(title);
+    }
+
+    public LiveData<List<Label>> getAllLabel(){
+        return labelDao.getAllLabel();
     }
 
     static class InsertscheduleAsyncTask extends AsyncTask<Schedule, Void, Void> {

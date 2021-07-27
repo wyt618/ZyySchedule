@@ -11,7 +11,7 @@ public class Schedule {
     @ColumnInfo(name = "starttime")
     private String starttime;  //日程开始时间
     @ColumnInfo(name = "endtime")
-    private String endtime;  //日程开始时间
+    private String endtime;  //日程结束时间
     @ColumnInfo(name = "remind")
     private int remind;  //提醒模式
     @ColumnInfo(name = "title")
