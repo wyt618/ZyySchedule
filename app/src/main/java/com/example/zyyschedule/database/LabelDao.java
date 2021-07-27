@@ -14,4 +14,7 @@ public interface LabelDao {
 
     @Query("SELECT * FROM Label WHERE title =:title")
     LiveData<List<Label>> checkLabel(String title);
+
+    @Query("SELECT * FROM Label")
+    LiveData<List<Label>> getAllLabel();
 }

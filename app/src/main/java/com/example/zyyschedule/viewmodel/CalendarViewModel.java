@@ -4,9 +4,14 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.zyyschedule.database.DataRepositor;
+import com.example.zyyschedule.database.Label;
+
 import java.util.Calendar;
+import java.util.List;
 
 public class CalendarViewModel extends AndroidViewModel {
     private int day;
@@ -14,10 +19,11 @@ public class CalendarViewModel extends AndroidViewModel {
     public MutableLiveData<String> AddScheduleTime;
     private String dateAgo;
     public MutableLiveData<String> priority;
-
+    public MutableLiveData<String> label;
     public MutableLiveData<String> getPriority() {
         return priority;
     }
+    private DataRepositor dataRepositor;
 
     public void setPriority(MutableLiveData<String> priority) {
         this.priority = priority;
@@ -26,15 +32,21 @@ public class CalendarViewModel extends AndroidViewModel {
 
     public CalendarViewModel(@NonNull Application application) {
         super(application);
+        dataRepositor = new DataRepositor(application);
         Calendar calendar = Calendar.getInstance();
         day = calendar.get(Calendar.DAY_OF_MONTH);
         AddScheduleDateAgo = new MutableLiveData<>();
         AddScheduleTime = new MutableLiveData<>();
         priority = new MutableLiveData<>();
+        label = new MutableLiveData<>();
         AddScheduleTime.setValue("00:00");
         priority.setValue("无优先级");
+        label.setValue("未分类");
     }
 
+    public LiveData<List<Label>>getAllLabel(){
+        return dataRepositor.getAllLabel();
+    }
 
     public MutableLiveData<String> getAddScheduleDateAgo() {
         return AddScheduleDateAgo;
