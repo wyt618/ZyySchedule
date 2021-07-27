@@ -13,7 +13,7 @@ public class Schedule {
     @ColumnInfo(name = "endtime")
     private String endtime;  //日程结束时间
     @ColumnInfo(name = "remind")
-    private int remind;  //提醒模式
+    private String remind;  //提醒模式
     @ColumnInfo(name = "title")
     private String title;  //日程标题
     @ColumnInfo(name = "detailed")
@@ -33,11 +33,11 @@ public class Schedule {
         this.id = id;
     }
 
-    public int getRemind() {
+    public String getRemind() {
         return remind;
     }
 
-    public void setRemind(int remind) {
+    public void setRemind(String remind) {
         this.remind = remind;
     }
 
