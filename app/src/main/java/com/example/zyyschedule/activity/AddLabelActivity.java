@@ -26,7 +26,7 @@ public class AddLabelActivity extends AppCompatActivity implements View.OnClickL
     private ActivityAddLabelBinding binding;
     private ColorpickerDialogBinding colorpickerDialogBinding;
     private AlertDialog.Builder builder;
-    private int labelcolor = 0xffffffff ;
+    private int labelcolor = 0xff679BE4 ;
     private AddLabelViewModel vm;
     private Label label;
     @Override

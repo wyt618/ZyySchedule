@@ -10,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Adapter;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,14 +22,18 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.zyyschedule.PriorityBean;
 import com.example.zyyschedule.R;
+import com.example.zyyschedule.adapter.LabelAdapter;
 import com.example.zyyschedule.adapter.PriorityListAdapter;
+import com.example.zyyschedule.database.Label;
 import com.example.zyyschedule.databinding.AddScheduleBinding;
+import com.example.zyyschedule.databinding.AllLabelDialogBinding;
 import com.example.zyyschedule.databinding.CalendarFragmentBinding;
 import com.example.zyyschedule.databinding.PriorityDialogBinding;
 import com.example.zyyschedule.databinding.TimepickerDialogBinding;
@@ -36,6 +42,7 @@ import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CalendarFragment extends Fragment implements View.OnClickListener, CalendarView.OnCalendarSelectListener {
 
@@ -54,6 +61,8 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     private PriorityBean priorityBean;
     private PriorityListAdapter priorityListAdapter;
     private AlertDialog prioritydialog;
+    private AllLabelDialogBinding labelBinding;
+    private LabelAdapter labelAdapter;
 
 
     public static CalendarFragment newInstance() {
@@ -70,6 +79,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         addScheduleBinding = DataBindingUtil.inflate(inflater, R.layout.add_schedule, container, false);
         timepickerbinding = DataBindingUtil.inflate(inflater, R.layout.timepicker_dialog, container, false);
         priorityDialogBinding = DataBindingUtil.inflate(inflater, R.layout.priority_dialog, container, false);
+        labelBinding = DataBindingUtil.inflate(inflater,R.layout.all_label_dialog,container,false);
         datePicker = dialog.findViewById(R.id.date_picker);
         /**
          * 实现长按日期跳转
@@ -124,6 +134,8 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         addScheduleBinding.textTime.setOnClickListener(this);
         addScheduleBinding.priorityButton.setOnClickListener(this);
         addScheduleBinding.textPriority.setOnClickListener(this);
+        addScheduleBinding.labelButton.setOnClickListener(this);
+        addScheduleBinding.scheduleLabel.setOnClickListener(this);
         addScheduleBinding.setVm(vm);
         addScheduleBinding.setLifecycleOwner(this);
         timepickerbinding.hourPicker.setMaxValue(23);
@@ -132,6 +144,24 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         timepickerbinding.minePicker.setMinValue(00);
         timepickerbinding.minePicker.setMaxValue(59);
         timepickerbinding.minePicker.setValue(time.get(java.util.Calendar.MINUTE));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        labelBinding.labelList.setLayoutManager(layoutManager);
+        vm.getAllLabel().observe(getViewLifecycleOwner(), new Observer<List<Label>>() {
+            @Override
+            public void onChanged(List<Label> labels) {
+               labelAdapter = new LabelAdapter(R.layout.label_item,labels);
+               labelBinding.labelList.setAdapter(labelAdapter);
+                labelAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+
+                    }
+                });
+               labelAdapter.notifyDataSetChanged();
+            }
+        });
+
 
     }
 
@@ -157,6 +187,12 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 break;
             case R.id.text_priority:
                 gotoPriority();
+                break;
+            case R.id.label_button:
+                gotoAllLabel();
+                break;
+            case R.id.schedule_label:
+                gotoAllLabel();
                 break;
         }
     }
@@ -188,12 +224,13 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         addscheule.show();
         Window window = addscheule.getWindow();
         window.setGravity(Gravity.BOTTOM);
+        window.clearFlags( WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         WindowManager m = getActivity().getWindowManager();
         Display d = m.getDefaultDisplay();
         WindowManager.LayoutParams p = addscheule.getWindow().getAttributes();
         p.width = d.getWidth();
         addscheule.getWindow().setAttributes(p);
-        addscheule.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(getContext(),R.drawable.add_schedule));
+        addscheule.getWindow().setBackgroundDrawableResource(R.drawable.add_schedule);
     }
 
     private void gotoGetTime() {
@@ -228,7 +265,6 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                         vm.AddScheduleTime.setValue(hour + ":" + time);
                     }
                 });
-
         builder.create().show();
     }
 
@@ -245,7 +281,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 TextView text = view.findViewById(R.id.priority_title);
                 ImageView flag = view.findViewById(R.id.priority_flag);
                 addScheduleBinding.textPriority.setTextColor(text.getTextColors());
-                addScheduleBinding.textPriority.setText(text.getText());
+                vm.priority.setValue(text.getText().toString());
                 addScheduleBinding.priorityButton.setImageDrawable((flag.getDrawable()));
                 prioritydialog.dismiss();
             }
@@ -259,6 +295,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         builder.setTitle("设置优先级")
                 .setView(priorityDialogBinding.getRoot());
         prioritydialog = builder.create();
+        prioritydialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_background);
         prioritydialog.show();
     }
 
@@ -281,6 +318,19 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         priorityBean.setPrioritytype(4);
         ary.add(priorityBean);
         return ary;
+    }
+    private void gotoAllLabel(){
+        if (labelBinding.getRoot().getParent() != null) {
+            ViewGroup vg = (ViewGroup) labelBinding.getRoot().getParent();
+            vg.removeView(labelBinding.getRoot());
+        }
+        builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("选择标签")
+                .setView(labelBinding.getRoot());
+        AlertDialog labeladd = builder.create();
+        labeladd.getWindow().setBackgroundDrawableResource(R.drawable.dialog_background);
+        WindowManager.LayoutParams p = labeladd.getWindow().getAttributes();
+        labeladd.show();
     }
 
 
