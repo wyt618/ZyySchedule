@@ -2,7 +2,9 @@ package com.example.zyyschedule.fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.zyyschedule.PriorityBean;
 import com.example.zyyschedule.R;
+import com.example.zyyschedule.activity.AddLabelActivity;
 import com.example.zyyschedule.adapter.LabelAdapter;
 import com.example.zyyschedule.adapter.PriorityListAdapter;
 import com.example.zyyschedule.database.Label;
@@ -60,6 +63,9 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     private AlertDialog prioritydialog;
     private AllLabelDialogBinding labelBinding;
     private LabelAdapter labelAdapter;
+    private AlertDialog labelchoose ;
+    private View labeldialogfoot;
+    private AlertDialog addscheule;
 
 
     public static CalendarFragment newInstance() {
@@ -73,6 +79,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         builder = new AlertDialog.Builder(getContext());
         binding = DataBindingUtil.inflate(inflater, R.layout.calendar_fragment, container, false);
         dialog = inflater.inflate(R.layout.dialog_date, null);
+        labeldialogfoot = inflater.inflate(R.layout.label_dialog_foot, null);
         addScheduleBinding = DataBindingUtil.inflate(inflater, R.layout.add_schedule, container, false);
         timepickerbinding = DataBindingUtil.inflate(inflater, R.layout.timepicker_dialog, container, false);
         priorityDialogBinding = DataBindingUtil.inflate(inflater, R.layout.priority_dialog, container, false);
@@ -144,18 +151,34 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         labelBinding.labelList.setLayoutManager(layoutManager);
+        labeldialogfoot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), AddLabelActivity.class);
+                startActivity(intent);
+            }
+        });
         vm.getAllLabel().observe(getViewLifecycleOwner(), new Observer<List<Label>>() {
             @Override
             public void onChanged(List<Label> labels) {
                labelAdapter = new LabelAdapter(R.layout.label_item,labels);
                labelBinding.labelList.setAdapter(labelAdapter);
-                labelAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+               labelAdapter.notifyDataSetChanged();
+               labelAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
+                        TextView labelname = view.findViewById(R.id.label_name);
+                        TextView labelid = view.findViewById(R.id.label_id);
+                        addScheduleBinding.scheduleLabelId.setText(labelid.getText());
+                        vm.label.setValue(labelname.getText().toString());
+                        labelchoose.dismiss();
                     }
                 });
-               labelAdapter.notifyDataSetChanged();
+                if (labeldialogfoot.getParent() != null) {
+                    ViewGroup vg = (ViewGroup) labeldialogfoot.getParent();
+                    vg.removeView(labeldialogfoot);
+                }
+               labelAdapter.addHeaderView(labeldialogfoot);
             }
         });
 
@@ -211,13 +234,14 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void gotoAddSchedule() {
+        binding.fabBtn.setVisibility(View.GONE);
         if (addScheduleBinding.getRoot().getParent() != null) {
             ViewGroup vg = (ViewGroup) addScheduleBinding.getRoot().getParent();
             vg.removeView(addScheduleBinding.getRoot());
         }
         builder = new AlertDialog.Builder(getContext());
         builder.setView(addScheduleBinding.getRoot());
-        AlertDialog addscheule = builder.create();
+        addscheule = builder.create();
         addscheule.show();
         Window window = addscheule.getWindow();
         window.setGravity(Gravity.BOTTOM);
@@ -228,6 +252,12 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         p.width = d.getWidth();
         addscheule.getWindow().setAttributes(p);
         addscheule.getWindow().setBackgroundDrawableResource(R.drawable.add_schedule);
+        addscheule.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                binding.fabBtn.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void gotoGetTime() {
@@ -279,6 +309,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 ImageView flag = view.findViewById(R.id.priority_flag);
                 addScheduleBinding.textPriority.setTextColor(text.getTextColors());
                 vm.priority.setValue(text.getText().toString());
+                vm.priorityid.setValue(position);
                 addScheduleBinding.priorityButton.setImageDrawable((flag.getDrawable()));
                 prioritydialog.dismiss();
             }
@@ -300,19 +331,19 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         ArrayList ary = new ArrayList<>();
         priorityBean = new PriorityBean();
         priorityBean.setPrioritytitle("！无优先级");
-        priorityBean.setPrioritytype(1);
+        priorityBean.setPrioritytype(0);
         ary.add(priorityBean);
         priorityBean = new PriorityBean();
         priorityBean.setPrioritytitle("！低优先级");
-        priorityBean.setPrioritytype(2);
+        priorityBean.setPrioritytype(1);
         ary.add(priorityBean);
         priorityBean = new PriorityBean();
         priorityBean.setPrioritytitle("！中优先级");
-        priorityBean.setPrioritytype(3);
+        priorityBean.setPrioritytype(2);
         ary.add(priorityBean);
         priorityBean = new PriorityBean();
         priorityBean.setPrioritytitle("！高优先级");
-        priorityBean.setPrioritytype(4);
+        priorityBean.setPrioritytype(3);
         ary.add(priorityBean);
         return ary;
     }
@@ -324,10 +355,15 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         builder = new AlertDialog.Builder(getContext());
         builder.setTitle("选择标签")
                 .setView(labelBinding.getRoot());
-        AlertDialog labeladd = builder.create();
-        labeladd.getWindow().setBackgroundDrawableResource(R.drawable.dialog_background);
-        WindowManager.LayoutParams p = labeladd.getWindow().getAttributes();
-        labeladd.show();
+        labelchoose = builder.create();
+        labelchoose.getWindow().setBackgroundDrawableResource(R.drawable.dialog_background);
+        labelchoose.show();
+        WindowManager m = getActivity().getWindowManager();
+        Display d = m.getDefaultDisplay();
+        WindowManager.LayoutParams p = labelchoose.getWindow().getAttributes();
+        p.width = d.getWidth()/3;
+        p.height = d.getHeight()/3;
+        labelchoose.getWindow().setAttributes(p);
     }
 
 

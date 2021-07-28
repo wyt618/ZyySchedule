@@ -18,6 +18,7 @@ public class CalendarViewModel extends AndroidViewModel {
     public MutableLiveData<String> AddScheduleDateAgo;
     public MutableLiveData<String> AddScheduleTime;
     private String dateAgo;
+    public MutableLiveData<Integer> priorityid;
     public MutableLiveData<String> priority;
     public MutableLiveData<String> label;
     public MutableLiveData<String> getPriority() {
@@ -29,7 +30,6 @@ public class CalendarViewModel extends AndroidViewModel {
         this.priority = priority;
     }
 
-
     public CalendarViewModel(@NonNull Application application) {
         super(application);
         dataRepositor = new DataRepositor(application);
@@ -38,10 +38,12 @@ public class CalendarViewModel extends AndroidViewModel {
         AddScheduleDateAgo = new MutableLiveData<>();
         AddScheduleTime = new MutableLiveData<>();
         priority = new MutableLiveData<>();
+        priorityid = new MutableLiveData<>();
         label = new MutableLiveData<>();
         AddScheduleTime.setValue("00:00");
         priority.setValue("无优先级");
-        label.setValue("未分类");
+        label.setValue("无标签");
+        priorityid.setValue(0);
     }
 
     public LiveData<List<Label>>getAllLabel(){

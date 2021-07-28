@@ -18,6 +18,7 @@ public class LabelAdapter extends BaseQuickAdapter<Label, BaseViewHolder> {
     @Override
     protected void convert(BaseViewHolder helper, Label item) {
         helper.setText(R.id.label_name,item.getTitle());
-        helper.setBackgroundColor(R.id.label_color,item.getColor());
+        helper.setBackgroundColor(R.id.label_color_view,item.getColor());
+        helper.setText(R.id.label_id,String.valueOf(item.getId()));
     }
 }
