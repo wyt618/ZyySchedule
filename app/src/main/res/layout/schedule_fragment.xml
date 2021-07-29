@@ -74,6 +74,13 @@
             android:fitsSystemWindows="true"
             app:menu="@menu/left_menu">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/label_recyclerview"
+                android:layout_marginTop="250dp"
+                android:layout_marginLeft="@dimen/space_30dp"
+                android:layout_width="250dp"
+                android:layout_height="match_parent"/>
+
         </com.google.android.material.navigation.NavigationView>
 
     </androidx.drawerlayout.widget.DrawerLayout>
