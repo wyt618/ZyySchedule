@@ -5,6 +5,7 @@
     <string name="main_menu_setting">Setting</string>
     <string name="dialog_button_ok">Ok</string>
     <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_button_finish">Complete</string>
     <string name="clendar_dialog_title" translatable="false">Jump To</string>
     <string name="schedule_hint">What are you going to do ? </string>
     <string name="add_schedule_title">Create Schedule</string>
@@ -24,4 +25,7 @@
     <string name="add_label_dialog_messgae">The label name cannot be empty</string>
     <string name="add_label_dialog_neturl">I see</string>
     <string name="check_labeltitle_messgae">Duplicate label names</string>
+    <string name="priority_dialog_title">Setting priority</string>
+    <string name="label_dialog_title">Select the label</string>
+    <string name="remind_dialog_title">Remind</string>
 </resources>
