@@ -6,6 +6,7 @@
     <string name="main_menu_setting">设置</string>
     <string name="dialog_button_ok">确定</string>
     <string name="dialog_button_cancel">取消</string>
+    <string name="dialog_button_finish">完成</string>
     <string name="clendar_dialog_title">跳转到</string>
     <string name="schedule_hint">准备做什么？ </string>
     <string name="add_schedule_title">创建日程</string>
@@ -25,4 +26,7 @@
     <string name="add_label_dialog_messgae">标签名称不能为空</string>
     <string name="add_label_dialog_neturl">我知道了</string>
     <string name="check_labeltitle_messgae">标签名称重复</string>
+    <string name="priority_dialog_title">设置优先级</string>
+    <string name="label_dialog_title">选择标签</string>
+    <string name="remind_dialog_title">提醒</string>
 </resources>
