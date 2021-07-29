@@ -86,6 +86,14 @@
                 android:text="@{vm.priority}"
                 android:textColor="@color/priority_null"
                 android:textSize="@dimen/text_size_18sp" />
+            <TextView
+                android:id="@+id/priority_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_18sp"
+                android:text="@{String.valueOf(vm.priorityid)}"
+                android:visibility="gone"
+                />
 
             <Button
                 android:id="@+id/label_button"
@@ -103,23 +111,41 @@
                 android:textColor="@color/color_schedule_start"
                 android:textSize="@dimen/text_size_18sp"
                 android:text="@{vm.label}"/>
+            <TextView
+                android:id="@+id/schedule_label_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                />
 
             <Button
                 android:id="@+id/remind_button"
                 android:layout_width="@dimen/button_size_40dp"
                 android:layout_height="@dimen/button_size_40dp"
                 android:background="@drawable/ic_baseline_add_alert_24" />
+            <TextView
+                android:id="@+id/remind_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxEms="5"
+                android:singleLine="true"
+                android:textColor="@color/color_schedule_start"
+                android:textSize="@dimen/text_size_18sp"
+                android:text="@{vm.remindtext}"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <Button
-                android:layout_width="@dimen/button_size_50dp"
+            <ImageView
+                android:id="@+id/send_schedule"
+                android:layout_width="@dimen/button_size_40dp"
                 android:layout_height="@dimen/button_size_40dp"
                 android:layout_gravity="end"
-                android:background="@drawable/ic_baseline_send_24" />
+                android:background="@drawable/ic_baseline_send_24"
+                android:clickable="false"/>
 
         </LinearLayout>
 
