@@ -11,6 +11,7 @@ import com.example.zyyschedule.PriorityBean;
 import com.example.zyyschedule.RemindBean;
 import com.example.zyyschedule.database.DataRepositor;
 import com.example.zyyschedule.database.Label;
+import com.example.zyyschedule.database.Schedule;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,6 +53,9 @@ public class CalendarViewModel extends AndroidViewModel {
         label.setValue("无标签");
         priorityid.setValue(0);
         remindtext.setValue("无提醒");
+    }
+    public void insertSchedule(Schedule ...schedules){
+        dataRepositor.insertSchedule(schedules);
     }
 
     public LiveData<List<Label>>getAllLabel(){
