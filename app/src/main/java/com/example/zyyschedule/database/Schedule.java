@@ -13,7 +13,7 @@ public class Schedule {
     @ColumnInfo(name = "endtime")
     private String endtime;  //日程结束时间
     @ColumnInfo(name = "remind")
-    private String remind;  //提醒模式
+    private String remind;  //提醒日期
     @ColumnInfo(name = "title")
     private String title;  //日程标题
     @ColumnInfo(name = "detailed")
@@ -23,7 +23,7 @@ public class Schedule {
     @ColumnInfo(name = "priority")
     private int priority;  //优先级索引
     @ColumnInfo(name = "labelid")
-    private int labelid;
+    private int labelid;  //标签id
 
     public int getId() {
         return id;
