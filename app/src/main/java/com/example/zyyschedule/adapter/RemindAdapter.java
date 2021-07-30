@@ -15,7 +15,7 @@ import com.example.zyyschedule.databinding.RemindListHeadBinding;
 
 public class RemindAdapter extends BaseQuickAdapter<RemindBean, BaseViewHolder> {
     private RemindListHeadBinding remindListHeadBinding;
-    private StringBuffer addRemind = new StringBuffer("无提醒");
+    public StringBuffer addRemind = new StringBuffer("无提醒");
     public RemindAdapter(int layoutResId) {
         super(layoutResId);
     }
@@ -32,6 +32,7 @@ public class RemindAdapter extends BaseQuickAdapter<RemindBean, BaseViewHolder> 
                 item.setRemindisChecked(isChecked);
                 if(isChecked){
                     remindListHeadBinding.remindHeadBox.setChecked(false);
+                    addRemind.append(","+item.getRemindtitle());
                 }else{
                     int flag = 0;
                     for(int i=0;i<mData.size();i++){
@@ -40,8 +41,10 @@ public class RemindAdapter extends BaseQuickAdapter<RemindBean, BaseViewHolder> 
                         }
                         if(flag == mData.size()){
                             remindListHeadBinding.remindHeadBox.setChecked(true);
+                            addRemind = new StringBuffer("无提醒");
                         }
                     }
+                   addRemind = new StringBuffer(addRemind.toString().replace(","+item.getRemindtitle(),""));
                 }
             }
         });

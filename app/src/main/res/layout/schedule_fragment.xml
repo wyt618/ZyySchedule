@@ -22,7 +22,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="@dimen/space_50dp"
                 android:background="@color/color_schedule_blue"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -39,7 +39,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:text="中育清单"
                     android:textSize="@dimen/text_size_18sp"/>
 
                 <ImageButton
@@ -60,8 +59,8 @@
                 android:id="@+id/scheduleFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="3dp">
+                tools:layout_editor_absoluteX="@dimen/space_8dp"
+                tools:layout_editor_absoluteY="@dimen/space_3dp">
 
             </FrameLayout>
 
@@ -76,10 +75,10 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/label_recyclerview"
-                android:layout_marginTop="250dp"
+                android:layout_marginTop="@dimen/space_250dp"
                 android:layout_marginLeft="@dimen/space_30dp"
-                android:layout_width="250dp"
-                android:layout_height="match_parent"/>
+                android:layout_width="@dimen/space_250dp"
+                android:layout_height="@dimen/space_250dp"/>
 
         </com.google.android.material.navigation.NavigationView>
 

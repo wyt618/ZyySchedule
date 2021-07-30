@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -31,7 +30,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.example.zyyschedule.PriorityBean;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.activity.AddLabelActivity;
 import com.example.zyyschedule.adapter.LabelAdapter;
@@ -97,7 +95,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         priorityDialogBinding = DataBindingUtil.inflate(inflater, R.layout.priority_dialog, container, false);
         labelBinding = DataBindingUtil.inflate(inflater, R.layout.all_label_dialog, container, false);
         remindDialogBinding = DataBindingUtil.inflate(inflater, R.layout.remind_dialog, container, false);
-        remindListHeadBinding = DataBindingUtil.inflate(inflater,R.layout.remind_list_head,container,false);
+        remindListHeadBinding = DataBindingUtil.inflate(inflater, R.layout.remind_list_head, container, false);
         datePicker = dialog.findViewById(R.id.date_picker);
         return binding.getRoot();
     }
@@ -202,7 +200,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         });
 
 
-         //实现长按日期跳转
+        //实现长按日期跳转
         binding.tvMonthDay.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -233,14 +231,14 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         remindListHeadBinding.remindHeadBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     remindListHeadBinding.remindHeadBox.setClickable(false);
-                    addRemind = new StringBuffer("无提醒");
-                    for(int i = 0;i<remindAdapter.getData().size();i++){
+                    remindAdapter.addRemind = new StringBuffer("无提醒");
+                    for (int i = 0; i < remindAdapter.getData().size(); i++) {
                         remindAdapter.getData().get(i).setRemindisChecked(false);
                         remindAdapter.notifyDataSetChanged();
                     }
-                }else{
+                } else {
                     remindListHeadBinding.remindHeadBox.setClickable(true);
                 }
             }
@@ -416,6 +414,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void gotoAddRemind() {
+        remindListHeadBinding.remindHeadBox.setClickable(false);
         if (remindDialogBinding.getRoot().getParent() != null) {
             ViewGroup vg = (ViewGroup) remindDialogBinding.getRoot().getParent();
             vg.removeView(remindDialogBinding.getRoot());
@@ -426,7 +425,11 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 .setPositiveButton(R.string.dialog_button_finish, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        if (remindAdapter.addRemind.toString().equals("无提醒")) {
+                            addScheduleBinding.remindText.setText(remindAdapter.addRemind.toString());
+                        } else {
+                            addScheduleBinding.remindText.setText(remindAdapter.addRemind.substring(4,remindAdapter.addRemind.length()));
+                        }
                     }
                 })
                 .setNeutralButton(R.string.dialog_button_cancel, new DialogInterface.OnClickListener() {
