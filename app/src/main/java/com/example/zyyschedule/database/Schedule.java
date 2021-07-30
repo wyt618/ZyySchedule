@@ -19,9 +19,9 @@ public class Schedule {
     @ColumnInfo(name = "detailed")
     private String detailed;  //日程详细
     @ColumnInfo(name = "state")
-    private String state;  //日程状态
+    private String state;  //日程状态 0未完成 1已完成
     @ColumnInfo(name = "priority")
-    private int priority;  //优先级索引
+    private int priority;  //优先级索引 0无,1低,2中,3高
     @ColumnInfo(name = "labelid")
     private int labelid;  //标签id
 
