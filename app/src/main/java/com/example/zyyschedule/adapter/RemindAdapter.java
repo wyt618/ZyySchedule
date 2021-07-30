@@ -39,10 +39,10 @@ public class RemindAdapter extends BaseQuickAdapter<RemindBean, BaseViewHolder> 
                         if(!mData.get(i).isRemindisChecked()){
                             flag = flag+ 1;
                         }
-                        if(flag == mData.size()){
-                            remindListHeadBinding.remindHeadBox.setChecked(true);
-                            addRemind = new StringBuffer("无提醒");
-                        }
+                    }
+                    if(flag == mData.size()){
+                        remindListHeadBinding.remindHeadBox.setChecked(true);
+                        addRemind = new StringBuffer("无提醒");
                     }
                    addRemind = new StringBuffer(addRemind.toString().replace(","+item.getRemindtitle(),""));
                 }
