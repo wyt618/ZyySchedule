@@ -31,6 +31,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.example.zyyschedule.PriorityBean;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.activity.AddLabelActivity;
 import com.example.zyyschedule.adapter.LabelAdapter;
