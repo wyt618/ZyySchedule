@@ -467,7 +467,11 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         schedule.setDetailed(null);
         schedule.setState("0");
         schedule.setPriority(Integer.parseInt(addScheduleBinding.priorityId.getText().toString()));
-        schedule.setLabelid(Integer.parseInt(addScheduleBinding.scheduleLabelId.getText().toString()));
+        if (addScheduleBinding.scheduleLabelId.getText().toString().trim().isEmpty()) {
+            schedule.setLabelid(0);
+        } else {
+            schedule.setLabelid(Integer.parseInt(addScheduleBinding.scheduleLabelId.getText().toString().trim()));
+        }
         vm.insertSchedule(schedule);
         addscheule.dismiss();
     }

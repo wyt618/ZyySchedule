@@ -105,7 +105,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:calendar_content_view_id="@+id/recyclerView">
+            app:calendar_content_view_id="@+id/schedule_list">
 
             <com.haibin.calendarview.CalendarView
                 android:id="@+id/calendarView"
