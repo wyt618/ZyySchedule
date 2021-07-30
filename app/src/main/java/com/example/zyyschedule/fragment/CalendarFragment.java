@@ -1,10 +1,10 @@
 package com.example.zyyschedule.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -15,10 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +37,7 @@ import com.example.zyyschedule.adapter.LabelAdapter;
 import com.example.zyyschedule.adapter.PriorityListAdapter;
 import com.example.zyyschedule.adapter.RemindAdapter;
 import com.example.zyyschedule.database.Label;
+import com.example.zyyschedule.database.Schedule;
 import com.example.zyyschedule.databinding.AddScheduleBinding;
 import com.example.zyyschedule.databinding.AllLabelDialogBinding;
 import com.example.zyyschedule.databinding.CalendarFragmentBinding;
@@ -48,7 +49,9 @@ import com.example.zyyschedule.viewmodel.CalendarViewModel;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CalendarFragment extends Fragment implements View.OnClickListener, CalendarView.OnCalendarSelectListener {
@@ -76,7 +79,6 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     private AlertDialog addscheule;
     private AlertDialog remindDialog;
     private RemindListHeadBinding remindListHeadBinding;
-    private StringBuffer addRemind = new StringBuffer("无提醒");
 
 
     public static CalendarFragment newInstance() {
@@ -96,7 +98,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         priorityDialogBinding = DataBindingUtil.inflate(inflater, R.layout.priority_dialog, container, false);
         labelBinding = DataBindingUtil.inflate(inflater, R.layout.all_label_dialog, container, false);
         remindDialogBinding = DataBindingUtil.inflate(inflater, R.layout.remind_dialog, container, false);
-        remindListHeadBinding = DataBindingUtil.inflate(inflater,R.layout.remind_list_head,container,false);
+        remindListHeadBinding = DataBindingUtil.inflate(inflater, R.layout.remind_list_head, container, false);
         datePicker = dialog.findViewById(R.id.date_picker);
         return binding.getRoot();
     }
@@ -126,14 +128,15 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         addScheduleBinding.scheduleLabel.setOnClickListener(this);
         addScheduleBinding.remindButton.setOnClickListener(this);
         addScheduleBinding.remindText.setOnClickListener(this);
+        addScheduleBinding.sendSchedule.setOnClickListener(this);
         addScheduleBinding.setVm(vm);
         addScheduleBinding.setLifecycleOwner(this);
         timepickerbinding.hourPicker.setMaxValue(23);
         timepickerbinding.hourPicker.setMinValue(00);
-        timepickerbinding.hourPicker.setValue(time.get(java.util.Calendar.HOUR_OF_DAY));
+        timepickerbinding.hourPicker.setValue(00);
         timepickerbinding.minePicker.setMinValue(00);
         timepickerbinding.minePicker.setMaxValue(59);
-        timepickerbinding.minePicker.setValue(time.get(java.util.Calendar.MINUTE));
+        timepickerbinding.minePicker.setValue(00);
         labelBinding.labelList.setLayoutManager(layoutManager);
         labelBinding.labelList.setAdapter(labelAdapter);
         LinearLayoutManager remindLayoutManager = new LinearLayoutManager(getContext());
@@ -142,6 +145,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         remindDialogBinding.remindChooseList.setAdapter(remindAdapter);
         ArrayList remindlist = vm.RemindListData();
         remindAdapter.setNewData(remindlist);
+        remindAdapter.setHeader(remindListHeadBinding);
         remindAdapter.setHeaderView(remindListHeadBinding.getRoot());
         labeldialoghead.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,7 +188,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0) {
+                if (!s.toString().trim().isEmpty()) {
                     addScheduleBinding.sendSchedule.setImageResource(R.drawable.ic_baseline_send_click_24);
                     addScheduleBinding.sendSchedule.setClickable(true);
                 } else {
@@ -200,7 +204,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         });
 
 
-         //实现长按日期跳转
+        //实现长按日期跳转
         binding.tvMonthDay.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -231,13 +235,15 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         remindListHeadBinding.remindHeadBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    addRemind = new StringBuffer("无提醒");
-                    for(int i = 0;i<remindAdapter.getData().size();i++){
+                if (isChecked) {
+                    remindListHeadBinding.remindHeadBox.setClickable(false);
+                    remindAdapter.addRemind = new StringBuffer("无提醒");
+                    for (int i = 0; i < remindAdapter.getData().size(); i++) {
                         remindAdapter.getData().get(i).setRemindisChecked(false);
                         remindAdapter.notifyDataSetChanged();
                     }
-                }else{
+                } else {
+                    remindListHeadBinding.remindHeadBox.setClickable(true);
                 }
             }
         });
@@ -278,6 +284,9 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
             case R.id.remind_text:
                 gotoAddRemind();
                 break;
+            case R.id.send_schedule:
+                AddSchedule();
+                break;
         }
     }
 
@@ -300,6 +309,11 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
 
     private void gotoAddSchedule() {
         binding.fabBtn.setVisibility(View.GONE);
+        if (addScheduleBinding.editText.getText().toString().trim().isEmpty()) {
+            addScheduleBinding.sendSchedule.setClickable(false);
+        } else {
+            addScheduleBinding.sendSchedule.setClickable(true);
+        }
         if (addScheduleBinding.getRoot().getParent() != null) {
             ViewGroup vg = (ViewGroup) addScheduleBinding.getRoot().getParent();
             vg.removeView(addScheduleBinding.getRoot());
@@ -326,6 +340,8 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void gotoGetTime() {
+        timepickerbinding.hourPicker.setValue(time.get(java.util.Calendar.HOUR_OF_DAY));
+        timepickerbinding.minePicker.setValue(time.get(java.util.Calendar.MINUTE));
         if (timepickerbinding.getRoot().getParent() != null) {
             ViewGroup vg = (ViewGroup) timepickerbinding.getRoot().getParent();
             vg.removeView(timepickerbinding.getRoot());
@@ -342,19 +358,21 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String hour;
-                        String time;
-                        if (timepickerbinding.hourPicker.getValue() < 10) {
-                            hour = String.valueOf("0" + timepickerbinding.hourPicker.getValue());
-                        } else {
-                            hour = String.valueOf(timepickerbinding.hourPicker.getValue());
+                        vm.AddScheduleTime.setValue(ProcessingTime(timepickerbinding.hourPicker.getValue()) + ":" + ProcessingTime(timepickerbinding.minePicker.getValue()));
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        if(addScheduleBinding.textTime.getText().toString().equals("00:00")){
+                            timepickerbinding.hourPicker.setValue(00);
+                            timepickerbinding.minePicker.setValue(00);
+                            vm.AddScheduleTime.setValue(ProcessingTime(timepickerbinding.hourPicker.getValue()) + ":" + ProcessingTime(timepickerbinding.minePicker.getValue()));
+                        }else{
+                            timepickerbinding.hourPicker.setValue(Integer.parseInt(vm.AddScheduleTime.getValue().substring(0,2)));
+                            timepickerbinding.minePicker.setValue(Integer.parseInt(vm.AddScheduleTime.getValue().substring(3)));
+                            vm.AddScheduleTime.setValue(ProcessingTime(timepickerbinding.hourPicker.getValue()) + ":" + ProcessingTime(timepickerbinding.minePicker.getValue()));
                         }
-                        if (timepickerbinding.minePicker.getValue() < 10) {
-                            time = String.valueOf("0" + timepickerbinding.minePicker.getValue());
-                        } else {
-                            time = String.valueOf(timepickerbinding.minePicker.getValue());
-                        }
-                        vm.AddScheduleTime.setValue(hour + ":" + time);
                     }
                 });
         builder.create().show();
@@ -412,6 +430,18 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void gotoAddRemind() {
+        int flag =0;
+        for(int i=0;i<remindAdapter.getData().size();i++){
+            if(!remindAdapter.getData().get(i).isRemindisChecked()){
+                flag = flag+ 1;
+            }
+        }
+        if(flag==remindAdapter.getData().size()){
+            remindListHeadBinding.remindHeadBox.setClickable(false);
+        }else{
+            remindListHeadBinding.remindHeadBox.setClickable(true);
+        }
+
         if (remindDialogBinding.getRoot().getParent() != null) {
             ViewGroup vg = (ViewGroup) remindDialogBinding.getRoot().getParent();
             vg.removeView(remindDialogBinding.getRoot());
@@ -422,7 +452,11 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 .setPositiveButton(R.string.dialog_button_finish, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        if (remindAdapter.addRemind.toString().equals("无提醒")) {
+                            addScheduleBinding.remindText.setText(remindAdapter.addRemind.toString());
+                        } else {
+                            addScheduleBinding.remindText.setText(remindAdapter.addRemind.substring(4, remindAdapter.addRemind.length()));
+                        }
                     }
                 })
                 .setNeutralButton(R.string.dialog_button_cancel, new DialogInterface.OnClickListener() {
@@ -440,6 +474,126 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         p.width = d.getWidth() / 3;
         p.height = d.getHeight() / 2;
         remindDialog.getWindow().setAttributes(p);
+    }
+
+    private void AddSchedule() {
+        Schedule schedule = new Schedule();
+        String starttime = selectYear + "-" + selectMonth + "-" + selectDay + " " + vm.AddScheduleTime.getValue();
+        schedule.setStarttime(starttime);
+        schedule.setEndtime(null);
+        schedule.setRemind(RemindChangeTime());
+        schedule.setTitle(addScheduleBinding.editText.getText().toString());
+        schedule.setDetailed(null);
+        schedule.setState("0");
+        schedule.setPriority(Integer.parseInt(addScheduleBinding.priorityId.getText().toString()));
+        schedule.setLabelid(Integer.parseInt(addScheduleBinding.scheduleLabelId.getText().toString()));
+        vm.insertSchedule(schedule);
+        addscheule.dismiss();
+    }
+
+    //将提醒字符转化为时间字符
+    private String RemindChangeTime() {
+        String remindtime = new String();
+        remindtime = remindAdapter.addRemind.toString();
+        if (remindtime.equals("无提醒")) {
+            remindtime = new String();
+        } else {
+            remindtime = remindtime.replace("无提醒", "");
+            remindtime = remindtime.replace(",准时", RemindToTime(1) + ",");
+            remindtime = remindtime.replace(",提前1分钟", RemindToTime(2) + ",");
+            remindtime = remindtime.replace(",提前5分钟", RemindToTime(3) + ",");
+            remindtime = remindtime.replace(",提前10分钟", RemindToTime(4) + ",");
+            remindtime = remindtime.replace(",提前15分钟", RemindToTime(5) + ",");
+            remindtime = remindtime.replace(",提前20分钟", RemindToTime(6) + ",");
+            remindtime = remindtime.replace(",提前25分钟", RemindToTime(7) + ",");
+            remindtime = remindtime.replace(",提前30分钟", RemindToTime(8) + ",");
+            remindtime = remindtime.replace(",提前45分钟", RemindToTime(9) + ",");
+            remindtime = remindtime.replace(",提前1个小时", RemindToTime(10) + ",");
+            remindtime = remindtime.replace(",提前2个小时", RemindToTime(11) + ",");
+            remindtime = remindtime.replace(",提前3个小时", RemindToTime(12) + ",");
+            remindtime = remindtime.replace(",提前12个小时", RemindToTime(13) + ",");
+            remindtime = remindtime.replace(",提前1天", RemindToTime(14) + ",");
+            remindtime = remindtime.replace(",提前2天", RemindToTime(15) + ",");
+            remindtime = remindtime.replace(",提前1周", RemindToTime(16) + ",");
+        }
+
+        return remindtime;
+    }
+
+    //处理时分的方法
+    private String ProcessingTime(int time) {
+        String strtime;
+        if (time < 10) {
+            strtime = "0" + time;
+        } else {
+            strtime = String.valueOf(time);
+        }
+        return strtime;
+    }
+
+    //处理提醒与时间的方法
+    private String RemindToTime(int i) {
+        String remindtime;
+        Date date = new Date();
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        remindtime = selectYear + "-" + selectMonth + "-" + selectDay + " " +addScheduleBinding.textTime.getText() + ":" + "00";
+        SimpleDateFormat std = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        calendar.setTime(date);
+        try {
+            date = std.parse(remindtime);
+        } catch (Exception e) {
+        }
+        if (i == 1) {
+            remindtime = std.format(date);
+        } else if (i == 2) {
+            date.setTime( date.getTime()-60*1000);
+            remindtime = std.format(date);
+        }else if(i==3){
+            date.setTime( date.getTime()-5*60*1000);
+            remindtime = std.format(date);
+        }else if(i==4){
+            date.setTime( date.getTime()-10*60*1000);
+            remindtime = std.format(date);
+        }else if(i==5){
+            date.setTime( date.getTime()-15*60*1000);
+            remindtime = std.format(date);
+        }else if(i==6){
+            date.setTime( date.getTime()-20*60*1000);
+            remindtime = std.format(date);
+        }else if(i==7){
+            date.setTime( date.getTime()-25*60*1000);
+            remindtime = std.format(date);
+        }else if(i==8){
+            date.setTime( date.getTime()-30*60*1000);
+            remindtime = std.format(date);
+        }else if(i==9){
+            date.setTime( date.getTime()-45*60*1000);
+            remindtime = std.format(date);
+        }else if(i==10){
+            date.setTime( date.getTime()-60*60*1000);
+            remindtime = std.format(date);
+        }else if(i==11){
+            date.setTime( date.getTime()-2*60*60*1000);
+            remindtime = std.format(date);
+        }else if(i==12){
+            date.setTime( date.getTime()-3*60*60*1000);
+            remindtime = std.format(date);
+        }else if(i==13){
+            date.setTime( date.getTime()-12*60*60*1000);
+            remindtime = std.format(date);
+        }else if(i==14){
+            date.setTime( date.getTime()-24*60*60*1000);
+            remindtime = std.format(date);
+        }else if(i==15){
+            date.setTime( date.getTime()-2*24*60*60*1000);
+            remindtime = std.format(date);
+        }else if(i==16){
+            date.setTime( date.getTime()-7*24*60*60*1000);
+            remindtime = std.format(date);
+        }
+
+
+        return remindtime;
     }
 
 
