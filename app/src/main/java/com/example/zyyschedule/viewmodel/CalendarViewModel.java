@@ -62,6 +62,13 @@ public class CalendarViewModel extends AndroidViewModel {
         return dataRepositor.getAllLabel();
     }
 
+    public LiveData<List<Schedule>>getUnfinishedScheduleOfDay(String day){
+       return dataRepositor.getUnfinishedScheduleOfDay(day);
+    }
+    public LiveData<List<Schedule>>getFinishedScheduleOfDay(String day){
+        return dataRepositor.getFinishedScheduleOfDay(day);
+    }
+
     public MutableLiveData<String> getAddScheduleDateAgo() {
         return AddScheduleDateAgo;
     }
@@ -76,6 +83,9 @@ public class CalendarViewModel extends AndroidViewModel {
 
     public void setAddScheduleTime(MutableLiveData<String> addScheduleTime) {
         AddScheduleTime = addScheduleTime;
+    }
+    public void ChangeStateSchedule(Schedule ...schedules){
+        dataRepositor.ChangeStateSchedule(schedules);
     }
 
     public int getDay() {

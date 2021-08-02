@@ -1,10 +1,21 @@
 package com.example.zyyschedule.database;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.Query;
+import androidx.room.Update;
+
+import java.util.List;
 
 @Dao
 public interface ScheduleDao {
     @Insert
     void insertSchedule(Schedule ...schedules);
+    @Query("SELECT * FROM Schedule WHERE starttime like :day and state = 0 ")
+    LiveData<List<Schedule>>getUnfinishedScheduleOfDay(String day);
+    @Update
+    void ChangeStateSchedule(Schedule ...schedules);
+    @Query("SELECT * FROM Schedule WHERE starttime like :day and state = 1")
+    LiveData<List<Schedule>>getFinishedScheduleOfDay(String day);
 }

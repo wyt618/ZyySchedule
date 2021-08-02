@@ -17,12 +17,23 @@ public class DataRepositor {
         scheduleDao = schenduleDataBase.getScheduleDao();
     }
 
+    public void ChangeStateSchedule(Schedule ...schedules){
+        new ChangeStateScheduleAsyncTask(scheduleDao).execute(schedules);
+    }
+
     public void insertSchedule(Schedule ...schedules){
         new InsertscheduleAsyncTask(scheduleDao).execute(schedules);
     }
 
     public void insertLabel(Label ...labels){
         new InsertLabelAsyncTask(labelDao).execute(labels);
+    }
+
+    public LiveData<List<Schedule>>getUnfinishedScheduleOfDay(String day){
+        return scheduleDao.getUnfinishedScheduleOfDay(day);
+    }
+    public LiveData<List<Schedule>>getFinishedScheduleOfDay(String day){
+        return scheduleDao.getFinishedScheduleOfDay(day);
     }
 
     public LiveData<List<Label>> checkLabel(String title){
@@ -57,6 +68,20 @@ public class DataRepositor {
         @Override
         protected Void doInBackground(Label... labels) {
             labelDao.insertLabel(labels);
+            return null;
+        }
+    }
+
+    static class ChangeStateScheduleAsyncTask extends AsyncTask<Schedule,Void,Void>{
+        private ScheduleDao scheduleDao;
+
+        public ChangeStateScheduleAsyncTask(ScheduleDao scheduleDao) {
+            this.scheduleDao = scheduleDao;
+        }
+
+        @Override
+        protected Void doInBackground(Schedule... schedules) {
+            scheduleDao.ChangeStateSchedule(schedules);
             return null;
         }
     }

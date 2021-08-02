@@ -1,5 +1,6 @@
 package com.example.zyyschedule.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,6 +34,7 @@ import com.example.zyyschedule.activity.AddLabelActivity;
 import com.example.zyyschedule.adapter.LabelAdapter;
 import com.example.zyyschedule.adapter.PriorityListAdapter;
 import com.example.zyyschedule.adapter.RemindAdapter;
+import com.example.zyyschedule.adapter.ScheduleAdapter;
 import com.example.zyyschedule.database.Label;
 import com.example.zyyschedule.database.Schedule;
 import com.example.zyyschedule.databinding.AddScheduleBinding;
@@ -41,6 +43,8 @@ import com.example.zyyschedule.databinding.CalendarFragmentBinding;
 import com.example.zyyschedule.databinding.PriorityDialogBinding;
 import com.example.zyyschedule.databinding.RemindDialogBinding;
 import com.example.zyyschedule.databinding.RemindListHeadBinding;
+import com.example.zyyschedule.databinding.ScheduleListFinishBinding;
+import com.example.zyyschedule.databinding.ScheduleListHeadBinding;
 import com.example.zyyschedule.databinding.TimepickerDialogBinding;
 import com.example.zyyschedule.viewmodel.CalendarViewModel;
 import com.haibin.calendarview.Calendar;
@@ -76,6 +80,10 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     private AlertDialog addscheule;
     private AlertDialog remindDialog;
     private RemindListHeadBinding remindListHeadBinding;
+    private ScheduleAdapter scheduleAdapter;
+    private ScheduleListHeadBinding scheduleListHeadBinding;
+    private ScheduleListFinishBinding scheduleListFinishBinding;
+    private View EmptySchedule;
 
 
     public static CalendarFragment newInstance() {
@@ -96,10 +104,14 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         labelBinding = DataBindingUtil.inflate(inflater, R.layout.all_label_dialog, container, false);
         remindDialogBinding = DataBindingUtil.inflate(inflater, R.layout.remind_dialog, container, false);
         remindListHeadBinding = DataBindingUtil.inflate(inflater, R.layout.remind_list_head, container, false);
+        scheduleListHeadBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_list_head, container, false);
+        scheduleListFinishBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_list_finish, container, false);
+        EmptySchedule = inflater.inflate(R.layout.empty_schedule_list, null);
         datePicker = dialog.findViewById(R.id.date_picker);
         return binding.getRoot();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -144,6 +156,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         remindAdapter.setNewData(remindlist);
         remindAdapter.setHeader(remindListHeadBinding);
         remindAdapter.setHeaderView(remindListHeadBinding.getRoot());
+        scheduleListHeadBinding.scheduleListHead.setText(selectMonth + "月" + selectDay + "日");
         labeldialoghead.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -244,9 +257,42 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 }
             }
         });
+        LinearLayoutManager scheduleLayoutManager = new LinearLayoutManager(getContext());
+        remindLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        binding.scheduleList.setLayoutManager(scheduleLayoutManager);
+        scheduleAdapter = new ScheduleAdapter(R.layout.schedule_item);
+        scheduleAdapter.addHeaderView(scheduleListHeadBinding.getRoot());
+        scheduleAdapter.setEmptyView(EmptySchedule);
+        scheduleAdapter.setOwner(this);
+        scheduleAdapter.setmContext(getContext());
+//        scheduleAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
+//        scheduleAdapter.isFirstOnly(false);  加载动画
+        binding.scheduleList.setAdapter(scheduleAdapter);
+        scheduleListHeadBinding.scheduleListHead.setText(selectMonth + "月" + selectDay + "日");
+        String Day = "%" + selectYear + "-" + selectMonth + "-" + selectDay + "%";
+        vm.getUnfinishedScheduleOfDay(Day).observe(getViewLifecycleOwner(), schedules -> {
+            for (int i = 0; i < schedules.size(); i++) {
+                schedules.get(i).setChecked(false);
+            }
+            scheduleAdapter.setNewData(schedules);
+            scheduleAdapter.notifyDataSetChanged();
+        });
+        vm.getFinishedScheduleOfDay(Day).observe(getViewLifecycleOwner(),schedules -> {
+            for (int i = 0; i < schedules.size(); i++) {
+                schedules.get(i).setChecked(true);
+            }
+            scheduleAdapter.addData(schedules);
+            scheduleAdapter.notifyDataSetChanged();
+        });
+        if (scheduleListFinishBinding.getRoot().getParent() != null) {
+            ViewGroup vg = (ViewGroup) scheduleListFinishBinding.getRoot().getParent();
+            vg.removeView(scheduleListFinishBinding.getRoot());
+        }
+        scheduleAdapter.addHeaderView(scheduleListFinishBinding.getRoot(),3);
     }
 
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -284,6 +330,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     }
 
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onCalendarSelect(Calendar calendar, boolean isClick) {
         selectYear = calendar.getYear();
@@ -294,6 +341,26 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         binding.tvMonthDay.setText(calendar.getMonth() + "月" + calendar.getDay() + "日");
         binding.tvYear.setText(String.valueOf(calendar.getYear()));
         binding.tvLunar.setText(calendar.getLunar());
+        String Day = "%" + selectYear + "-" + selectMonth + "-" + selectDay + "%";
+        vm.getUnfinishedScheduleOfDay(Day).observe(getViewLifecycleOwner(), schedules -> {
+            for (int i = 0; i < schedules.size(); i++) {
+                schedules.get(i).setChecked(false);
+            }
+            scheduleAdapter.setNewData(schedules);
+            scheduleAdapter.notifyDataSetChanged();
+        });
+        vm.getFinishedScheduleOfDay(Day).observe(getViewLifecycleOwner(),schedules -> {
+            for (int i = 0; i < schedules.size(); i++) {
+                schedules.get(i).setChecked(true);
+            }
+            scheduleAdapter.addData(schedules);
+            scheduleAdapter.notifyDataSetChanged();
+        });
+        if (scheduleListFinishBinding.getRoot().getParent() != null) {
+            ViewGroup vg = (ViewGroup) scheduleListFinishBinding.getRoot().getParent();
+            vg.removeView(scheduleListFinishBinding.getRoot());
+        }
+        scheduleAdapter.addHeaderView(scheduleListFinishBinding.getRoot(),3);
     }
 
     private void gotoAddSchedule() {
@@ -522,7 +589,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         Date date = new Date();
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         remindtime = selectYear + "-" + selectMonth + "-" + selectDay + " " + addScheduleBinding.textTime.getText() + ":" + "00";
-        SimpleDateFormat std = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat std = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         calendar.setTime(date);
         try {
             date = std.parse(remindtime);
