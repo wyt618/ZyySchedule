@@ -68,6 +68,9 @@ public class CalendarViewModel extends AndroidViewModel {
     public LiveData<List<Schedule>>getFinishedScheduleOfDay(String day){
         return dataRepositor.getFinishedScheduleOfDay(day);
     }
+    public LiveData<List<String>> getScheduleDayOfTag(){
+        return dataRepositor.getScheduleDayOfTag();
+    }
 
     public MutableLiveData<String> getAddScheduleDateAgo() {
         return AddScheduleDateAgo;

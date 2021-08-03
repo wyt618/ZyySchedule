@@ -29,6 +29,10 @@ public class DataRepositor {
         new InsertLabelAsyncTask(labelDao).execute(labels);
     }
 
+    public LiveData<List<String>> getScheduleDayOfTag(){
+        return scheduleDao.getScheduleDayOfTag();
+    }
+
     public LiveData<List<Schedule>>getUnfinishedScheduleOfDay(String day){
         return scheduleDao.getUnfinishedScheduleOfDay(day);
     }

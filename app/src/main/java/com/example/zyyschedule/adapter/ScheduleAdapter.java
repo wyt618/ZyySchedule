@@ -34,7 +34,7 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
     protected void convert(BaseViewHolder helper, Schedule item) {
         vm = new ViewModelProvider(owner).get(CalendarViewModel.class);
         helper.setText(R.id.schedule_title, item.getTitle());
-        helper.setText(R.id.schedule_time, item.getStarttime().substring(9));
+        helper.setText(R.id.schedule_time, item.getStarttime().substring(item.getStarttime().length()-5));
         CheckBox checkBox = helper.getView(R.id.schedule_title);
         checkBox.setOnCheckedChangeListener(null);
         checkBox.setChecked(item.getChecked());

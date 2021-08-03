@@ -25,24 +25,24 @@
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
     <loaded-nodes>
-      <connection connection-id="da61a4cf-8128-4bef-a470-32cdba0c467b">
-        <schema name="main" object-types="table, view" />
+      <connection connection-id="abae8abf-1b0b-4f67-9347-045c3d2c13ae">
+        <schema name="main" object-types="table, view, constraint, index, column, dataset trigger" />
       </connection>
     </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="da61a4cf-8128-4bef-a470-32cdba0c467b">
-      <console name="Connection" type="STANDARD" schema="main" session="Main" />
+    <connection id="abae8abf-1b0b-4f67-9347-045c3d2c13ae">
+      <console name="Connection" type="STANDARD" schema="main" session="Main"><![CDATA[select distinct  substr(starttime,0,length(starttime)-4) from "Schedule"]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="da61a4cf-8128-4bef-a470-32cdba0c467b" />
+    <connection id="abae8abf-1b0b-4f67-9347-045c3d2c13ae" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="da61a4cf-8128-4bef-a470-32cdba0c467b" dataset="main.Schedule" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="abae8abf-1b0b-4f67-9347-045c3d2c13ae" dataset="main.Schedule" active-filter-id="EMPTY_FILTER" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
@@ -70,7 +70,7 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="da61a4cf-8128-4bef-a470-32cdba0c467b" active="true">
+      <connection id="abae8abf-1b0b-4f67-9347-045c3d2c13ae" active="true">
         <database>
           <name value="Connection" />
           <description value="" />
