@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.database.Schedule;
 import com.example.zyyschedule.viewmodel.CalendarViewModel;
@@ -21,7 +21,6 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
     public ScheduleAdapter(int layoutResId) {
         super(layoutResId);
     }
-
 
     public void setOwner(ViewModelStoreOwner owner) {
         this.owner = owner;
@@ -39,7 +38,7 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
         CheckBox checkBox = helper.getView(R.id.schedule_title);
         checkBox.setOnCheckedChangeListener(null);
         checkBox.setChecked(item.getChecked());
-        helper.setOnCheckedChangeListener(R.id.schedule_title, (buttonView, isChecked) -> {
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             item.setChecked(isChecked);
             if (isChecked) {
                 item.setState("1");

@@ -29,7 +29,7 @@ public class CalendarViewModel extends AndroidViewModel {
     public MutableLiveData<String> getPriority() {
         return priority;
     }
-    private DataRepositor dataRepositor;
+    private final DataRepositor dataRepositor;
     private PriorityBean priorityBean;
     private RemindBean remindBean;
 
