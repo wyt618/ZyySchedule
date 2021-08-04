@@ -4,11 +4,14 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,7 +21,12 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.chad.library.adapter.base.listener.OnItemLongClickListener;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.activity.AddLabelActivity;
 import com.example.zyyschedule.adapter.LabelAdapter;
@@ -27,6 +35,8 @@ import com.example.zyyschedule.databinding.AddScheduleBinding;
 import com.example.zyyschedule.databinding.ScheduleFragmentBinding;
 import com.example.zyyschedule.viewmodel.ScheduleViewModel;
 import com.google.android.material.navigation.NavigationView;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -67,7 +77,22 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         return binding.getRoot();
     }
 
-
+    public void showPopMenu(View view,final int pos){
+        PopupMenu popupMenu = new PopupMenu(getActivity(),view);
+        popupMenu.getMenuInflater().inflate(R.menu.item_menu,popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                labelAdapter.removeItem(pos);
+                return false;
+            }
+        });
+        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            @Override
+            public void onDismiss(PopupMenu menu) {
+            }
+        });
+        popupMenu.show();
+    }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -81,7 +106,31 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
             labelAdapter.notifyDataSetChanged();
 
         });
+
+        //item点击事件
+        labelAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(@NonNull @NotNull BaseQuickAdapter<?, ?> adapter, @NonNull @NotNull View view, int position) {
+                Log.i("tag", "onItemClick: ");
+            }
+
+        });
+
+        //item长按事件
+        labelAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(@NonNull @NotNull BaseQuickAdapter adapter, @NonNull @NotNull View view, int pos) {
+                Log.i("TAG", "onItemLongClick: ");
+
+                showPopMenu(view,pos);
+                return false;
+
+            }
+        });
     }
+
+
+
 
 
         @SuppressLint({"WrongConstant", "NonConstantResourceId"})
