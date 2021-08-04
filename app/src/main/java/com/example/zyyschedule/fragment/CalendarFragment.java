@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,12 +27,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.room.Ignore;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemLongClickListener;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.activity.AddLabelActivity;
+import com.example.zyyschedule.activity.MainActivity;
 import com.example.zyyschedule.adapter.LabelAdapter;
 import com.example.zyyschedule.adapter.PriorityListAdapter;
 import com.example.zyyschedule.adapter.RemindAdapter;
@@ -89,6 +89,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     private ScheduleFootBinding scheduleFootBinding;
     private ScheduleListFinishHeadBinding scheduleListFinishHeadBinding;
     private FinishScheduleFootBinding finishScheduleFootBinding;
+
 
 
     public static CalendarFragment newInstance() {
@@ -261,13 +262,11 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 remindListHeadBinding.remindHeadBox.setClickable(true);
             }
         });
-        scheduleAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                return false;
-            }
+        scheduleAdapter.setOnItemLongClickListener((adapter, view, position) -> {
+            List<Schedule> schedules = adapter.getData();
+            Log.i("label",schedules.get(position).getTitle());
+            return true;
         });
-
         UpdateScheduleList();
         setCalendarTag();
 
@@ -446,10 +445,11 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         labelchoose.getWindow().setBackgroundDrawableResource(R.drawable.dialog_background);
         labelchoose.show();
         WindowManager m = getActivity().getWindowManager();
-        Display d = m.getDefaultDisplay();
+        DisplayMetrics d = new DisplayMetrics();
+        m.getDefaultDisplay().getMetrics(d);
         WindowManager.LayoutParams p = labelchoose.getWindow().getAttributes();
-        p.width = d.getWidth() / 3;
-        p.height = d.getHeight() / 2;
+        p.width = d.widthPixels / 3;
+        p.height = d.heightPixels / 2;
         labelchoose.getWindow().setAttributes(p);
     }
 
@@ -481,10 +481,11 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         remindDialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_background);
         remindDialog.show();
         WindowManager m = getActivity().getWindowManager();
-        Display d = m.getDefaultDisplay();
+        DisplayMetrics d = new DisplayMetrics();
+        m.getDefaultDisplay().getMetrics(d);
         WindowManager.LayoutParams p = remindDialog.getWindow().getAttributes();
-        p.width = d.getWidth() / 3;
-        p.height = d.getHeight() / 2;
+        p.width = d.widthPixels / 3;
+        p.height = d.heightPixels / 2;
         remindDialog.getWindow().setAttributes(p);
     }
 
