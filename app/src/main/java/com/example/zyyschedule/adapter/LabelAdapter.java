@@ -1,7 +1,8 @@
 package com.example.zyyschedule.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.database.Label;
 

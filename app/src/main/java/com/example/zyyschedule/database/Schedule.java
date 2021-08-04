@@ -2,6 +2,7 @@ package com.example.zyyschedule.database;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
@@ -24,6 +25,16 @@ public class Schedule {
     private int priority;  //优先级索引 0无,1低,2中,3高
     @ColumnInfo(name = "labelid")
     private int labelid;  //标签id
+    @Ignore
+    private Boolean isChecked;
+
+    public Boolean getChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(Boolean checked) {
+        isChecked = checked;
+    }
 
     public int getId() {
         return id;

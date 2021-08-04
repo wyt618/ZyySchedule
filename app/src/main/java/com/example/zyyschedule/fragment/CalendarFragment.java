@@ -1,7 +1,7 @@
 package com.example.zyyschedule.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,21 +25,27 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.room.Ignore;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemLongClickListener;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.activity.AddLabelActivity;
 import com.example.zyyschedule.adapter.LabelAdapter;
 import com.example.zyyschedule.adapter.PriorityListAdapter;
 import com.example.zyyschedule.adapter.RemindAdapter;
-import com.example.zyyschedule.database.Label;
+import com.example.zyyschedule.adapter.ScheduleAdapter;
 import com.example.zyyschedule.database.Schedule;
 import com.example.zyyschedule.databinding.AddScheduleBinding;
 import com.example.zyyschedule.databinding.AllLabelDialogBinding;
 import com.example.zyyschedule.databinding.CalendarFragmentBinding;
+import com.example.zyyschedule.databinding.FinishScheduleFootBinding;
 import com.example.zyyschedule.databinding.PriorityDialogBinding;
 import com.example.zyyschedule.databinding.RemindDialogBinding;
 import com.example.zyyschedule.databinding.RemindListHeadBinding;
+import com.example.zyyschedule.databinding.ScheduleFootBinding;
+import com.example.zyyschedule.databinding.ScheduleListFinishHeadBinding;
+import com.example.zyyschedule.databinding.ScheduleListHeadBinding;
 import com.example.zyyschedule.databinding.TimepickerDialogBinding;
 import com.example.zyyschedule.viewmodel.CalendarViewModel;
 import com.haibin.calendarview.Calendar;
@@ -49,7 +54,9 @@ import com.haibin.calendarview.CalendarView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CalendarFragment extends Fragment implements View.OnClickListener, CalendarView.OnCalendarSelectListener {
 
@@ -76,6 +83,12 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     private AlertDialog addscheule;
     private AlertDialog remindDialog;
     private RemindListHeadBinding remindListHeadBinding;
+    private ScheduleAdapter scheduleAdapter;
+    private ScheduleListHeadBinding scheduleListHeadBinding;
+    private ScheduleAdapter finishScheduleAdapter;
+    private ScheduleFootBinding scheduleFootBinding;
+    private ScheduleListFinishHeadBinding scheduleListFinishHeadBinding;
+    private FinishScheduleFootBinding finishScheduleFootBinding;
 
 
     public static CalendarFragment newInstance() {
@@ -96,10 +109,15 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         labelBinding = DataBindingUtil.inflate(inflater, R.layout.all_label_dialog, container, false);
         remindDialogBinding = DataBindingUtil.inflate(inflater, R.layout.remind_dialog, container, false);
         remindListHeadBinding = DataBindingUtil.inflate(inflater, R.layout.remind_list_head, container, false);
+        scheduleListHeadBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_list_head, container, false);
+        scheduleFootBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_foot, container, false);
+        scheduleListFinishHeadBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_list_finish_head, container, false);
+        finishScheduleFootBinding = DataBindingUtil.inflate(inflater, R.layout.finish_schedule_foot, container, false);
         datePicker = dialog.findViewById(R.id.date_picker);
         return binding.getRoot();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -129,11 +147,11 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         addScheduleBinding.setVm(vm);
         addScheduleBinding.setLifecycleOwner(this);
         timepickerbinding.hourPicker.setMaxValue(23);
-        timepickerbinding.hourPicker.setMinValue(00);
-        timepickerbinding.hourPicker.setValue(00);
-        timepickerbinding.minePicker.setMinValue(00);
+        timepickerbinding.hourPicker.setMinValue(0);
+        timepickerbinding.hourPicker.setValue(0);
+        timepickerbinding.minePicker.setMinValue(0);
         timepickerbinding.minePicker.setMaxValue(59);
-        timepickerbinding.minePicker.setValue(00);
+        timepickerbinding.minePicker.setValue(0);
         labelBinding.labelList.setLayoutManager(layoutManager);
         labelBinding.labelList.setAdapter(labelAdapter);
         LinearLayoutManager remindLayoutManager = new LinearLayoutManager(getContext());
@@ -144,36 +162,49 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         remindAdapter.setNewData(remindlist);
         remindAdapter.setHeader(remindListHeadBinding);
         remindAdapter.setHeaderView(remindListHeadBinding.getRoot());
-        labeldialoghead.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AddLabelActivity.class);
-                startActivity(intent);
-            }
+        scheduleListHeadBinding.scheduleListHead.setText(selectMonth + "月" + selectDay + "日");
+        LinearLayoutManager scheduleLayoutManager = new LinearLayoutManager(getContext());
+        scheduleLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        binding.scheduleList.setLayoutManager(scheduleLayoutManager);
+        LinearLayoutManager finishscheduleLayoutManager = new LinearLayoutManager(getContext());
+        finishscheduleLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        binding.finishScheduleList.setLayoutManager(finishscheduleLayoutManager);
+        finishScheduleAdapter = new ScheduleAdapter(R.layout.schedule_item);
+        finishScheduleAdapter.setOwner(this);
+        finishScheduleAdapter.setmContext(getContext());
+        finishScheduleAdapter.addHeaderView(scheduleListFinishHeadBinding.getRoot());
+        finishScheduleAdapter.addFooterView(finishScheduleFootBinding.getRoot());
+        finishScheduleAdapter.setEmptyView(R.layout.schedule_empty);
+        scheduleAdapter = new ScheduleAdapter(R.layout.schedule_item);
+        scheduleAdapter.addHeaderView(scheduleListHeadBinding.getRoot());
+        scheduleAdapter.addFooterView(scheduleFootBinding.getRoot());
+        scheduleAdapter.setEmptyView(R.layout.schedule_empty);
+        scheduleAdapter.setOwner(this);
+        scheduleAdapter.setmContext(getContext());
+        binding.scheduleList.setAdapter(scheduleAdapter);
+        binding.finishScheduleList.setAdapter(finishScheduleAdapter);
+        scheduleListHeadBinding.scheduleListHead.setText(selectMonth + "月" + selectDay + "日");
+        labeldialoghead.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), AddLabelActivity.class);
+            startActivity(intent);
         });
 
         //对标签数据进行监听，刷新标签选择对话框，对话框点击事件
-        vm.getAllLabel().observe(getViewLifecycleOwner(), new Observer<List<Label>>() {
-            @Override
-            public void onChanged(List<Label> labels) {
-                labelAdapter.setNewData(labels);
-                labelAdapter.notifyDataSetChanged();
-                labelAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                        TextView labelname = view.findViewById(R.id.label_name);
-                        TextView labelid = view.findViewById(R.id.label_id);
-                        addScheduleBinding.scheduleLabelId.setText(labelid.getText());
-                        vm.label.setValue(labelname.getText().toString());
-                        labelchoose.dismiss();
-                    }
-                });
-                if (labeldialoghead.getParent() != null) {
-                    ViewGroup vg = (ViewGroup) labeldialoghead.getParent();
-                    vg.removeView(labeldialoghead);
-                }
-                labelAdapter.addHeaderView(labeldialoghead);
+        vm.getAllLabel().observe(getViewLifecycleOwner(), labels -> {
+            labelAdapter.setNewData(labels);
+            labelAdapter.notifyDataSetChanged();
+            labelAdapter.setOnItemClickListener((adapter, view, position) -> {
+                TextView labelname = view.findViewById(R.id.label_name);
+                TextView labelid = view.findViewById(R.id.label_id);
+                addScheduleBinding.scheduleLabelId.setText(labelid.getText());
+                vm.label.setValue(labelname.getText().toString());
+                labelchoose.dismiss();
+            });
+            if (labeldialoghead.getParent() != null) {
+                ViewGroup vg = (ViewGroup) labeldialoghead.getParent();
+                vg.removeView(labeldialoghead);
             }
+            labelAdapter.addHeaderView(labeldialoghead);
         });
 
         //设置新增日程对话框有内容时唤醒按钮
@@ -202,51 +233,48 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
 
 
         //实现长按日期跳转
-        binding.tvMonthDay.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (dialog.getParent() != null) {
-                    ViewGroup vg = (ViewGroup) dialog.getParent();
-                    vg.removeView(dialog);
-                }
-                builder.setView(dialog)
-                        .setTitle(R.string.clendar_dialog_title)
-                        .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                binding.calendarView.scrollToCalendar(datePicker.getYear(), datePicker.getMonth() + 1, datePicker.getDayOfMonth());
-                                Toast.makeText(getContext(), datePicker.getYear() + "年" + String.valueOf(datePicker.getMonth() + 1) + "月" + datePicker.getDayOfMonth() + "日", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNeutralButton(R.string.dialog_button_cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                builder.create().show();
-                return true;
+        binding.tvMonthDay.setOnLongClickListener(v -> {
+            if (dialog.getParent() != null) {
+                ViewGroup vg = (ViewGroup) dialog.getParent();
+                vg.removeView(dialog);
             }
+            builder.setView(dialog)
+                    .setTitle(R.string.clendar_dialog_title)
+                    .setPositiveButton(R.string.dialog_button_ok, (dialog, which) -> {
+                        binding.calendarView.scrollToCalendar(datePicker.getYear(), datePicker.getMonth() + 1, datePicker.getDayOfMonth());
+                        Toast.makeText(getContext(), datePicker.getYear() + "年" + String.valueOf(datePicker.getMonth() + 1) + "月" + datePicker.getDayOfMonth() + "日", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNeutralButton(R.string.dialog_button_cancel, (dialog, which) -> dialog.dismiss());
+            builder.create().show();
+            return true;
         });
         remindListHeadBinding.remindHeadBox.setChecked(true);
-        remindListHeadBinding.remindHeadBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    remindListHeadBinding.remindHeadBox.setClickable(false);
-                    remindAdapter.addRemind = new StringBuffer("无提醒");
-                    for (int i = 0; i < remindAdapter.getData().size(); i++) {
-                        remindAdapter.getData().get(i).setRemindisChecked(false);
-                        remindAdapter.notifyDataSetChanged();
-                    }
-                } else {
-                    remindListHeadBinding.remindHeadBox.setClickable(true);
+        remindListHeadBinding.remindHeadBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                remindListHeadBinding.remindHeadBox.setClickable(false);
+                remindAdapter.addRemind = new StringBuffer("无提醒");
+                for (int i = 0; i < remindAdapter.getData().size(); i++) {
+                    remindAdapter.getData().get(i).setRemindisChecked(false);
+                    remindAdapter.notifyDataSetChanged();
                 }
+            } else {
+                remindListHeadBinding.remindHeadBox.setClickable(true);
             }
         });
+        scheduleAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
+                return false;
+            }
+        });
+
+        UpdateScheduleList();
+        setCalendarTag();
+
     }
 
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -283,7 +311,36 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     public void onCalendarOutOfRange(Calendar calendar) {
     }
 
+    private void setCalendarTag() {
+        int redcolor = 0xFF0000;
+        Map<String, Calendar> map = new HashMap<>();
+        vm.getScheduleDayOfTag().observe(getViewLifecycleOwner(), new Observer<List<String>>() {
+            @Override
+            public void onChanged(List<String> strings) {
+                for(int i=0;i<strings.size();i++){
+                    map.put(getSchemeCalendar(Integer.parseInt(strings.get(i).substring(0,4)), Integer.parseInt(strings.get(i).substring(5,7)), Integer.parseInt(strings.get(i).substring(8,10)), redcolor).toString(),
+                            getSchemeCalendar(Integer.parseInt(strings.get(i).substring(0,4)), Integer.parseInt(strings.get(i).substring(5,7)), Integer.parseInt(strings.get(i).substring(8,10)), redcolor));
+                }
+                binding.calendarView.setSchemeDate(map);
+            }
+        });
 
+    }
+
+    private Calendar getSchemeCalendar(int year, int month, int day, int color) {
+        Calendar calendar = new Calendar();
+        calendar.setYear(year);
+        calendar.setMonth(month);
+        calendar.setDay(day);
+        calendar.setSchemeColor(color);//如果单独标记颜色、则会使用这个颜色
+        calendar.addScheme(new Calendar.Scheme());
+        calendar.addScheme(0xFF008800, "假");
+        calendar.addScheme(0xFF008800, "节");
+        return calendar;
+    }
+
+
+    @SuppressLint("SetTextI18n")
     @Override
     public void onCalendarSelect(Calendar calendar, boolean isClick) {
         selectYear = calendar.getYear();
@@ -294,6 +351,8 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         binding.tvMonthDay.setText(calendar.getMonth() + "月" + calendar.getDay() + "日");
         binding.tvYear.setText(String.valueOf(calendar.getYear()));
         binding.tvLunar.setText(calendar.getLunar());
+        scheduleListHeadBinding.scheduleListHead.setText(selectMonth + "月" + selectDay + "日");
+        UpdateScheduleList();
     }
 
     private void gotoAddSchedule() {
@@ -316,12 +375,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         p.width = d.getWidth();
         addscheule.getWindow().setAttributes(p);
         addscheule.getWindow().setBackgroundDrawableResource(R.drawable.add_schedule);
-        addscheule.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                binding.fabBtn.setVisibility(View.VISIBLE);
-            }
-        });
+        addscheule.setOnDismissListener(dialog -> binding.fabBtn.setVisibility(View.VISIBLE));
     }
 
     private void gotoGetTime() {
@@ -334,31 +388,19 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         builder = new AlertDialog.Builder(getContext());
         builder.setView(timepickerbinding.getRoot())
                 .setTitle(R.string.add_schedule_timepicker)
-                .setNeutralButton(R.string.dialog_button_cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                .setNeutralButton(R.string.dialog_button_cancel, (dialog, which) -> dialog.dismiss())
+                .setPositiveButton(R.string.dialog_button_ok, (dialog, which) ->
+                        vm.AddScheduleTime.setValue(ProcessingTime(timepickerbinding.hourPicker.getValue()) + ":" + ProcessingTime(timepickerbinding.minePicker.getValue()))
+                )
+                .setOnDismissListener(dialog -> {
+                    if (addScheduleBinding.textTime.getText().toString().equals("00:00")) {
+                        timepickerbinding.hourPicker.setValue(0);
+                        timepickerbinding.minePicker.setValue(0);
+                    } else {
+                        timepickerbinding.hourPicker.setValue(Integer.parseInt(vm.AddScheduleTime.getValue().substring(0, 2)));
+                        timepickerbinding.minePicker.setValue(Integer.parseInt(vm.AddScheduleTime.getValue().substring(3)));
                     }
-                })
-                .setPositiveButton(R.string.dialog_button_ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        vm.AddScheduleTime.setValue(ProcessingTime(timepickerbinding.hourPicker.getValue()) + ":" + ProcessingTime(timepickerbinding.minePicker.getValue()));
-                    }
-                })
-                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        if (addScheduleBinding.textTime.getText().toString().equals("00:00")) {
-                            timepickerbinding.hourPicker.setValue(0);
-                            timepickerbinding.minePicker.setValue(0);
-                            vm.AddScheduleTime.setValue(ProcessingTime(timepickerbinding.hourPicker.getValue()) + ":" + ProcessingTime(timepickerbinding.minePicker.getValue()));
-                        } else {
-                            timepickerbinding.hourPicker.setValue(Integer.parseInt(vm.AddScheduleTime.getValue().substring(0, 2)));
-                            timepickerbinding.minePicker.setValue(Integer.parseInt(vm.AddScheduleTime.getValue().substring(3)));
-                            vm.AddScheduleTime.setValue(ProcessingTime(timepickerbinding.hourPicker.getValue()) + ":" + ProcessingTime(timepickerbinding.minePicker.getValue()));
-                        }
-                    }
+                    vm.AddScheduleTime.setValue(ProcessingTime(timepickerbinding.hourPicker.getValue()) + ":" + ProcessingTime(timepickerbinding.minePicker.getValue()));
                 });
         builder.create().show();
     }
@@ -370,17 +412,14 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         ArrayList prioritydata = vm.PriorityListData();
         priorityListAdapter = new PriorityListAdapter(R.layout.priority_item, prioritydata);
         priorityListAdapter.setContext(getContext());
-        priorityListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                TextView text = view.findViewById(R.id.priority_title);
-                ImageView flag = view.findViewById(R.id.priority_flag);
-                addScheduleBinding.textPriority.setTextColor(text.getTextColors());
-                vm.priority.setValue(text.getText().toString());
-                vm.priorityid.setValue(position);
-                addScheduleBinding.priorityButton.setImageDrawable((flag.getDrawable()));
-                prioritydialog.dismiss();
-            }
+        priorityListAdapter.setOnItemClickListener((adapter, view, position) -> {
+            TextView text = view.findViewById(R.id.priority_title);
+            ImageView flag = view.findViewById(R.id.priority_flag);
+            addScheduleBinding.textPriority.setTextColor(text.getTextColors());
+            vm.priority.setValue(text.getText().toString());
+            vm.priorityid.setValue(position);
+            addScheduleBinding.priorityButton.setImageDrawable((flag.getDrawable()));
+            prioritydialog.dismiss();
         });
         priorityDialogBinding.priorityList.setAdapter(priorityListAdapter);
         if (priorityDialogBinding.getRoot().getParent() != null) {
@@ -430,22 +469,14 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.remind_dialog_title)
                 .setView(remindDialogBinding.getRoot())
-                .setPositiveButton(R.string.dialog_button_finish, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (remindAdapter.addRemind.toString().equals("无提醒")) {
-                            addScheduleBinding.remindText.setText(remindAdapter.addRemind.toString());
-                        } else {
-                            addScheduleBinding.remindText.setText(remindAdapter.addRemind.substring(4, remindAdapter.addRemind.length()));
-                        }
+                .setPositiveButton(R.string.dialog_button_finish, (dialog, which) -> {
+                    if (remindAdapter.addRemind.toString().equals("无提醒")) {
+                        addScheduleBinding.remindText.setText(remindAdapter.addRemind.toString());
+                    } else {
+                        addScheduleBinding.remindText.setText(remindAdapter.addRemind.substring(4, remindAdapter.addRemind.length()));
                     }
                 })
-                .setNeutralButton(R.string.dialog_button_cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                .setNeutralButton(R.string.dialog_button_cancel, (dialog, which) -> dialog.dismiss());
         remindDialog = builder.create();
         remindDialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_background);
         remindDialog.show();
@@ -459,7 +490,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
 
     private void AddSchedule() {
         Schedule schedule = new Schedule();
-        String starttime = selectYear + "-" + selectMonth + "-" + selectDay + " " + vm.AddScheduleTime.getValue();
+        String starttime = selectYear + "-" + ProcessingTime(selectMonth) + "-" + ProcessingTime(selectDay) + " " + vm.AddScheduleTime.getValue();
         schedule.setStarttime(starttime);
         schedule.setEndtime(null);
         schedule.setRemind(RemindChangeTime());
@@ -473,6 +504,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
             schedule.setLabelid(Integer.parseInt(addScheduleBinding.scheduleLabelId.getText().toString().trim()));
         }
         vm.insertSchedule(schedule);
+        UpdateScheduleList();
         addscheule.dismiss();
     }
 
@@ -505,7 +537,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         return remindtime;
     }
 
-    //处理时分的方法
+    //处理日期数字 例如6月转为06，7分钟转化为07
     private String ProcessingTime(int time) {
         String strtime;
         if (time < 10) {
@@ -516,13 +548,15 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         return strtime;
     }
 
+
+
     //处理提醒与时间的方法
     private String RemindToTime(int i) {
         String remindtime;
         Date date = new Date();
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         remindtime = selectYear + "-" + selectMonth + "-" + selectDay + " " + addScheduleBinding.textTime.getText() + ":" + "00";
-        SimpleDateFormat std = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat std = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         calendar.setTime(date);
         try {
             date = std.parse(remindtime);
@@ -579,5 +613,35 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         return remindtime;
     }
 
+
+    private void UpdateScheduleList() {
+        String Day = "%" + selectYear + "-" + ProcessingTime(selectMonth) + "-" + ProcessingTime(selectDay) + "%";
+        vm.getUnfinishedScheduleOfDay(Day).observe(getViewLifecycleOwner(), schedules -> {
+            for (int i = 0; i < schedules.size(); i++) {
+                schedules.get(i).setChecked(false);
+            }
+            if (schedules.size() == 0) {
+                scheduleListHeadBinding.getRoot().setVisibility(View.GONE);
+                scheduleFootBinding.getRoot().setVisibility(View.GONE);
+            } else {
+                scheduleListHeadBinding.getRoot().setVisibility(View.VISIBLE);
+                scheduleFootBinding.getRoot().setVisibility(View.VISIBLE);
+            }
+            scheduleAdapter.setList(schedules);
+        });
+        vm.getFinishedScheduleOfDay(Day).observe(getViewLifecycleOwner(), schedules -> {
+            for (int i = 0; i < schedules.size(); i++) {
+                schedules.get(i).setChecked(true);
+            }
+            if (schedules.size() == 0) {
+                scheduleListFinishHeadBinding.getRoot().setVisibility(View.GONE);
+                finishScheduleFootBinding.getRoot().setVisibility(View.GONE);
+            } else {
+                scheduleListFinishHeadBinding.getRoot().setVisibility(View.VISIBLE);
+                finishScheduleFootBinding.getRoot().setVisibility(View.VISIBLE);
+            }
+            finishScheduleAdapter.setList(schedules);
+        });
+    }
 
 }
