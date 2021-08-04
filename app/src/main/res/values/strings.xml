@@ -29,4 +29,5 @@
     <string name="label_dialog_title">Select the label</string>
     <string name="remind_dialog_title">Remind</string>
     <string name="schedule_list_finish_head">Completed</string>
+    <string name="exit_message">Press again to exit.</string>
 </resources>

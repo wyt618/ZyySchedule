@@ -14,7 +14,10 @@ public class LabelAdapter extends BaseQuickAdapter<Label, BaseViewHolder> {
         super(layoutResId);
     }
 
-
+    public void removeItem(int pos){
+        this.remove(pos);
+        notifyItemRemoved(pos);
+    }
 
     @Override
     protected void convert(BaseViewHolder helper, Label item) {
