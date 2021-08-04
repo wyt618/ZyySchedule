@@ -1,5 +1,6 @@
 package com.example.zyyschedule.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -24,14 +25,12 @@ public class ColorPickView extends View {
     private Context context;
     private int bigCircle;      //外圆半径
     private int rudeRadius;     //可移动小球的半径
-    private int centerColor;    //可移动小球的颜色
     private Bitmap bitmapBack;  //背景图片
     private Paint mPaint;       //背景画笔
     private Paint mCenterPaint; //可移动小球背景
     private Point centerPoint;  //中心位置
     private Point mRockPosition;    //小球当前位置
     private OnColorChangedListener listener;    //小球移动监听
-    private int length;             //小球到中心位置的距离
     public String colorStr="";
 
     public ColorPickView(Context context) {
@@ -55,7 +54,10 @@ public class ColorPickView extends View {
     }
 
     private void init(AttributeSet attrs) {
+        @SuppressLint("CustomViewStyleable")
         TypedArray types = context.obtainStyledAttributes(attrs, R.styleable.color_picker);
+        //可移动小球的颜色
+        int centerColor;
         try {
             //外圆半径
             bigCircle = types.getDimensionPixelOffset(R.styleable.color_picker_circle_radius,100);
@@ -115,11 +117,13 @@ public class ColorPickView extends View {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event){
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:       //按下
-                length = getLength(event.getX(),event.getY(),centerPoint.x,centerPoint.y);
+                //小球到中心位置的距离
+                int length = getLength(event.getX(), event.getY(), centerPoint.x, centerPoint.y);
                 if(length > bigCircle - rudeRadius){
                     return true;
                 }

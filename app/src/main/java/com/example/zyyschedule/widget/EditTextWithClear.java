@@ -17,9 +17,9 @@ import com.example.zyyschedule.R;
 
 
 public class EditTextWithClear extends AppCompatEditText {
-    private Context mcontext;
-    private Drawable cleardrawable;
-    private CharSequence mtext;
+    private final Context mcontext;
+    private final Drawable cleardrawable;
+
     public EditTextWithClear(@NonNull Context context) {
         super(context);
         mcontext = context;
@@ -41,8 +41,7 @@ public class EditTextWithClear extends AppCompatEditText {
     @Override
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
         super.onTextChanged(text, start, lengthBefore, lengthAfter);
-        mtext = text;
-        toggleClearIcon(mtext);
+        toggleClearIcon(text);
     }
 
     private void toggleClearIcon(CharSequence text) {

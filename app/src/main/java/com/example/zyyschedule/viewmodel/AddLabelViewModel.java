@@ -12,7 +12,7 @@ import com.example.zyyschedule.database.Label;
 import java.util.List;
 
 public class AddLabelViewModel extends AndroidViewModel {
-    private DataRepositor dataRepositor;
+    private final DataRepositor dataRepositor;
     public AddLabelViewModel(@NonNull Application application) {
         super(application);
         dataRepositor = new DataRepositor(application);

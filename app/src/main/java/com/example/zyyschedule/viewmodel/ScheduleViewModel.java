@@ -14,7 +14,7 @@ import com.example.zyyschedule.database.Label;
 import java.util.List;
 
 public class ScheduleViewModel extends AndroidViewModel {
-    private DataRepositor dataRepositor;
+    private final DataRepositor dataRepositor;
 
 
 
