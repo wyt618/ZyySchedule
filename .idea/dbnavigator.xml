@@ -24,15 +24,11 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes>
-      <connection connection-id="abae8abf-1b0b-4f67-9347-045c3d2c13ae">
-        <schema name="main" object-types="table, view, constraint, index, column, dataset trigger" />
-      </connection>
-    </loaded-nodes>
+    <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="abae8abf-1b0b-4f67-9347-045c3d2c13ae">
-      <console name="Connection" type="STANDARD" schema="main" session="Main"><![CDATA[select distinct  substr(starttime,0,length(starttime)-4) from "Schedule"]]></console>
+      <console name="Connection" type="STANDARD" schema="" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
