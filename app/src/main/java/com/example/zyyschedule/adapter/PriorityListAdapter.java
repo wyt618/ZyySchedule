@@ -6,7 +6,8 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.example.zyyschedule.PriorityBean;
 import com.example.zyyschedule.R;
 
@@ -17,11 +18,6 @@ public class PriorityListAdapter extends BaseQuickAdapter<PriorityBean, BaseView
 
     public PriorityListAdapter(int layoutResId, @Nullable List<PriorityBean> data) {
         super(layoutResId, data);
-    }
-
-
-    public Context getContext() {
-        return context;
     }
 
     public void setContext(Context context) {

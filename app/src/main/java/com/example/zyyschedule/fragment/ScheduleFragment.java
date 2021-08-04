@@ -4,27 +4,21 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.solver.state.helpers.VerticalChainReference;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.activity.AddLabelActivity;
 import com.example.zyyschedule.adapter.LabelAdapter;
@@ -47,39 +41,32 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         return new ScheduleFragment();
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.schedule_fragment, container, false);
         binding.ivMainMenu.setOnClickListener(this);
-        binding.navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.today:
-                        gotoTodayScheduleFragment();
-                        break;
-                    case R.id.inbox:
-                        gotoInboxFragment();
-                        break;
-                    case R.id.dates:
-                        gotoPersonFragment();
-                        break;
-                    case R.id.add_list:
-                        gotoAddLabelActivity();
-                }
-                return true;
+        binding.navView.setNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.today:
+                    gotoTodayScheduleFragment();
+                    break;
+                case R.id.inbox:
+                    gotoInboxFragment();
+                    break;
+                case R.id.dates:
+                    gotoPersonFragment();
+                    break;
+                case R.id.add_list:
+                    gotoAddLabelActivity();
             }
+            return true;
         });
         gotoTodayScheduleFragment();
         return binding.getRoot();
     }
 
-
-    protected void onRestart() {
-
-
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -89,25 +76,20 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.labelRecyclerview.setLayoutManager(layoutManager);
         binding.labelRecyclerview.setAdapter(labelAdapter);
-        mViewModel.getAllLabel().observe(getViewLifecycleOwner(), new Observer<List<Label>>() {
-            @Override
-            public void onChanged(List<Label> labels) {
-                labelAdapter.setNewData(labels);
-                labelAdapter.notifyDataSetChanged();
+        mViewModel.getAllLabel().observe(getViewLifecycleOwner(), labels -> {
+            labelAdapter.setNewData(labels);
+            labelAdapter.notifyDataSetChanged();
 
-            }
         });
     }
 
 
-        @SuppressLint("WrongConstant")
+        @SuppressLint({"WrongConstant", "NonConstantResourceId"})
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.ivMainMenu:
+            if (v.getId() == R.id.ivMainMenu) {
                 binding.drawerLayout.openDrawer(Gravity.START);
-                break;
-        }
+            }
     }
 
     @SuppressLint("WrongConstant")

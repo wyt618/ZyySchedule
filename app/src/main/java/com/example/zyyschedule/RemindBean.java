@@ -12,10 +12,6 @@ public class RemindBean {
         this.remindtitle = remindtitle;
     }
 
-    public int getRemindtype() {
-        return remindtype;
-    }
-
     public void setRemindtype(int remindtype) {
         this.remindtype = remindtype;
     }

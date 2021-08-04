@@ -29,7 +29,7 @@ public class CalendarViewModel extends AndroidViewModel {
     public MutableLiveData<String> getPriority() {
         return priority;
     }
-    private DataRepositor dataRepositor;
+    private final DataRepositor dataRepositor;
     private PriorityBean priorityBean;
     private RemindBean remindBean;
 
@@ -62,6 +62,16 @@ public class CalendarViewModel extends AndroidViewModel {
         return dataRepositor.getAllLabel();
     }
 
+    public LiveData<List<Schedule>>getUnfinishedScheduleOfDay(String day){
+       return dataRepositor.getUnfinishedScheduleOfDay(day);
+    }
+    public LiveData<List<Schedule>>getFinishedScheduleOfDay(String day){
+        return dataRepositor.getFinishedScheduleOfDay(day);
+    }
+    public LiveData<List<String>> getScheduleDayOfTag(){
+        return dataRepositor.getScheduleDayOfTag();
+    }
+
     public MutableLiveData<String> getAddScheduleDateAgo() {
         return AddScheduleDateAgo;
     }
@@ -76,6 +86,9 @@ public class CalendarViewModel extends AndroidViewModel {
 
     public void setAddScheduleTime(MutableLiveData<String> addScheduleTime) {
         AddScheduleTime = addScheduleTime;
+    }
+    public void ChangeStateSchedule(Schedule ...schedules){
+        dataRepositor.ChangeStateSchedule(schedules);
     }
 
     public int getDay() {
