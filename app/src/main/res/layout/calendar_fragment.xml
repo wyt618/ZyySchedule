@@ -142,7 +142,7 @@
                     app:year_view_week_text_size="6sp" />
 
                 <androidx.core.widget.NestedScrollView
-                    android:id = "@+id/schedule"
+                    android:id="@+id/schedule"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fillViewport="true">
@@ -150,20 +150,20 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical" >
+                        android:orientation="vertical">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/schedule_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/schedule_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:layout_marginTop="@dimen/space_10dp"
-                        android:id="@+id/finish_schedule_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/finish_schedule_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_10dp"
+                            android:nestedScrollingEnabled="false" />
                     </LinearLayout>
                 </androidx.core.widget.NestedScrollView>
 
@@ -182,13 +182,6 @@
                 android:src="@drawable/fab_add"
                 app:backgroundTint="@color/color_schedule_blue"
                 app:rippleColor="@color/color_schedule_start" />
-
-            <FrameLayout
-                android:id="@+id/add_schedule"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-            </FrameLayout>
         </RelativeLayout>
 
     </LinearLayout>

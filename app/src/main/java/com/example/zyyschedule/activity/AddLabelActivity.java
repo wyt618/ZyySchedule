@@ -21,9 +21,10 @@ import com.example.zyyschedule.viewmodel.AddLabelViewModel;
 public class AddLabelActivity extends AppCompatActivity implements View.OnClickListener {
     private ActivityAddLabelBinding binding;
     private ColorpickerDialogBinding colorpickerDialogBinding;
-    private int labelcolor = 0xff679BE4 ;
+    private int labelcolor = 0xff679BE4;
     private AddLabelViewModel vm;
     private Label label;
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,7 @@ public class AddLabelActivity extends AppCompatActivity implements View.OnClickL
             actionBar.hide(); //隐藏标题栏
         }
         colorpickerDialogBinding = ColorpickerDialogBinding.inflate(getLayoutInflater());
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_add_label);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_add_label);
         binding.LabelSetColor.setOnClickListener(this);
         vm = new ViewModelProvider(this).get(AddLabelViewModel.class);
         colorpickerDialogBinding.colorPickView.setOnColorChangedListener((a, r, g, b) -> {
@@ -43,7 +44,6 @@ public class AddLabelActivity extends AppCompatActivity implements View.OnClickL
         });
         binding.addLabelExit.setOnClickListener(this);
         binding.addLabelButton.setOnClickListener(this);
-
 
 
     }
@@ -67,7 +67,7 @@ public class AddLabelActivity extends AppCompatActivity implements View.OnClickL
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.LabelSetColor:
                 gotoColorpicker();
                 break;
@@ -79,16 +79,17 @@ public class AddLabelActivity extends AppCompatActivity implements View.OnClickL
                 break;
         }
     }
-    private void AddLabel(){
-        if(binding.LabelTitle.getText().length()>0){
-            String title =  binding.LabelTitle.getText().toString();
+
+    private void AddLabel() {
+        if (binding.LabelTitle.getText().length() > 0) {
+            String title = binding.LabelTitle.getText().toString();
             vm.checkLabelTitle(title).observe(this, labels -> {
-                if(labels.size()!=0){
+                if (labels.size() != 0) {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(AddLabelActivity.this);
                     dialog.setMessage(R.string.check_labeltitle_messgae);
                     dialog.setPositiveButton(R.string.add_label_dialog_neturl, (dialog1, which) -> dialog1.dismiss());
                     dialog.show();
-                }else{
+                } else {
                     label = new Label();
                     label.setColor(labelcolor);
                     label.setTitle(binding.LabelTitle.getText().toString());
@@ -96,7 +97,7 @@ public class AddLabelActivity extends AppCompatActivity implements View.OnClickL
                     AddLabelActivity.this.finish();
                 }
             });
-        }else{
+        } else {
             AlertDialog.Builder dialog = new AlertDialog.Builder(AddLabelActivity.this);
             dialog.setMessage(R.string.add_label_dialog_messgae);
             dialog.setPositiveButton(R.string.add_label_dialog_neturl, (dialog12, which) -> dialog12.dismiss());

@@ -14,7 +14,6 @@
         tools:openDrawer="start">
 
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -35,26 +34,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_18sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:textSize="@dimen/text_size_18sp"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageButton
                     android:id="@+id/ivMainMenu"
                     android:layout_width="@dimen/action_bar_height"
                     android:layout_height="match_parent"
                     android:background="@color/colorTranslate"
-                    app:srcCompat="@drawable/menu_more"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintVertical_bias="0.0"
+                    app:srcCompat="@drawable/menu_more" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
             <FrameLayout
                 android:id="@+id/scheduleFragment"
                 android:layout_width="match_parent"
@@ -65,6 +65,7 @@
             </FrameLayout>
 
         </LinearLayout>
+
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/nav_view"
             android:layout_width="wrap_content"
@@ -75,10 +76,10 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/label_recyclerview"
-                android:layout_marginTop="@dimen/space_250dp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/space_250dp"
                 android:layout_marginLeft="@dimen/space_30dp"
-                android:layout_width="@dimen/space_250dp"
-                android:layout_height="@dimen/space_250dp"/>
+                android:layout_marginTop="@dimen/space_250dp" />
 
         </com.google.android.material.navigation.NavigationView>
 

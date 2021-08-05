@@ -10,7 +10,6 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.zyyschedule.R;
@@ -19,6 +18,7 @@ import com.example.zyyschedule.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     private long firstTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,11 +26,11 @@ public class MainActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide(); //隐藏标题栏
         }
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_main);
-        NavController navController = Navigation.findNavController(this,R.id.fragment);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        NavController navController = Navigation.findNavController(this, R.id.fragment);
         AppBarConfiguration configuration = new AppBarConfiguration.Builder(binding.bottomNavigationView.getMenu()).build();
-        NavigationUI.setupActionBarWithNavController(this,navController,configuration);
-        NavigationUI.setupWithNavController(binding.bottomNavigationView,navController);
+        NavigationUI.setupActionBarWithNavController(this, navController, configuration);
+        NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
     }
 
     @Override
