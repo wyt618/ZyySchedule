@@ -26,15 +26,12 @@ public class Schedule {
     @ColumnInfo(name = "labelid")
     private int labelid;  //标签id
     @Ignore
-    private Boolean isChecked;
+    private Boolean isChecked;//在列表中判断日程是否选中判断日程是否选中
+    @Ignore
+    private Boolean isEditor = false; //判断是否处于编辑状态
+    @Ignore
+    private Boolean isEditorChecked = false; //判断在编辑状态下是否选中
 
-    public Boolean getChecked() {
-        return isChecked;
-    }
-
-    public void setChecked(Boolean checked) {
-        isChecked = checked;
-    }
 
     public int getId() {
         return id;
@@ -106,5 +103,29 @@ public class Schedule {
 
     public void setEndtime(String endtime) {
         this.endtime = endtime;
+    }
+
+    public Boolean getChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(Boolean checked) {
+        isChecked = checked;
+    }
+
+    public Boolean getEditor() {
+        return isEditor;
+    }
+
+    public void setEditor(Boolean editor) {
+        isEditor = editor;
+    }
+
+    public Boolean getEditorChecked() {
+        return isEditorChecked;
+    }
+
+    public void setEditorChecked(Boolean editorChecked) {
+        isEditorChecked = editorChecked;
     }
 }

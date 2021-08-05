@@ -1,7 +1,9 @@
 package com.example.zyyschedule.adapter;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.CheckBox;
+import android.widget.RadioButton;
 
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -34,7 +36,11 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
     protected void convert(BaseViewHolder helper, Schedule item) {
         vm = new ViewModelProvider(owner).get(CalendarViewModel.class);
         helper.setText(R.id.schedule_title, item.getTitle());
-        helper.setText(R.id.schedule_time, item.getStarttime().substring(item.getStarttime().length()-5));
+        helper.setText(R.id.delete_radio_button, item.getTitle());
+        helper.setText(R.id.schedule_time, item.getStarttime().substring(item.getStarttime().length() - 5));
+        RadioButton radioButton = helper.getView(R.id.delete_radio_button);
+        radioButton.setOnCheckedChangeListener(null);
+        radioButton.setChecked(item.getEditorChecked());
         CheckBox checkBox = helper.getView(R.id.schedule_title);
         checkBox.setOnCheckedChangeListener(null);
         checkBox.setChecked(item.getChecked());
@@ -47,10 +53,29 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
             }
             vm.ChangeStateSchedule(item);
         });
+
+        radioButton.setOnClickListener(v -> {
+            if (item.getEditorChecked()) {
+                item.setEditorChecked(false);
+            } else {
+                item.setEditorChecked(true);
+            }
+            radioButton.setChecked(item.getEditorChecked());
+        });
+
+
         if (item.getState().equals("1")) {
             helper.setTextColor(R.id.schedule_title, ContextCompat.getColor(mContext, R.color.color_schedule_grey));
         } else {
             helper.setTextColor(R.id.schedule_title, ContextCompat.getColor(mContext, R.color.textColor));
+        }
+
+        if (item.getEditor()) {
+            checkBox.setVisibility(View.GONE);
+            radioButton.setVisibility(View.VISIBLE);
+        } else {
+            checkBox.setVisibility(View.VISIBLE);
+            radioButton.setVisibility(View.GONE);
         }
     }
 }
