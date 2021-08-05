@@ -24,6 +24,13 @@ public class DataRepositor {
     public void insertSchedule(Schedule ...schedules){
         new InsertscheduleAsyncTask(scheduleDao).execute(schedules);
     }
+    public void deleteSchedule(Schedule ...schedules){
+        new DeleteScheduleAsyncTask(scheduleDao).execute(schedules);
+    }
+
+    public void deleteLabel(Label ...labels){
+        new DeleteLabelAsyncTask(labelDao,scheduleDao).execute(labels);
+    }
 
     public void insertLabel(Label ...labels){
         new InsertLabelAsyncTask(labelDao).execute(labels);
@@ -77,7 +84,7 @@ public class DataRepositor {
     }
 
     static class ChangeStateScheduleAsyncTask extends AsyncTask<Schedule,Void,Void>{
-        private ScheduleDao scheduleDao;
+        private final ScheduleDao scheduleDao;
 
         public ChangeStateScheduleAsyncTask(ScheduleDao scheduleDao) {
             this.scheduleDao = scheduleDao;
@@ -86,6 +93,38 @@ public class DataRepositor {
         @Override
         protected Void doInBackground(Schedule... schedules) {
             scheduleDao.ChangeStateSchedule(schedules);
+            return null;
+        }
+    }
+
+    static class DeleteLabelAsyncTask extends AsyncTask<Label,Void,Void>{
+        private LabelDao labelDao;
+        private ScheduleDao scheduleDao;
+
+        public DeleteLabelAsyncTask(LabelDao labelDao,ScheduleDao scheduleDao) {
+            this.labelDao = labelDao;
+            this.scheduleDao = scheduleDao;
+        }
+
+        @Override
+        protected Void doInBackground(Label... labels) {
+            labelDao.deleteLabel(labels);
+            for(int i=0;i<labels.length;i++){
+               scheduleDao.updateScheduleLabel(labels[i].getId());
+            }
+            return null;
+        }
+    }
+    static class DeleteScheduleAsyncTask extends AsyncTask<Schedule,Void,Void>{
+        private ScheduleDao scheduleDao;
+
+        public DeleteScheduleAsyncTask(ScheduleDao scheduleDao) {
+            this.scheduleDao = scheduleDao;
+        }
+
+        @Override
+        protected Void doInBackground(Schedule... schedules) {
+            scheduleDao.deleteSchedule(schedules);
             return null;
         }
     }

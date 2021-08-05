@@ -30,4 +30,6 @@
     <string name="remind_dialog_title">Remind</string>
     <string name="schedule_list_finish_head">Completed</string>
     <string name="exit_message">Press again to exit.</string>
+    <string name="delete_button_text">Delete</string>
+    <string name="delete_schedule_message">Do you want to delete the selected schedule?</string>
 </resources>

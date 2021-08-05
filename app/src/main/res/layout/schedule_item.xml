@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/layout_ripple"
     android:layout_marginStart="@dimen/space_10dp"
-    android:layout_marginEnd="@dimen/space_10dp">
+    android:layout_marginEnd="@dimen/space_10dp"
+    android:background="@drawable/layout_ripple">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,8 +14,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/label_color_view"
@@ -24,21 +22,36 @@
             android:layout_height="@dimen/space_20dp"
             android:orientation="vertical" />
 
+        <RadioButton
+            android:id="@+id/delete_radio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxEms="30"
+            android:singleLine="true"
+            android:textSize="@dimen/text_size_18sp"
+            android:visibility="gone" />
+
         <CheckBox
             android:id="@+id/schedule_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_18sp"/>
+            android:ellipsize="end"
+            android:maxEms="30"
+            android:singleLine="true"
+            android:textSize="@dimen/text_size_18sp" />
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
+
         <TextView
             android:id="@+id/schedule_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end"
             android:layout_marginEnd="@dimen/space_6dp"
-            android:textSize="18sp"/>
+            android:gravity="end"
+            android:textSize="18sp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
