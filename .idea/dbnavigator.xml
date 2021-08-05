@@ -17,28 +17,32 @@
       <scope value="GLOBAL" />
       <destination value="FILE" />
       <format value="EXCEL" />
-      <charset value="GBK" />
+      <charset value="UTF-8" />
     </export-instructions>
   </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes />
+    <loaded-nodes>
+      <connection connection-id="c461b6a6-9e88-4239-9f22-30c572b66817">
+        <schema name="main" object-types="table, view, constraint, index, column, dataset trigger" />
+      </connection>
+    </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="abae8abf-1b0b-4f67-9347-045c3d2c13ae">
-      <console name="Connection" type="STANDARD" schema="" session="Main" />
+    <connection id="c461b6a6-9e88-4239-9f22-30c572b66817">
+      <console name="Connection" type="STANDARD" schema="main" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="abae8abf-1b0b-4f67-9347-045c3d2c13ae" />
+    <connection id="c461b6a6-9e88-4239-9f22-30c572b66817" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="abae8abf-1b0b-4f67-9347-045c3d2c13ae" dataset="main.Schedule" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="c461b6a6-9e88-4239-9f22-30c572b66817" dataset="main.Schedule" active-filter-id="EMPTY_FILTER" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
@@ -66,7 +70,7 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="abae8abf-1b0b-4f67-9347-045c3d2c13ae" active="true">
+      <connection id="c461b6a6-9e88-4239-9f22-30c572b66817" active="true">
         <database>
           <name value="Connection" />
           <description value="" />

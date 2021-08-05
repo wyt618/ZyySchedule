@@ -58,6 +58,10 @@ public class CalendarViewModel extends AndroidViewModel {
         dataRepositor.insertSchedule(schedules);
     }
 
+    public void deleteSchedule(Schedule ...schedules){
+        dataRepositor.deleteSchedule(schedules);
+    }
+
     public LiveData<List<Label>>getAllLabel(){
         return dataRepositor.getAllLabel();
     }
@@ -105,32 +109,32 @@ public class CalendarViewModel extends AndroidViewModel {
             if (selyear - 1 == toyear) {
                 dateAgo = "明年" + selmonth + "月" + selday + "号";
             } else {
-                dateAgo = String.valueOf(selyear - toyear) + "年后的" + selmonth + "月" + selday + "号";
+                dateAgo = (selyear - toyear) + "年后的" + selmonth + "月" + selday + "号";
             }
         } else if (selyear < toyear) {
             if (selyear + 1 == toyear) {
                 dateAgo = "去年" + selmonth + "月" + selday + "号";
             } else {
-                dateAgo = String.valueOf(toyear - selyear) + "年前的" + selmonth + "月" + selday + "号";
+                dateAgo = (toyear - selyear) + "年前的" + selmonth + "月" + selday + "号";
             }
         } else {
             if (selmonth > tomonth) {
                 if (selmonth - 1 == tomonth) {
-                    dateAgo = "下个月" + String.valueOf(selday) + "号";
+                    dateAgo = "下个月" + selday + "号";
                 } else {
-                    dateAgo = String.valueOf(selmonth - tomonth) + "个月后的" + String.valueOf(selday) + "号";
+                    dateAgo = (selmonth - tomonth) + "个月后的" + selday + "号";
                 }
             } else if (selmonth < tomonth) {
                 if (selmonth + 1 == toyear) {
                     dateAgo = "上个月" + selday + "号";
                 } else {
-                    dateAgo = String.valueOf(tomonth - selmonth) + "个月前的" + String.valueOf(selday) + "号";
+                    dateAgo = (tomonth - selmonth) + "个月前的" + selday + "号";
                 }
             } else {
                 if (selday > today) {
-                    dateAgo = String.valueOf(selday - today) + "天后";
+                    dateAgo = (selday - today) + "天后";
                 } else if (selday < today) {
-                    dateAgo = String.valueOf(today - selday) + "天前";
+                    dateAgo = (today - selday) + "天前";
                 } else {
                     dateAgo = "今天";
                 }
@@ -143,8 +147,8 @@ public class CalendarViewModel extends AndroidViewModel {
     }
 
 
-    public ArrayList PriorityListData() {
-        ArrayList ary = new ArrayList<>();
+    public ArrayList<PriorityBean> PriorityListData() {
+        ArrayList<PriorityBean> ary = new ArrayList<>();
         priorityBean = new PriorityBean();
         priorityBean.setPrioritytitle("无优先级");
         priorityBean.setPrioritytype(0);
@@ -164,8 +168,8 @@ public class CalendarViewModel extends AndroidViewModel {
         return ary;
     }
 
-    public ArrayList RemindListData() {
-        ArrayList ary = new ArrayList<>();
+    public ArrayList<RemindBean> RemindListData() {
+        ArrayList<RemindBean> ary = new ArrayList<>();
         remindBean = new RemindBean();
         remindBean.setRemindtitle("准时");
         remindBean.setRemindtype(1);

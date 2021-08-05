@@ -2,6 +2,7 @@ package com.example.zyyschedule.database;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -17,4 +18,6 @@ public interface LabelDao {
 
     @Query("SELECT * FROM Label")
     LiveData<List<Label>> getAllLabel();
+    @Delete
+    void deleteLabel(Label ...labels);
 }
