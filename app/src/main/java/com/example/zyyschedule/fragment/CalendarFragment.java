@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,6 +93,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     private List<Schedule> finishSchedules;
 
 
+
     public static CalendarFragment newInstance() {
         return new CalendarFragment();
     }
@@ -98,7 +101,6 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        time = java.util.Calendar.getInstance();
         builder = new AlertDialog.Builder(getContext());
         binding = DataBindingUtil.inflate(inflater, R.layout.calendar_fragment, container, false);
         dialog = inflater.inflate(R.layout.dialog_date, null);
@@ -121,6 +123,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        time = java.util.Calendar.getInstance();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         selectYear = binding.calendarView.getCurYear();
@@ -290,6 +293,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 remindListHeadBinding.remindHeadBox.setClickable(true);
             }
         });
+        //完成和未完成日程item长按事件
         scheduleAdapter.setOnItemLongClickListener((adapter, view, position) -> {
             scheduleListHeadBinding.deleteSchedule.setVisibility(View.VISIBLE);
             scheduleListHeadBinding.scheduleListHead.setVisibility(View.GONE);
@@ -377,6 +381,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         });
     }
 
+    //为日历添加标记
     private Calendar getSchemeCalendar(int year, int month, int day, int color) {
         Calendar calendar = new Calendar();
         calendar.setYear(year);
@@ -434,6 +439,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void gotoGetTime() {
+        time = java.util.Calendar.getInstance();
         timepickerbinding.hourPicker.setValue(time.get(java.util.Calendar.HOUR_OF_DAY));
         timepickerbinding.minePicker.setValue(time.get(java.util.Calendar.MINUTE));
         if (timepickerbinding.getRoot().getParent() != null) {
@@ -545,6 +551,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         remindDialog.getWindow().setAttributes(p);
     }
 
+    //新增日程到数据库
     private void AddSchedule() {
         Schedule schedule = new Schedule();
         String starttime = selectYear + "-" + ProcessingTime(selectMonth) + "-" + ProcessingTime(selectDay) + " " + vm.AddScheduleTime.getValue();
@@ -563,6 +570,14 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         vm.insertSchedule(schedule);
         UpdateScheduleList();
         addscheule.dismiss();
+        if(!schedule.getRemind().isEmpty()){
+            int RemindCheck =  CheckRemindTime(schedule.getRemind());
+            if(RemindCheck>0){
+                Toast.makeText(getContext(),"抱歉，有"+RemindCheck+"条提醒因为超出当前时间无效",Toast.LENGTH_LONG).show();
+            }
+        }
+
+
     }
 
     //将提醒字符转化为时间字符
@@ -702,6 +717,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         });
     }
 
+    //删除日程的对话框
     public void gotoDeleteDialog() {
         builder = new AlertDialog.Builder(getContext());
         builder.setMessage(R.string.delete_schedule_message)
@@ -722,5 +738,23 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 })
                 .setNeutralButton(R.string.dialog_button_cancel, (dialog, which) -> dialog.dismiss());
         builder.create().show();
+    }
+
+    private int CheckRemindTime(String reminds){
+        int RemindCheck = 0;
+        Date now = new Date();
+        Date date = new Date();
+        String[] str =reminds.split(",");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat std = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for (String s : str) {
+            try {
+                date = std.parse(s);
+            } catch (Exception ignored) {
+            }
+            if (date.getTime() < now.getTime()) {
+                RemindCheck++;
+            }
+        }
+        return RemindCheck;
     }
 }

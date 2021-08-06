@@ -55,6 +55,10 @@ public class DataRepositor {
         return labelDao.getAllLabel();
     }
 
+    public LiveData<List<Schedule>> getALLUnFinishOfRemind(){
+        return scheduleDao.getALLUnFinishOfRemind();
+    }
+
     static class InsertscheduleAsyncTask extends AsyncTask<Schedule, Void, Void> {
         private ScheduleDao scheduleDao;
 

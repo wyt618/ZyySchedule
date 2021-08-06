@@ -128,4 +128,22 @@ public class Schedule {
     public void setEditorChecked(Boolean editorChecked) {
         isEditorChecked = editorChecked;
     }
+
+    @Override
+    public String toString() {
+        return "Schedule{" +
+                "id='" + id + '\''+
+                "starttime='" + starttime + '\''+
+                "endtime='" + endtime + '\''+
+                "remind='" + remind + '\''+
+                "title='" + title + '\''+
+                "detailed='" + detailed + '\''+
+                "state='" + state + '\''+
+                "priority='" + priority + '\''+
+                "labelid='" + labelid + '\''+
+                "isChecked='" + isChecked + '\''+
+                "isEditor='" + isEditor + '\''+
+                "isEditorChecked='" + isEditorChecked + '\''+
+                '}';
+    }
 }
