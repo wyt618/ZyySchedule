@@ -5,7 +5,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
@@ -32,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private long firstTime = 0;
     private MainActivityViewModel vm;
+    private int ALARM_INTENT_CODE=0;
 
 
     @Override
@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         Date date = new Date();
         Date now = new Date();
         for (String s : remind) {
+            ALARM_INTENT_CODE++;
             try {
                 date = std.parse(s);
             } catch (Exception ignored) {
@@ -89,12 +90,9 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, NotificationReceiver.class);
                 intent.setAction("Notification_Receiver");
                 intent.putExtra("remind_schedule", gson.toJson(schedule));
-                intent.putExtra("notification_time", date);
-                PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent, 0);
+                PendingIntent sender = PendingIntent.getBroadcast(this, ALARM_INTENT_CODE, intent, 0);
                 AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
                 am.set(AlarmManager.RTC_WAKEUP, date.getTime(), sender);
-                Log.i("label", date.toString());
-                Log.i("label", gson.toJson(schedule));
             }
         }
     }

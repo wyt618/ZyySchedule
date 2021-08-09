@@ -195,6 +195,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
             scheduleListHeadBinding.deleteSchedule.setVisibility(View.GONE);
             scheduleListHeadBinding.scheduleListHead.setVisibility(View.VISIBLE);
             scheduleListHeadBinding.scheduleDeleteBack.setVisibility(View.GONE);
+            binding.fabBtn.setVisibility(View.VISIBLE);
             for (int i = 0; i < Schedules.size(); i++) {
                 Schedules.get(i).setEditor(false);
             }
@@ -208,6 +209,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
             scheduleListFinishHeadBinding.deleteSchedule.setVisibility(View.GONE);
             scheduleListFinishHeadBinding.scheduleListFinish.setVisibility(View.VISIBLE);
             scheduleListFinishHeadBinding.scheduleDeleteBack.setVisibility(View.GONE);
+            binding.fabBtn.setVisibility(View.VISIBLE);
             for (int i = 0; i < Schedules.size(); i++) {
                 Schedules.get(i).setEditor(false);
             }
@@ -295,6 +297,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         });
         //完成和未完成日程item长按事件
         scheduleAdapter.setOnItemLongClickListener((adapter, view, position) -> {
+            binding.fabBtn.setVisibility(View.GONE);
             scheduleListHeadBinding.deleteSchedule.setVisibility(View.VISIBLE);
             scheduleListHeadBinding.scheduleListHead.setVisibility(View.GONE);
             scheduleListHeadBinding.scheduleDeleteBack.setVisibility(View.VISIBLE);
@@ -309,6 +312,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
             return true;
         });
         finishScheduleAdapter.setOnItemLongClickListener((adapter, view, position) -> {
+            binding.fabBtn.setVisibility(View.GONE);
             scheduleListHeadBinding.deleteSchedule.setVisibility(View.VISIBLE);
             scheduleListHeadBinding.scheduleListHead.setVisibility(View.GONE);
             scheduleListHeadBinding.scheduleDeleteBack.setVisibility(View.VISIBLE);
@@ -734,6 +738,13 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                     }
                     dialog.dismiss();
                     UpdateScheduleList();
+                    binding.fabBtn.setVisibility(View.VISIBLE);
+                    scheduleListFinishHeadBinding.deleteSchedule.setVisibility(View.GONE);
+                    scheduleListFinishHeadBinding.scheduleListFinish.setVisibility(View.VISIBLE);
+                    scheduleListFinishHeadBinding.scheduleDeleteBack.setVisibility(View.GONE);
+                    scheduleListHeadBinding.deleteSchedule.setVisibility(View.GONE);
+                    scheduleListHeadBinding.scheduleListHead.setVisibility(View.VISIBLE);
+                    scheduleListHeadBinding.scheduleDeleteBack.setVisibility(View.GONE);
                     setCalendarTag();
                 })
                 .setNeutralButton(R.string.dialog_button_cancel, (dialog, which) -> dialog.dismiss());
