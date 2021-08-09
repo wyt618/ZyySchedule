@@ -12,10 +12,10 @@ import com.example.zyyschedule.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link InboxFragment#newInstance} factory method to
+ * Use the {@link LocalFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class InboxFragment extends Fragment {
+public class LocalFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +26,7 @@ public class InboxFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public InboxFragment() {
+    public LocalFragment() {
         // Required empty public constructor
     }
 
@@ -39,8 +39,8 @@ public class InboxFragment extends Fragment {
      * @return A new instance of fragment InboxFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static InboxFragment newInstance(String param1, String param2) {
-        InboxFragment fragment = new InboxFragment();
+    public static LocalFragment newInstance(String param1, String param2) {
+        LocalFragment fragment = new LocalFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -61,6 +61,6 @@ public class InboxFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_inbox, container, false);
+        return inflater.inflate(R.layout.fragment_local, container, false);
     }
 }

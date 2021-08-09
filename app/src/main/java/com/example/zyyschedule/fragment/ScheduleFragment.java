@@ -74,7 +74,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
                     gotoTodayScheduleFragment();
                     break;
                 case R.id.inbox:
-                    gotoInboxFragment();
+                    gotoLocalFragment();
                     break;
                 case R.id.dates:
                     gotoPersonFragment();
@@ -121,10 +121,10 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
     }
 
     @SuppressLint("WrongConstant")
-    private void gotoInboxFragment() {
+    private void gotoLocalFragment() {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_NONE);
-        ft.replace(R.id.scheduleFragment, new InboxFragment(), null)
+        ft.replace(R.id.scheduleFragment, new LocalFragment(), null)
                 .commit();
         binding.scheduleTitleBarTitle.setText(R.string.title_local_schedule);
         binding.drawerLayout.closeDrawer(Gravity.START);

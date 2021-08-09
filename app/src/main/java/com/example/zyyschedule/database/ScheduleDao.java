@@ -29,4 +29,9 @@ public interface ScheduleDao {
     LiveData<List<Schedule>>getALLUnFinishOfRemind();
     @Query("UPDATE Schedule SET tagRemind = 1 WHERE id =:id")
     void updateRemindTag(int id);
+    @Query("SELECT * FROM Schedule WHERE state = 0 ORDER BY datetime(starttime)")
+    LiveData<List<Schedule>>allUFScheduleByTime();
+    @Query("SELECT * FROM Schedule WHERE state = 1 ORDER BY datetime(starttime)")
+    LiveData<List<Schedule>>allFScheduleByTime();
+
 }

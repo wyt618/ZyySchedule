@@ -1,4 +1,4 @@
-package com.example.zyyschedule;
+package com.example.zyyschedule.BroadcastReceiver;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.example.zyyschedule.R;
 import com.example.zyyschedule.database.Schedule;
 import com.google.gson.Gson;
 

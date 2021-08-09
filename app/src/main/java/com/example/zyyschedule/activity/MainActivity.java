@@ -18,7 +18,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.zyyschedule.NotificationReceiver;
+import com.example.zyyschedule.BroadcastReceiver.NotificationReceiver;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.database.Schedule;
 import com.example.zyyschedule.databinding.ActivityMainBinding;
