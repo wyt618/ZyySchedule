@@ -21,4 +21,8 @@ public class MainActivityViewModel extends AndroidViewModel {
     public LiveData<List<Schedule>> getALLUnFinishOfRemind(){
         return dataRepositor.getALLUnFinishOfRemind();
     }
+
+    public void updateRemindTag(Integer ...id){
+        dataRepositor.updateRemindTag(id);
+    }
 }

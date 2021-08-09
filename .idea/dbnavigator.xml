@@ -25,13 +25,13 @@
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
     <loaded-nodes>
-      <connection connection-id="c461b6a6-9e88-4239-9f22-30c572b66817">
+      <connection connection-id="73c3f5f9-122b-4cf2-8cc6-95609345e2b8">
         <schema name="main" object-types="table, view, constraint, index, column, dataset trigger" />
       </connection>
     </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="c461b6a6-9e88-4239-9f22-30c572b66817">
+    <connection id="73c3f5f9-122b-4cf2-8cc6-95609345e2b8">
       <console name="Connection" type="STANDARD" schema="main" session="Main" />
     </connection>
   </component>
@@ -39,10 +39,10 @@
     <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="c461b6a6-9e88-4239-9f22-30c572b66817" />
+    <connection id="73c3f5f9-122b-4cf2-8cc6-95609345e2b8" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="c461b6a6-9e88-4239-9f22-30c572b66817" dataset="main.Schedule" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="73c3f5f9-122b-4cf2-8cc6-95609345e2b8" dataset="main.Schedule" active-filter-id="EMPTY_FILTER" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
@@ -70,7 +70,7 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="c461b6a6-9e88-4239-9f22-30c572b66817" active="true">
+      <connection id="73c3f5f9-122b-4cf2-8cc6-95609345e2b8" active="true">
         <database>
           <name value="Connection" />
           <description value="" />

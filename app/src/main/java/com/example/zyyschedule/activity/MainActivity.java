@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
@@ -31,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private long firstTime = 0;
     private MainActivityViewModel vm;
-    private int ALARM_INTENT_CODE=0;
 
 
     @Override
@@ -50,8 +50,9 @@ public class MainActivity extends AppCompatActivity {
 
         vm.getALLUnFinishOfRemind().observe(this, schedules -> {
             for(int i=0;i<schedules.size();i++){
-                if(!schedules.get(i).getRemind().isEmpty()){
+                if(!schedules.get(i).getRemind().isEmpty() || !schedules.get(i).isTagRemind()){
                     setNotificationRemind(schedules.get(i));
+                    vm.updateRemindTag(schedules.get(i).getId());
                 }
             }
         });
@@ -79,10 +80,9 @@ public class MainActivity extends AppCompatActivity {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat std = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         Date now = new Date();
-        for (String s : remind) {
-            ALARM_INTENT_CODE++;
+        for (int i=0;i<remind.length;i++){
             try {
-                date = std.parse(s);
+                date = std.parse(remind[i]);
             } catch (Exception ignored) {
             }
             if (date.getTime() > now.getTime()) {
@@ -90,9 +90,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, NotificationReceiver.class);
                 intent.setAction("Notification_Receiver");
                 intent.putExtra("remind_schedule", gson.toJson(schedule));
-                PendingIntent sender = PendingIntent.getBroadcast(this, ALARM_INTENT_CODE, intent, 0);
+                PendingIntent sender = PendingIntent.getBroadcast(this, schedule.getId()+i, intent, 0);
                 AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
                 am.set(AlarmManager.RTC_WAKEUP, date.getTime(), sender);
+                Log.i("label",gson.toJson(schedule));
             }
         }
     }

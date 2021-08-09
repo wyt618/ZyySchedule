@@ -25,6 +25,8 @@ public interface ScheduleDao {
     void updateScheduleLabel(int i);
     @Delete
     void deleteSchedule(Schedule... schedules);
-    @Query("SELECT * FROM Schedule WHERE state = 0")
+    @Query("SELECT * FROM Schedule WHERE state = 0 and tagRemind = 0")
     LiveData<List<Schedule>>getALLUnFinishOfRemind();
+    @Query("UPDATE Schedule SET tagRemind = 1 WHERE id =:id")
+    void updateRemindTag(int id);
 }

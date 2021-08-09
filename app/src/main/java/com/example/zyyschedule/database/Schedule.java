@@ -25,14 +25,14 @@ public class Schedule {
     private int priority;  //优先级索引 0无,1低,2中,3高
     @ColumnInfo(name = "labelid")
     private int labelid;  //标签id
+    @ColumnInfo(name = "tagRemind")
+    private boolean tagRemind = false; //提醒是否设置
     @Ignore
     private Boolean isChecked;//在列表中判断日程是否选中判断日程是否选中
     @Ignore
     private Boolean isEditor = false; //判断是否处于编辑状态
     @Ignore
     private Boolean isEditorChecked = false; //判断在编辑状态下是否选中
-
-
     public int getId() {
         return id;
     }
@@ -129,6 +129,14 @@ public class Schedule {
         isEditorChecked = editorChecked;
     }
 
+    public boolean isTagRemind() {
+        return tagRemind;
+    }
+
+    public void setTagRemind(boolean tagRemind) {
+        this.tagRemind = tagRemind;
+    }
+
     @Override
     public String toString() {
         return "Schedule{" +
@@ -144,6 +152,7 @@ public class Schedule {
                 "isChecked='" + isChecked + '\''+
                 "isEditor='" + isEditor + '\''+
                 "isEditorChecked='" + isEditorChecked + '\''+
+                "tagRemind='" + tagRemind + '\''+
                 '}';
     }
 }

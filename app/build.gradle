@@ -53,5 +53,6 @@ dependencies {
     implementation "android.arch.navigation:navigation-ui-ktx:1.0.0"
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6'
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.blankj:utilcodex:1.30.6'
 
 }

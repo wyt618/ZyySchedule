@@ -27,6 +27,9 @@ public class DataRepositor {
     public void deleteSchedule(Schedule ...schedules){
         new DeleteScheduleAsyncTask(scheduleDao).execute(schedules);
     }
+    public void updateRemindTag(Integer ...id){
+        new updateRemindTagAsyncTask(scheduleDao).execute(id);
+    }
 
     public void deleteLabel(Label ...labels){
         new DeleteLabelAsyncTask(labelDao,scheduleDao).execute(labels);
@@ -35,6 +38,7 @@ public class DataRepositor {
     public void insertLabel(Label ...labels){
         new InsertLabelAsyncTask(labelDao).execute(labels);
     }
+
 
     public LiveData<List<String>> getScheduleDayOfTag(){
         return scheduleDao.getScheduleDayOfTag();
@@ -132,4 +136,20 @@ public class DataRepositor {
             return null;
         }
     }
+
+    static class updateRemindTagAsyncTask extends AsyncTask<Integer,Void,Void>{
+        private ScheduleDao scheduleDao;
+
+        public updateRemindTagAsyncTask(ScheduleDao scheduleDao) {
+            this.scheduleDao = scheduleDao;
+        }
+
+        @Override
+        protected Void doInBackground(Integer... id) {
+            scheduleDao.updateRemindTag(id[0]);
+            return null;
+        }
+    }
+
+
 }
