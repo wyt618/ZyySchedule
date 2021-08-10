@@ -1,6 +1,8 @@
 package com.example.zyyschedule.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
@@ -15,10 +17,14 @@ import com.example.zyyschedule.R;
 import com.example.zyyschedule.database.Schedule;
 import com.example.zyyschedule.viewmodel.CalendarViewModel;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> {
     private ViewModelStoreOwner owner;
     private CalendarViewModel vm;
     private Context mContext;
+    private Date date;
 
     public ScheduleAdapter(int layoutResId) {
         super(layoutResId);
@@ -34,10 +40,18 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
 
     @Override
     protected void convert(BaseViewHolder helper, Schedule item) {
+
+        Date now = new Date();
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat std = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            date = std.parse(item.getStarttime());
+        } catch (Exception ignored) {
+        }
+
         vm = new ViewModelProvider(owner).get(CalendarViewModel.class);
         helper.setText(R.id.schedule_title, item.getTitle());
         helper.setText(R.id.delete_radio_button, item.getTitle());
-        helper.setText(R.id.schedule_time, item.getStarttime().substring(item.getStarttime().length() - 5));
+        helper.setText(R.id.schedule_time, item.getStarttime().substring(item.getStarttime().length() - 8, item.getStarttime().length() - 3));
         RadioButton radioButton = helper.getView(R.id.delete_radio_button);
         radioButton.setOnCheckedChangeListener(null);
         radioButton.setChecked(item.getEditorChecked());
@@ -67,7 +81,12 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
         if (item.getState().equals("1")) {
             helper.setTextColor(R.id.schedule_title, ContextCompat.getColor(mContext, R.color.color_schedule_grey));
         } else {
-            helper.setTextColor(R.id.schedule_title, ContextCompat.getColor(mContext, R.color.textColor));
+            helper.setTextColor(R.id.schedule_title, Color.BLACK);
+            if (date.getTime() <= now.getTime()) {
+                helper.setTextColor(R.id.schedule_time, Color.RED);
+            } else {
+                helper.setTextColor(R.id.schedule_time, Color.BLACK);
+            }
         }
 
         if (item.getEditor()) {
@@ -77,5 +96,7 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
             checkBox.setVisibility(View.VISIBLE);
             radioButton.setVisibility(View.GONE);
         }
+
+
     }
 }

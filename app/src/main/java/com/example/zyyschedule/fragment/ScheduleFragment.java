@@ -1,16 +1,19 @@
 package com.example.zyyschedule.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -18,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.activity.AddLabelActivity;
 import com.example.zyyschedule.adapter.LabelAdapter;
@@ -29,7 +33,7 @@ import java.util.List;
 
 public class ScheduleFragment extends Fragment implements View.OnClickListener {
     private ScheduleFragmentBinding binding;
-    private ScheduleViewModel mv;
+    private ScheduleViewModel vm;
     private LabelAdapter labelAdapter = new LabelAdapter(R.layout.label_item);
 
     public static ScheduleFragment newInstance() {
@@ -44,25 +48,13 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         return binding.getRoot();
     }
 
-    public void showPopMenu(BaseQuickAdapter adapter, View view, final int pos) {
-        PopupMenu popupMenu = new PopupMenu(getActivity(), view);
-        popupMenu.getMenuInflater().inflate(R.menu.item_menu, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(item -> {
-            List<Label> labels = adapter.getData();
-            mv.deleteLabel(labels.get(pos));
-            adapter.notifyDataSetChanged();
-            return false;
-        });
-        popupMenu.setOnDismissListener(menu -> {
-        });
-        popupMenu.show();
-    }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         gotoTodayScheduleFragment();
-        mv = new ViewModelProvider(this).get(ScheduleViewModel.class);
+        vm = new ViewModelProvider(this).get(ScheduleViewModel.class);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.labelRecyclerview.setLayoutManager(layoutManager);
@@ -74,17 +66,17 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
                     gotoTodayScheduleFragment();
                     break;
                 case R.id.inbox:
-                    gotoInboxFragment();
+                    gotoLocalFragment();
                     break;
                 case R.id.dates:
-                    gotoPersonFragment();
+                    gotoLabelFragment();
                     break;
                 case R.id.add_list:
                     gotoAddLabelActivity();
             }
             return true;
         });
-        mv.getAllLabel().observe(getViewLifecycleOwner(), labels -> {
+        vm.getAllLabel().observe(getViewLifecycleOwner(), labels -> {
             labelAdapter.setList(labels);
             labelAdapter.notifyDataSetChanged();
 
@@ -92,12 +84,55 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
 
         //item点击事件
         labelAdapter.setOnItemClickListener((adapter, view, position) -> {
+           view.findViewById(R.id.trash).setVisibility(View.VISIBLE);
+
+
+        });
+
+        labelAdapter.addChildClickViewIds(R.id.trash);
+        // 设置子控件点击监听
+        labelAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
+                if (view.getId() == R.id.trash) {
+
+                    AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+                    builder.setTitle("删除标签");
+                    builder.setMessage("您标签内的所有日程将被删除。");
+                    builder.setPositiveButton("删除",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    List<Label> labels = (List<Label>) adapter.getData();
+                                    vm.deleteLabel(labels.get(position));
+                                    adapter.notifyDataSetChanged();
+                                }
+                            })
+                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    AlertDialog dialog=builder.create();
+                    dialog.getWindow().setBackgroundDrawableResource(R.drawable.delete_dialog);
+                    dialog.show();
+                    WindowManager m = getActivity().getWindowManager();
+                    DisplayMetrics d = new DisplayMetrics();
+                    m.getDefaultDisplay().getMetrics(d);
+                    WindowManager.LayoutParams p = dialog.getWindow().getAttributes();
+                    p.width = d.widthPixels / 3;
+                    p.height = d.heightPixels / 5;
+                    dialog.getWindow().setAttributes(p);
+                }
+            }
+
         });
 
         //item长按事件
         labelAdapter.setOnItemLongClickListener((adapter, view, pos) -> {
-            showPopMenu(adapter, view, pos);
-            return false;
+                    view.findViewById(R.id.trash).setVisibility(View.VISIBLE);
+                    return false;
         });
     }
 
@@ -121,20 +156,20 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
     }
 
     @SuppressLint("WrongConstant")
-    private void gotoInboxFragment() {
+    private void gotoLocalFragment() {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_NONE);
-        ft.replace(R.id.scheduleFragment, new InboxFragment(), null)
+        ft.replace(R.id.scheduleFragment, new LocalFragment(), null)
                 .commit();
         binding.scheduleTitleBarTitle.setText(R.string.title_local_schedule);
         binding.drawerLayout.closeDrawer(Gravity.START);
     }
 
     @SuppressLint("WrongConstant")
-    private void gotoPersonFragment() {
+    private void gotoLabelFragment() {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_NONE);
-        ft.replace(R.id.scheduleFragment, new PersonFragment(), null)
+        ft.replace(R.id.scheduleFragment, new LabelFragment(), null)
                 .commit();
         binding.scheduleTitleBarTitle.setText(R.string.title_not_classified);
         binding.drawerLayout.closeDrawer(Gravity.START);
