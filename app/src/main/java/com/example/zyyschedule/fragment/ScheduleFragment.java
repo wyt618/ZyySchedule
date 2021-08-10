@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -84,9 +85,14 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
 
         //item点击事件
         labelAdapter.setOnItemClickListener((adapter, view, position) -> {
-           view.findViewById(R.id.trash).setVisibility(View.VISIBLE);
-
-
+            TextView labelName = view.findViewById(R.id.label_name);
+            TextView labelId = view.findViewById(R.id.label_id);
+            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            ft.setTransition(FragmentTransaction.TRANSIT_NONE);
+            ft.replace(R.id.scheduleFragment, new LabelFragment(Integer.parseInt(labelId.getText().toString())), null)
+                    .commit();
+            binding.scheduleTitleBarTitle.setText(labelName.getText());
+            binding.drawerLayout.closeDrawer(Gravity.START);
         });
 
         labelAdapter.addChildClickViewIds(R.id.trash);
@@ -132,7 +138,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         //item长按事件
         labelAdapter.setOnItemLongClickListener((adapter, view, pos) -> {
                     view.findViewById(R.id.trash).setVisibility(View.VISIBLE);
-                    return false;
+                    return true;
         });
     }
 
@@ -169,7 +175,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
     private void gotoLabelFragment() {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_NONE);
-        ft.replace(R.id.scheduleFragment, new LabelFragment(), null)
+        ft.replace(R.id.scheduleFragment, new LabelFragment(0), null)
                 .commit();
         binding.scheduleTitleBarTitle.setText(R.string.title_not_classified);
         binding.drawerLayout.closeDrawer(Gravity.START);

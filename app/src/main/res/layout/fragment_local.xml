@@ -21,7 +21,7 @@
             tools:ignore="ContentDescription" />
 
         <androidx.core.widget.NestedScrollView
-            android:id="@+id/today_schedule"
+            android:id="@+id/local_schedule"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fillViewport="true"

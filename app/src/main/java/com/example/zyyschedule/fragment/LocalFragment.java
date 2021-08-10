@@ -51,7 +51,6 @@ public class LocalFragment extends Fragment {
         scheduleFootBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_foot, container, false);
         scheduleListFinishHeadBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_list_finish_head, container, false);
         finishScheduleFootBinding = DataBindingUtil.inflate(inflater, R.layout.finish_schedule_foot, container, false);
-        builder = new AlertDialog.Builder(getContext());
         return binding.getRoot();
     }
 
@@ -59,6 +58,7 @@ public class LocalFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         vm = new ViewModelProvider(this).get(ScheduleViewModel.class);
+        builder = new AlertDialog.Builder(getContext());
         LinearLayoutManager localSchedule =  new LinearLayoutManager(getContext());
         localSchedule.setOrientation(LinearLayoutManager.VERTICAL);
         LinearLayoutManager finishSchedule =  new LinearLayoutManager(getContext());

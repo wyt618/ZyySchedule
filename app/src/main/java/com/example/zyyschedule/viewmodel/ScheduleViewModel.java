@@ -45,4 +45,12 @@ public class ScheduleViewModel extends AndroidViewModel {
     public LiveData<List<Schedule>>allFScheduleByTime(){
         return dataRepositor.allFScheduleByTime();
     }
+
+    public LiveData<List<Schedule>>getFScheduleOfLabel(int labelid){
+        return dataRepositor.getFScheduleOfLabel(labelid);
+    }
+    public LiveData<List<Schedule>>getUFScheduleOfLabel(int labelid){
+        return dataRepositor.getUFScheduleOfLabel(labelid);
+    }
+
 }

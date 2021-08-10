@@ -33,5 +33,8 @@ public interface ScheduleDao {
     LiveData<List<Schedule>>allUFScheduleByTime();
     @Query("SELECT * FROM Schedule WHERE state = 1 ORDER BY datetime(starttime)")
     LiveData<List<Schedule>>allFScheduleByTime();
-
+    @Query("SELECT * FROM Schedule WHERE labelid = :labelid and state = 0 ORDER BY datetime(starttime)")
+    LiveData<List<Schedule>>getUFScheduleOfLabel(int labelid);
+    @Query("SELECT * FROM Schedule WHERE labelid = :labelid and state = 1 ORDER BY datetime(starttime)")
+    LiveData<List<Schedule>>getFScheduleOfLabel(int labelid);
 }
