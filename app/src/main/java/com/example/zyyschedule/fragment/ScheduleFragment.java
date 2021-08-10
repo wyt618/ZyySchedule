@@ -29,7 +29,7 @@ import java.util.List;
 
 public class ScheduleFragment extends Fragment implements View.OnClickListener {
     private ScheduleFragmentBinding binding;
-    private ScheduleViewModel mv;
+    private ScheduleViewModel vm;
     private LabelAdapter labelAdapter = new LabelAdapter(R.layout.label_item);
 
     public static ScheduleFragment newInstance() {
@@ -49,7 +49,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         popupMenu.getMenuInflater().inflate(R.menu.item_menu, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(item -> {
             List<Label> labels = adapter.getData();
-            mv.deleteLabel(labels.get(pos));
+            vm.deleteLabel(labels.get(pos));
             adapter.notifyDataSetChanged();
             return false;
         });
@@ -62,7 +62,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         gotoTodayScheduleFragment();
-        mv = new ViewModelProvider(this).get(ScheduleViewModel.class);
+        vm = new ViewModelProvider(this).get(ScheduleViewModel.class);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.labelRecyclerview.setLayoutManager(layoutManager);
@@ -77,14 +77,14 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
                     gotoLocalFragment();
                     break;
                 case R.id.dates:
-                    gotoPersonFragment();
+                    gotoLabelFragment();
                     break;
                 case R.id.add_list:
                     gotoAddLabelActivity();
             }
             return true;
         });
-        mv.getAllLabel().observe(getViewLifecycleOwner(), labels -> {
+        vm.getAllLabel().observe(getViewLifecycleOwner(), labels -> {
             labelAdapter.setList(labels);
             labelAdapter.notifyDataSetChanged();
 
@@ -131,10 +131,10 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
     }
 
     @SuppressLint("WrongConstant")
-    private void gotoPersonFragment() {
+    private void gotoLabelFragment() {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_NONE);
-        ft.replace(R.id.scheduleFragment, new PersonFragment(), null)
+        ft.replace(R.id.scheduleFragment, new LabelFragment(), null)
                 .commit();
         binding.scheduleTitleBarTitle.setText(R.string.title_not_classified);
         binding.drawerLayout.closeDrawer(Gravity.START);

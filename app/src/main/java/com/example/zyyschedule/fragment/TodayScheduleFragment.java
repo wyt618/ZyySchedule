@@ -1,5 +1,6 @@
 package com.example.zyyschedule.fragment;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ public class TodayScheduleFragment extends Fragment {
     private ScheduleFootBinding scheduleFootBinding;
     private ScheduleListFinishHeadBinding scheduleListFinishHeadBinding;
     private FinishScheduleFootBinding finishScheduleFootBinding;
+    private AlertDialog.Builder builder;
     public TodayScheduleFragment() {
     }
     @Override
@@ -50,6 +52,7 @@ public class TodayScheduleFragment extends Fragment {
         scheduleFootBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_foot, container, false);
         scheduleListFinishHeadBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_list_finish_head, container, false);
         finishScheduleFootBinding = DataBindingUtil.inflate(inflater, R.layout.finish_schedule_foot, container, false);
+        builder = new AlertDialog.Builder(getContext());
         return binding.getRoot();
     }
 
@@ -76,6 +79,68 @@ public class TodayScheduleFragment extends Fragment {
         binding.todayScheduleList.setAdapter(scheduleAdapter);
         binding.finishScheduleList.setAdapter(finishScheduleAdapter);
         scheduleHeadBinding.scheduleListHead.setText(R.string.title_today);
+        scheduleHeadBinding.scheduleDeleteBack.setOnClickListener(v -> {
+            scheduleHeadBinding.deleteSchedule.setVisibility(View.GONE);
+            scheduleHeadBinding.scheduleListHead.setVisibility(View.VISIBLE);
+            scheduleHeadBinding.scheduleDeleteBack.setVisibility(View.GONE);
+            for (int i = 0; i < Schedules.size(); i++) {
+                Schedules.get(i).setEditor(false);
+            }
+            for (int i = 0; i < finishSchedules.size(); i++) {
+                finishSchedules.get(i).setEditor(false);
+            }
+            scheduleAdapter.notifyDataSetChanged();
+            finishScheduleAdapter.notifyDataSetChanged();
+        });
+        scheduleListFinishHeadBinding.scheduleDeleteBack.setOnClickListener(v -> {
+            scheduleListFinishHeadBinding.deleteSchedule.setVisibility(View.GONE);
+            scheduleListFinishHeadBinding.scheduleListFinish.setVisibility(View.VISIBLE);
+            scheduleListFinishHeadBinding.scheduleDeleteBack.setVisibility(View.GONE);
+            for (int i = 0; i < Schedules.size(); i++) {
+                Schedules.get(i).setEditor(false);
+            }
+            for (int i = 0; i < finishSchedules.size(); i++) {
+                finishSchedules.get(i).setEditor(false);
+            }
+            scheduleAdapter.notifyDataSetChanged();
+            finishScheduleAdapter.notifyDataSetChanged();
+        });
+        scheduleHeadBinding.deleteSchedule.setOnClickListener(v -> gotoDeleteDialog());
+        scheduleListFinishHeadBinding.deleteSchedule.setOnClickListener(v -> gotoDeleteDialog());
+        //完成和未完成日程item长按事件
+        scheduleAdapter.setOnItemLongClickListener((adapter, view, position) -> {
+            scheduleHeadBinding.deleteSchedule.setVisibility(View.VISIBLE);
+            scheduleHeadBinding.scheduleListHead.setVisibility(View.GONE);
+            scheduleHeadBinding.scheduleDeleteBack.setVisibility(View.VISIBLE);
+            for (int i = 0; i < Schedules.size(); i++) {
+                Schedules.get(i).setEditor(true);
+            }
+            for (int i = 0; i < finishSchedules.size(); i++) {
+                finishSchedules.get(i).setEditor(true);
+            }
+            adapter.notifyDataSetChanged();
+            finishScheduleAdapter.notifyDataSetChanged();
+            return true;
+        });
+        finishScheduleAdapter.setOnItemLongClickListener((adapter, view, position) -> {
+            scheduleHeadBinding.deleteSchedule.setVisibility(View.VISIBLE);
+            scheduleHeadBinding.scheduleListHead.setVisibility(View.GONE);
+            scheduleHeadBinding.scheduleDeleteBack.setVisibility(View.VISIBLE);
+            if (scheduleAdapter.getData().size() == 0) {
+                scheduleListFinishHeadBinding.deleteSchedule.setVisibility(View.VISIBLE);
+                scheduleListFinishHeadBinding.scheduleListFinish.setVisibility(View.GONE);
+                scheduleListFinishHeadBinding.scheduleDeleteBack.setVisibility(View.VISIBLE);
+            }
+            for (int i = 0; i < Schedules.size(); i++) {
+                Schedules.get(i).setEditor(true);
+            }
+            for (int i = 0; i < finishSchedules.size(); i++) {
+                finishSchedules.get(i).setEditor(true);
+            }
+            adapter.notifyDataSetChanged();
+            scheduleAdapter.notifyDataSetChanged();
+            return true;
+        });
         UpdateScheduleList();
     }
     private void UpdateScheduleList() {
@@ -119,5 +184,32 @@ public class TodayScheduleFragment extends Fragment {
             startTime = String.valueOf(time);
         }
         return startTime;
+    }
+
+    public void gotoDeleteDialog() {
+        builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(R.string.delete_schedule_message)
+                .setPositiveButton(R.string.dialog_button_ok, (dialog, which) -> {
+                    for (int i = 0; i < Schedules.size(); i++) {
+                        if (Schedules.get(i).getEditorChecked()) {
+                            vm.deleteSchedule(Schedules.get(i));
+                        }
+                    }
+                    for (int i = 0; i < finishSchedules.size(); i++) {
+                        if (finishSchedules.get(i).getEditorChecked()) {
+                            vm.deleteSchedule(finishSchedules.get(i));
+                        }
+                    }
+                    dialog.dismiss();
+                    UpdateScheduleList();
+                    scheduleListFinishHeadBinding.deleteSchedule.setVisibility(View.GONE);
+                    scheduleListFinishHeadBinding.scheduleListFinish.setVisibility(View.VISIBLE);
+                    scheduleListFinishHeadBinding.scheduleDeleteBack.setVisibility(View.GONE);
+                    scheduleHeadBinding.deleteSchedule.setVisibility(View.GONE);
+                    scheduleHeadBinding.scheduleListHead.setVisibility(View.VISIBLE);
+                    scheduleHeadBinding.scheduleDeleteBack.setVisibility(View.GONE);
+                })
+                .setNeutralButton(R.string.dialog_button_cancel, (dialog, which) -> dialog.dismiss());
+        builder.create().show();
     }
 }
