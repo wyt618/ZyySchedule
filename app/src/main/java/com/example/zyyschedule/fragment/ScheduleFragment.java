@@ -5,13 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,7 +33,7 @@ import java.util.List;
 
 public class ScheduleFragment extends Fragment implements View.OnClickListener {
     private ScheduleFragmentBinding binding;
-    private ScheduleViewModel mv;
+    private ScheduleViewModel vm;
     private LabelAdapter labelAdapter = new LabelAdapter(R.layout.label_item);
 
     public static ScheduleFragment newInstance() {
@@ -50,11 +48,13 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         return binding.getRoot();
     }
 
+
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         gotoTodayScheduleFragment();
-        mv = new ViewModelProvider(this).get(ScheduleViewModel.class);
+        vm = new ViewModelProvider(this).get(ScheduleViewModel.class);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.labelRecyclerview.setLayoutManager(layoutManager);
@@ -66,17 +66,17 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
                     gotoTodayScheduleFragment();
                     break;
                 case R.id.inbox:
-                    gotoInboxFragment();
+                    gotoLocalFragment();
                     break;
                 case R.id.dates:
-                    gotoPersonFragment();
+                    gotoLabelFragment();
                     break;
                 case R.id.add_list:
                     gotoAddLabelActivity();
             }
             return true;
         });
-        mv.getAllLabel().observe(getViewLifecycleOwner(), labels -> {
+        vm.getAllLabel().observe(getViewLifecycleOwner(), labels -> {
             labelAdapter.setList(labels);
             labelAdapter.notifyDataSetChanged();
 
@@ -104,7 +104,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     List<Label> labels = (List<Label>) adapter.getData();
-                                    mv.deleteLabel(labels.get(position));
+                                    vm.deleteLabel(labels.get(position));
                                     adapter.notifyDataSetChanged();
                                 }
                             })
@@ -156,20 +156,20 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
     }
 
     @SuppressLint("WrongConstant")
-    private void gotoInboxFragment() {
+    private void gotoLocalFragment() {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_NONE);
-        ft.replace(R.id.scheduleFragment, new InboxFragment(), null)
+        ft.replace(R.id.scheduleFragment, new LocalFragment(), null)
                 .commit();
         binding.scheduleTitleBarTitle.setText(R.string.title_local_schedule);
         binding.drawerLayout.closeDrawer(Gravity.START);
     }
 
     @SuppressLint("WrongConstant")
-    private void gotoPersonFragment() {
+    private void gotoLabelFragment() {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_NONE);
-        ft.replace(R.id.scheduleFragment, new PersonFragment(), null)
+        ft.replace(R.id.scheduleFragment, new LabelFragment(), null)
                 .commit();
         binding.scheduleTitleBarTitle.setText(R.string.title_not_classified);
         binding.drawerLayout.closeDrawer(Gravity.START);
