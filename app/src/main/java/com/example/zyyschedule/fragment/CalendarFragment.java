@@ -722,7 +722,8 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     //删除日程的对话框
     public void gotoDeleteDialog() {
         builder = new AlertDialog.Builder(getContext());
-        builder.setMessage(R.string.delete_schedule_message)
+        builder.setTitle(R.string.delete_schedule_title)
+                .setMessage(R.string.delete_schedule_message)
                 .setPositiveButton(R.string.dialog_button_ok, (dialog, which) -> {
                     for (int i = 0; i < Schedules.size(); i++) {
                         if (Schedules.get(i).getEditorChecked()) {

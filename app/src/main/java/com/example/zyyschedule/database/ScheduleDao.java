@@ -21,7 +21,7 @@ public interface ScheduleDao {
     LiveData<List<Schedule>>getFinishedScheduleOfDay(String day);
     @Query("SELECT DISTINCT substr(starttime,0,length(starttime)-4) FROM Schedule")
     LiveData<List<String>>getScheduleDayOfTag();
-    @Query("UPDATE Schedule SET labelid = 0 WHERE labelid =:i ")
+    @Query("DELETE FROM Schedule  WHERE labelid =:i ")
     void updateScheduleLabel(int i);
     @Delete
     void deleteSchedule(Schedule... schedules);
