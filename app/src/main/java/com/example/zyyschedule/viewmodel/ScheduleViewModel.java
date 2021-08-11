@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 
 import com.example.zyyschedule.database.DataRepositor;
 import com.example.zyyschedule.database.Label;
+import com.example.zyyschedule.database.Schedule;
 
 import java.util.List;
 
@@ -28,4 +29,28 @@ public class ScheduleViewModel extends AndroidViewModel {
     public void deleteLabel(Label ...labels){
         dataRepositor.deleteLabel(labels);
     }
+    public LiveData<List<Schedule>>getUnfinishedScheduleOfDay(String day){
+        return dataRepositor.getUnfinishedScheduleOfDay(day);
+    }
+    public LiveData<List<Schedule>>getFinishedScheduleOfDay(String day){
+        return dataRepositor.getFinishedScheduleOfDay(day);
+    }
+    public void deleteSchedule(Schedule ...schedules){
+        dataRepositor.deleteSchedule(schedules);
+    }
+
+    public LiveData<List<Schedule>>allUFScheduleByTime(){
+       return dataRepositor.allUFScheduleByTime();
+    }
+    public LiveData<List<Schedule>>allFScheduleByTime(){
+        return dataRepositor.allFScheduleByTime();
+    }
+
+    public LiveData<List<Schedule>>getFScheduleOfLabel(int labelid){
+        return dataRepositor.getFScheduleOfLabel(labelid);
+    }
+    public LiveData<List<Schedule>>getUFScheduleOfLabel(int labelid){
+        return dataRepositor.getUFScheduleOfLabel(labelid);
+    }
+
 }

@@ -21,7 +21,7 @@ public interface ScheduleDao {
     LiveData<List<Schedule>>getFinishedScheduleOfDay(String day);
     @Query("SELECT DISTINCT substr(starttime,0,length(starttime)-4) FROM Schedule")
     LiveData<List<String>>getScheduleDayOfTag();
-    @Query("UPDATE Schedule SET labelid = 0 WHERE labelid =:i ")
+    @Query("DELETE FROM Schedule  WHERE labelid =:i ")
     void updateScheduleLabel(int i);
     @Delete
     void deleteSchedule(Schedule... schedules);
@@ -33,5 +33,8 @@ public interface ScheduleDao {
     LiveData<List<Schedule>>allUFScheduleByTime();
     @Query("SELECT * FROM Schedule WHERE state = 1 ORDER BY datetime(starttime)")
     LiveData<List<Schedule>>allFScheduleByTime();
-
+    @Query("SELECT * FROM Schedule WHERE labelid = :labelid and state = 0 ORDER BY datetime(starttime)")
+    LiveData<List<Schedule>>getUFScheduleOfLabel(int labelid);
+    @Query("SELECT * FROM Schedule WHERE labelid = :labelid and state = 1 ORDER BY datetime(starttime)")
+    LiveData<List<Schedule>>getFScheduleOfLabel(int labelid);
 }

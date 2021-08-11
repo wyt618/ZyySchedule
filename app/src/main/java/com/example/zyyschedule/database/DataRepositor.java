@@ -62,6 +62,19 @@ public class DataRepositor {
     public LiveData<List<Schedule>> getALLUnFinishOfRemind(){
         return scheduleDao.getALLUnFinishOfRemind();
     }
+    public LiveData<List<Schedule>>allUFScheduleByTime(){
+        return scheduleDao.allUFScheduleByTime();
+    }
+    public LiveData<List<Schedule>>allFScheduleByTime(){
+        return scheduleDao.allFScheduleByTime();
+    }
+
+    public LiveData<List<Schedule>>getFScheduleOfLabel(int labelid){
+        return scheduleDao.getFScheduleOfLabel(labelid);
+    }
+    public LiveData<List<Schedule>>getUFScheduleOfLabel(int labelid){
+        return scheduleDao.getUFScheduleOfLabel(labelid);
+    }
 
     static class InsertscheduleAsyncTask extends AsyncTask<Schedule, Void, Void> {
         private ScheduleDao scheduleDao;

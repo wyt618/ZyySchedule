@@ -32,4 +32,6 @@
     <string name="exit_message">Press again to exit.</string>
     <string name="delete_button_text">Delete</string>
     <string name="delete_schedule_message">Do you want to delete the selected schedule?</string>
+    <string name="delete_schedule_title">Delete the schedule</string>
+    <string name="local_schedule_head">Unfinished</string>
 </resources>

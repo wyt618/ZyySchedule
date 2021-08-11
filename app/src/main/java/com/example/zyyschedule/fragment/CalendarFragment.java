@@ -2,8 +2,15 @@ package com.example.zyyschedule.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.AppOpsManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -29,6 +36,7 @@ import com.example.zyyschedule.PriorityBean;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.RemindBean;
 import com.example.zyyschedule.activity.AddLabelActivity;
+import com.example.zyyschedule.activity.MainActivity;
 import com.example.zyyschedule.adapter.LabelAdapter;
 import com.example.zyyschedule.adapter.PriorityListAdapter;
 import com.example.zyyschedule.adapter.RemindAdapter;
@@ -49,12 +57,16 @@ import com.example.zyyschedule.viewmodel.CalendarViewModel;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class CalendarFragment extends Fragment implements View.OnClickListener, CalendarView.OnCalendarSelectListener {
 
@@ -89,12 +101,6 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     private FinishScheduleFootBinding finishScheduleFootBinding;
     private List<Schedule> Schedules;
     private List<Schedule> finishSchedules;
-
-
-
-    public static CalendarFragment newInstance() {
-        return new CalendarFragment();
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -372,12 +378,12 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void setCalendarTag() {
-        int redcolor = 0xFF0000;
+        int redColor = 0xFF0000;
         Map<String, Calendar> map = new HashMap<>();
         vm.getScheduleDayOfTag().observe(getViewLifecycleOwner(), strings -> {
             for (int i = 0; i < strings.size(); i++) {
-                map.put(getSchemeCalendar(Integer.parseInt(strings.get(i).substring(0, 4)), Integer.parseInt(strings.get(i).substring(5, 7)), Integer.parseInt(strings.get(i).substring(8, 10)), redcolor).toString(),
-                        getSchemeCalendar(Integer.parseInt(strings.get(i).substring(0, 4)), Integer.parseInt(strings.get(i).substring(5, 7)), Integer.parseInt(strings.get(i).substring(8, 10)), redcolor));
+                map.put(getSchemeCalendar(Integer.parseInt(strings.get(i).substring(0, 4)), Integer.parseInt(strings.get(i).substring(5, 7)), Integer.parseInt(strings.get(i).substring(8, 10)), redColor).toString(),
+                        getSchemeCalendar(Integer.parseInt(strings.get(i).substring(0, 4)), Integer.parseInt(strings.get(i).substring(5, 7)), Integer.parseInt(strings.get(i).substring(8, 10)), redColor));
             }
             binding.calendarView.setSchemeDate(map);
         });
@@ -460,7 +466,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                         timePickerBinding.hourPicker.setValue(0);
                         timePickerBinding.minePicker.setValue(0);
                     } else {
-                        timePickerBinding.hourPicker.setValue(Integer.parseInt(vm.AddScheduleTime.getValue().substring(0, 2)));
+                        timePickerBinding.hourPicker.setValue(Integer.parseInt(Objects.requireNonNull(vm.AddScheduleTime.getValue()).substring(0, 2)));
                         timePickerBinding.minePicker.setValue(Integer.parseInt(vm.AddScheduleTime.getValue().substring(3)));
                     }
                     vm.AddScheduleTime.setValue(ProcessingTime(timePickerBinding.hourPicker.getValue()) + ":" + ProcessingTime(timePickerBinding.minePicker.getValue()));
@@ -539,6 +545,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                     } else {
                         addScheduleBinding.remindText.setText(remindAdapter.addRemind.substring(4, remindAdapter.addRemind.length()));
                     }
+                    getNotification();
                 })
                 .setNeutralButton(R.string.dialog_button_cancel, (dialog, which) -> dialog.dismiss());
         remindDialog = builder.create();
@@ -556,7 +563,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     //新增日程到数据库
     private void AddSchedule() {
         Schedule schedule = new Schedule();
-        String starttime = selectYear + "-" + ProcessingTime(selectMonth) + "-" + ProcessingTime(selectDay) + " " + vm.AddScheduleTime.getValue()+":00";
+        String starttime = selectYear + "-" + ProcessingTime(selectMonth) + "-" + ProcessingTime(selectDay) + " " + vm.AddScheduleTime.getValue() + ":00";
         schedule.setStarttime(starttime);
         schedule.setEndtime(null);
         schedule.setRemind(RemindChangeTime());
@@ -572,10 +579,10 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         vm.insertSchedule(schedule);
         UpdateScheduleList();
         addSchedule.dismiss();
-        if(!schedule.getRemind().isEmpty()){
-            int RemindCheck =  CheckRemindTime(schedule.getRemind());
-            if(RemindCheck>0){
-                Toast.makeText(getContext(),"抱歉，有"+RemindCheck+"条提醒因为超出当前时间无效",Toast.LENGTH_LONG).show();
+        if (!schedule.getRemind().isEmpty()) {
+            int RemindCheck = CheckRemindTime(schedule.getRemind());
+            if (RemindCheck > 0) {
+                Toast.makeText(getContext(), "抱歉，有" + RemindCheck + "条提醒因为超出当前时间无效", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -627,10 +634,8 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     private String RemindToTime(int i) {
         String remindtime;
         Date date = new Date();
-        java.util.Calendar calendar = java.util.Calendar.getInstance();
         remindtime = selectYear + "-" + selectMonth + "-" + selectDay + " " + addScheduleBinding.textTime.getText() + ":" + "00";
         @SuppressLint("SimpleDateFormat") SimpleDateFormat std = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        calendar.setTime(date);
         try {
             date = std.parse(remindtime);
         } catch (Exception ignored) {
@@ -722,7 +727,8 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     //删除日程的对话框
     public void gotoDeleteDialog() {
         builder = new AlertDialog.Builder(getContext());
-        builder.setMessage(R.string.delete_schedule_message)
+        builder.setTitle(R.string.delete_schedule_title)
+                .setMessage(R.string.delete_schedule_message)
                 .setPositiveButton(R.string.dialog_button_ok, (dialog, which) -> {
                     for (int i = 0; i < Schedules.size(); i++) {
                         if (Schedules.get(i).getEditorChecked()) {
@@ -749,11 +755,11 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         builder.create().show();
     }
 
-    private int CheckRemindTime(String reminds){
+    private int CheckRemindTime(String reminds) {
         int RemindCheck = 0;
         Date now = new Date();
         Date date = new Date();
-        String[] str =reminds.split(",");
+        String[] str = reminds.split(",");
         @SuppressLint("SimpleDateFormat") SimpleDateFormat std = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for (String s : str) {
             try {
@@ -765,5 +771,70 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
             }
         }
         return RemindCheck;
+    }
+
+    @SuppressLint("NewApi")
+    private static final String CHECK_OP_NO_THROW = "checkOpNoThrow";
+    private static final String OP_POST_NOTIFICATION = "OP_POST_NOTIFICATION";
+    public static boolean isNotificationEnabled(Context context) {
+
+        AppOpsManager mAppOps = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+        ApplicationInfo appInfo = context.getApplicationInfo();
+        String pkg = context.getApplicationContext().getPackageName();
+        int uid = appInfo.uid;
+
+        Class appOpsClass = null;
+        try {
+            appOpsClass = Class.forName(AppOpsManager.class.getName());
+            Method checkOpNoThrowMethod = appOpsClass.getMethod(CHECK_OP_NO_THROW, Integer.TYPE, Integer.TYPE,
+                    String.class);
+            Field opPostNotificationValue = appOpsClass.getDeclaredField(OP_POST_NOTIFICATION);
+            int value = (Integer) opPostNotificationValue.get(Integer.class);
+            return ((Integer) checkOpNoThrowMethod.invoke(mAppOps, value, uid, pkg) == AppOpsManager.MODE_ALLOWED);
+        } catch (ClassNotFoundException | NoSuchMethodException | NoSuchFieldException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void getNotification() {
+        if (isNotificationEnabled(getContext())) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+                    .setCancelable(true)
+                    .setTitle("检测到通知权限未开启!")
+                    .setMessage("如果不开启权限会收不到推送通知哦~")
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .setPositiveButton("去开启", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            Intent intent = new Intent();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                                intent.putExtra("android.provider.extra.APP_PACKAGE", getActivity().getPackageName());
+                            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //5.0
+                                intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                                intent.putExtra("app_package", getActivity().getPackageName());
+                                intent.putExtra("app_uid", getActivity().getApplicationInfo().uid);
+                                startActivity(intent);
+                            } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) { //4.4
+                                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                            } else if (Build.VERSION.SDK_INT >= 15) {
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+                                intent.setData(Uri.fromParts("package", getActivity().getPackageName(), null));
+                            }
+                            startActivity(intent);
+                        }
+                    });
+            builder.create().show();
+        }
     }
 }

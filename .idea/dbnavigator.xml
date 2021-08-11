@@ -17,7 +17,7 @@
       <scope value="GLOBAL" />
       <destination value="FILE" />
       <format value="EXCEL" />
-      <charset value="GBK" />
+      <charset value="UTF-8" />
     </export-instructions>
   </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
@@ -25,25 +25,24 @@
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
     <loaded-nodes>
-      <connection connection-id="8e547ac1-d7d1-4b49-b7f9-c0d6c7668585">
+      <connection connection-id="1153f18d-525a-4a23-8b6f-6136ae5700e3">
         <schema name="main" object-types="table, view, constraint, index, column, dataset trigger" />
       </connection>
     </loaded-nodes>
-    <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="8e547ac1-d7d1-4b49-b7f9-c0d6c7668585">
-      <console name="Connection" type="STANDARD" schema="main" session="Main"><![CDATA[select * from Schedule order by datetime(starttime)]]></console>
+    <connection id="1153f18d-525a-4a23-8b6f-6136ae5700e3">
+      <console name="Connection" type="STANDARD" schema="main" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="8e547ac1-d7d1-4b49-b7f9-c0d6c7668585" />
+    <connection id="1153f18d-525a-4a23-8b6f-6136ae5700e3" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="8e547ac1-d7d1-4b49-b7f9-c0d6c7668585" dataset="main.Schedule" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="1153f18d-525a-4a23-8b6f-6136ae5700e3" dataset="main.Schedule" active-filter-id="EMPTY_FILTER" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
@@ -71,7 +70,7 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="8e547ac1-d7d1-4b49-b7f9-c0d6c7668585" active="true">
+      <connection id="1153f18d-525a-4a23-8b6f-6136ae5700e3" active="true">
         <database>
           <name value="Connection" />
           <description value="" />
