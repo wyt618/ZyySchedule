@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -773,66 +774,32 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         return RemindCheck;
     }
 
-    @SuppressLint("NewApi")
-    private static final String CHECK_OP_NO_THROW = "checkOpNoThrow";
-    private static final String OP_POST_NOTIFICATION = "OP_POST_NOTIFICATION";
+    //检测通知是否开启的方法
     public static boolean isNotificationEnabled(Context context) {
-
-        AppOpsManager mAppOps = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
-        ApplicationInfo appInfo = context.getApplicationInfo();
-        String pkg = context.getApplicationContext().getPackageName();
-        int uid = appInfo.uid;
-
-        Class appOpsClass = null;
+        boolean isOpened;
         try {
-            appOpsClass = Class.forName(AppOpsManager.class.getName());
-            Method checkOpNoThrowMethod = appOpsClass.getMethod(CHECK_OP_NO_THROW, Integer.TYPE, Integer.TYPE,
-                    String.class);
-            Field opPostNotificationValue = appOpsClass.getDeclaredField(OP_POST_NOTIFICATION);
-            int value = (Integer) opPostNotificationValue.get(Integer.class);
-            return ((Integer) checkOpNoThrowMethod.invoke(mAppOps, value, uid, pkg) == AppOpsManager.MODE_ALLOWED);
-        } catch (ClassNotFoundException | NoSuchMethodException | NoSuchFieldException | InvocationTargetException | IllegalAccessException e) {
+            isOpened = NotificationManagerCompat.from(context).areNotificationsEnabled();
+        } catch (Exception e) {
             e.printStackTrace();
+            isOpened = false;
         }
-        return false;
+        return isOpened;
     }
 
+    //当通知未开启时弹出框
     private void getNotification() {
-        if (isNotificationEnabled(getContext())) {
+        if (!isNotificationEnabled(getActivity())) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                     .setCancelable(true)
-                    .setTitle("检测到通知权限未开启!")
-                    .setMessage("如果不开启权限会收不到推送通知哦~")
-                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    })
-                    .setPositiveButton("去开启", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            Intent intent = new Intent();
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-                                intent.putExtra("android.provider.extra.APP_PACKAGE", getActivity().getPackageName());
-                            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //5.0
-                                intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-                                intent.putExtra("app_package", getActivity().getPackageName());
-                                intent.putExtra("app_uid", getActivity().getApplicationInfo().uid);
-                                startActivity(intent);
-                            } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) { //4.4
-                                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                intent.addCategory(Intent.CATEGORY_DEFAULT);
-                                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
-                            } else if (Build.VERSION.SDK_INT >= 15) {
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
-                                intent.setData(Uri.fromParts("package", getActivity().getPackageName(), null));
-                            }
-                            startActivity(intent);
-                        }
+                    .setTitle(R.string.notify_authority_dialog_title)
+                    .setMessage(R.string.notify_authority_dialog_message)
+                    .setNegativeButton(R.string.dialog_button_cancel, (dialog, which) -> dialog.cancel())
+                    .setPositiveButton(R.string.notify_authority_dialog_ok_button, (dialog, which) -> {
+                        dialog.cancel();
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                        startActivity(intent);
                     });
             builder.create().show();
         }
