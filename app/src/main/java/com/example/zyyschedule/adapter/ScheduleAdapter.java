@@ -51,6 +51,10 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
         vm = new ViewModelProvider(owner).get(CalendarViewModel.class);
         helper.setText(R.id.schedule_title, item.getTitle());
         helper.setText(R.id.delete_radio_button, item.getTitle());
+        helper.setText(R.id.schedule_date,item.getStarttime().substring(0,4)+"年"
+        +Integer.parseInt(item.getStarttime().substring(5,7))+"月"
+                +Integer.parseInt(item.getStarttime().substring(8,10))+"日"
+        );
         helper.setText(R.id.schedule_time, item.getStarttime().substring(item.getStarttime().length() - 8, item.getStarttime().length() - 3));
         RadioButton radioButton = helper.getView(R.id.delete_radio_button);
         radioButton.setOnCheckedChangeListener(null);
@@ -84,8 +88,10 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
             helper.setTextColor(R.id.schedule_title, Color.BLACK);
             if (date.getTime() <= now.getTime()) {
                 helper.setTextColor(R.id.schedule_time, Color.RED);
+                helper.setTextColor(R.id.schedule_date,Color.RED);
             } else {
                 helper.setTextColor(R.id.schedule_time, Color.BLACK);
+                helper.setTextColor(R.id.schedule_date,Color.BLACK);
             }
         }
 

@@ -2,7 +2,6 @@ package com.example.zyyschedule.fragment;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,16 +20,16 @@ import com.example.zyyschedule.databinding.FragmentTodayScheduleBinding;
 import com.example.zyyschedule.databinding.ScheduleFootBinding;
 import com.example.zyyschedule.databinding.ScheduleListFinishHeadBinding;
 import com.example.zyyschedule.databinding.ScheduleListHeadBinding;
-import com.example.zyyschedule.viewmodel.CalendarViewModel;
+import com.example.zyyschedule.viewmodel.ScheduleViewModel;
 
 import java.util.Calendar;
 import java.util.List;
 
 public class TodayScheduleFragment extends Fragment {
     private FragmentTodayScheduleBinding binding;
-    private CalendarViewModel vm;
-    ScheduleAdapter scheduleAdapter;
-    ScheduleAdapter finishScheduleAdapter;
+    private ScheduleViewModel vm;
+    private ScheduleAdapter scheduleAdapter;
+    private ScheduleAdapter finishScheduleAdapter;
     private List<Schedule> Schedules;
     private List<Schedule> finishSchedules;
     private ScheduleListHeadBinding scheduleHeadBinding;
@@ -38,8 +37,6 @@ public class TodayScheduleFragment extends Fragment {
     private ScheduleListFinishHeadBinding scheduleListFinishHeadBinding;
     private FinishScheduleFootBinding finishScheduleFootBinding;
     private AlertDialog.Builder builder;
-    public TodayScheduleFragment() {
-    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +56,7 @@ public class TodayScheduleFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        vm = new ViewModelProvider(this).get(CalendarViewModel.class);
+        vm = new ViewModelProvider(this).get(ScheduleViewModel.class);
         LinearLayoutManager ToDayLayoutManager = new LinearLayoutManager(getContext());
         ToDayLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         LinearLayoutManager FinishLayoutManager = new LinearLayoutManager(getContext());
