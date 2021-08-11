@@ -1,7 +1,6 @@
 package com.example.zyyschedule.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -21,8 +20,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.activity.AddLabelActivity;
 import com.example.zyyschedule.adapter.LabelAdapter;
@@ -50,7 +47,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
     }
 
 
-
+    @SuppressLint("WrongConstant")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -61,6 +58,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
         binding.labelRecyclerview.setLayoutManager(layoutManager);
         binding.labelRecyclerview.setAdapter(labelAdapter);
         binding.ivMainMenu.setOnClickListener(this);
+        binding.drawerLayout.setOnClickListener(this);
         binding.navView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.today:
@@ -97,48 +95,46 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
 
         labelAdapter.addChildClickViewIds(R.id.trash);
         // 设置子控件点击监听
-        labelAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                if (view.getId() == R.id.trash) {
+        labelAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+            if (view.getId() == R.id.trash) {
 
-                    AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
-                    builder.setTitle("删除标签");
-                    builder.setMessage("您标签内的所有日程将被删除。");
-                    builder.setPositiveButton("删除",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    List<Label> labels = (List<Label>) adapter.getData();
-                                    vm.deleteLabel(labels.get(position));
-                                    adapter.notifyDataSetChanged();
-                                }
-                            })
-                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    AlertDialog dialog=builder.create();
-                    dialog.getWindow().setBackgroundDrawableResource(R.drawable.delete_dialog);
-                    dialog.show();
-                    WindowManager m = getActivity().getWindowManager();
-                    DisplayMetrics d = new DisplayMetrics();
-                    m.getDefaultDisplay().getMetrics(d);
-                    WindowManager.LayoutParams p = dialog.getWindow().getAttributes();
-                    p.width = d.widthPixels / 3;
-                    p.height = d.heightPixels / 5;
-                    dialog.getWindow().setAttributes(p);
-                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("删除标签");
+                builder.setMessage("您标签内的所有日程将被删除。");
+                builder.setPositiveButton("删除",
+                        (dialogInterface, i) -> {
+                            List<Label> labels = (List<Label>) adapter.getData();
+                            vm.deleteLabel(labels.get(position));
+                            adapter.notifyDataSetChanged();
+                        })
+                        .setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
+                AlertDialog dialog = builder.create();
+                dialog.getWindow().setBackgroundDrawableResource(R.drawable.delete_dialog);
+                dialog.show();
+                WindowManager m = getActivity().getWindowManager();
+                DisplayMetrics d = new DisplayMetrics();
+                m.getDefaultDisplay().getMetrics(d);
+                WindowManager.LayoutParams p = dialog.getWindow().getAttributes();
+                p.width = d.widthPixels / 3;
+                p.height = d.heightPixels / 5;
+                dialog.getWindow().setAttributes(p);
             }
-
         });
 
         //item长按事件
         labelAdapter.setOnItemLongClickListener((adapter, view, pos) -> {
-                    view.findViewById(R.id.trash).setVisibility(View.VISIBLE);
-                    return true;
+            view.setFocusable(true);
+            view.setFocusableInTouchMode(true);
+            view.requestFocus();
+            view.requestFocusFromTouch();
+            view.setOnFocusChangeListener((v, hasFocus) -> {
+                if(hasFocus){
+                    v.findViewById(R.id.trash).setVisibility(View.VISIBLE);
+                }else{
+                    v.findViewById(R.id.trash).setVisibility(View.GONE);
+                }
+            });
+            return true;
         });
     }
 
