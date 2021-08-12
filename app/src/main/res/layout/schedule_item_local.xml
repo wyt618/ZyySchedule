@@ -32,7 +32,7 @@
             android:textSize="@dimen/text_size_18sp"
             android:visibility="gone" />
 
-        <CheckBox
+        <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/schedule_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

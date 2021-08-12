@@ -2,13 +2,9 @@ package com.example.zyyschedule.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.AppOpsManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
@@ -37,7 +33,6 @@ import com.example.zyyschedule.PriorityBean;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.RemindBean;
 import com.example.zyyschedule.activity.AddLabelActivity;
-import com.example.zyyschedule.activity.MainActivity;
 import com.example.zyyschedule.adapter.LabelAdapter;
 import com.example.zyyschedule.adapter.PriorityListAdapter;
 import com.example.zyyschedule.adapter.RemindAdapter;
@@ -58,9 +53,6 @@ import com.example.zyyschedule.viewmodel.CalendarViewModel;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -632,7 +624,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
 
 
     //处理提醒与时间的方法
-    private String RemindToTime(int i) {
+    private String RemindToTime(int remindType) {
         String remindtime;
         Date date = new Date();
         remindtime = selectYear + "-" + selectMonth + "-" + selectDay + " " + addScheduleBinding.textTime.getText() + ":" + "00";
@@ -641,51 +633,51 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
             date = std.parse(remindtime);
         } catch (Exception ignored) {
         }
-        if (i == 1) {
+        if (remindType == 1) {
             remindtime = std.format(date);
-        } else if (i == 2) {
+        } else if (remindType == 2) {
             date.setTime(date.getTime() - 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 3) {
+        } else if (remindType == 3) {
             date.setTime(date.getTime() - 5 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 4) {
+        } else if (remindType == 4) {
             date.setTime(date.getTime() - 10 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 5) {
+        } else if (remindType == 5) {
             date.setTime(date.getTime() - 15 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 6) {
+        } else if (remindType == 6) {
             date.setTime(date.getTime() - 20 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 7) {
+        } else if (remindType == 7) {
             date.setTime(date.getTime() - 25 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 8) {
+        } else if (remindType == 8) {
             date.setTime(date.getTime() - 30 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 9) {
+        } else if (remindType == 9) {
             date.setTime(date.getTime() - 45 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 10) {
+        } else if (remindType == 10) {
             date.setTime(date.getTime() - 60 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 11) {
+        } else if (remindType == 11) {
             date.setTime(date.getTime() - 2 * 60 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 12) {
+        } else if (remindType == 12) {
             date.setTime(date.getTime() - 3 * 60 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 13) {
+        } else if (remindType == 13) {
             date.setTime(date.getTime() - 12 * 60 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 14) {
+        } else if (remindType == 14) {
             date.setTime(date.getTime() - 24 * 60 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 15) {
+        } else if (remindType == 15) {
             date.setTime(date.getTime() - 2 * 24 * 60 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 16) {
+        } else if (remindType == 16) {
             date.setTime(date.getTime() - 7 * 24 * 60 * 60 * 1000);
             remindtime = std.format(date);
         }
