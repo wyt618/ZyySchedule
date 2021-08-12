@@ -2,13 +2,9 @@ package com.example.zyyschedule.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.AppOpsManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
@@ -27,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -36,7 +33,6 @@ import com.example.zyyschedule.PriorityBean;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.RemindBean;
 import com.example.zyyschedule.activity.AddLabelActivity;
-import com.example.zyyschedule.activity.MainActivity;
 import com.example.zyyschedule.adapter.LabelAdapter;
 import com.example.zyyschedule.adapter.PriorityListAdapter;
 import com.example.zyyschedule.adapter.RemindAdapter;
@@ -57,9 +53,6 @@ import com.example.zyyschedule.viewmodel.CalendarViewModel;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -631,7 +624,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
 
 
     //处理提醒与时间的方法
-    private String RemindToTime(int i) {
+    private String RemindToTime(int remindType) {
         String remindtime;
         Date date = new Date();
         remindtime = selectYear + "-" + selectMonth + "-" + selectDay + " " + addScheduleBinding.textTime.getText() + ":" + "00";
@@ -640,51 +633,51 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
             date = std.parse(remindtime);
         } catch (Exception ignored) {
         }
-        if (i == 1) {
+        if (remindType == 1) {
             remindtime = std.format(date);
-        } else if (i == 2) {
+        } else if (remindType == 2) {
             date.setTime(date.getTime() - 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 3) {
+        } else if (remindType == 3) {
             date.setTime(date.getTime() - 5 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 4) {
+        } else if (remindType == 4) {
             date.setTime(date.getTime() - 10 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 5) {
+        } else if (remindType == 5) {
             date.setTime(date.getTime() - 15 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 6) {
+        } else if (remindType == 6) {
             date.setTime(date.getTime() - 20 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 7) {
+        } else if (remindType == 7) {
             date.setTime(date.getTime() - 25 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 8) {
+        } else if (remindType == 8) {
             date.setTime(date.getTime() - 30 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 9) {
+        } else if (remindType == 9) {
             date.setTime(date.getTime() - 45 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 10) {
+        } else if (remindType == 10) {
             date.setTime(date.getTime() - 60 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 11) {
+        } else if (remindType == 11) {
             date.setTime(date.getTime() - 2 * 60 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 12) {
+        } else if (remindType == 12) {
             date.setTime(date.getTime() - 3 * 60 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 13) {
+        } else if (remindType == 13) {
             date.setTime(date.getTime() - 12 * 60 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 14) {
+        } else if (remindType == 14) {
             date.setTime(date.getTime() - 24 * 60 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 15) {
+        } else if (remindType == 15) {
             date.setTime(date.getTime() - 2 * 24 * 60 * 60 * 1000);
             remindtime = std.format(date);
-        } else if (i == 16) {
+        } else if (remindType == 16) {
             date.setTime(date.getTime() - 7 * 24 * 60 * 60 * 1000);
             remindtime = std.format(date);
         }
@@ -773,66 +766,32 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         return RemindCheck;
     }
 
-    @SuppressLint("NewApi")
-    private static final String CHECK_OP_NO_THROW = "checkOpNoThrow";
-    private static final String OP_POST_NOTIFICATION = "OP_POST_NOTIFICATION";
+    //检测通知是否开启的方法
     public static boolean isNotificationEnabled(Context context) {
-
-        AppOpsManager mAppOps = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
-        ApplicationInfo appInfo = context.getApplicationInfo();
-        String pkg = context.getApplicationContext().getPackageName();
-        int uid = appInfo.uid;
-
-        Class appOpsClass = null;
+        boolean isOpened;
         try {
-            appOpsClass = Class.forName(AppOpsManager.class.getName());
-            Method checkOpNoThrowMethod = appOpsClass.getMethod(CHECK_OP_NO_THROW, Integer.TYPE, Integer.TYPE,
-                    String.class);
-            Field opPostNotificationValue = appOpsClass.getDeclaredField(OP_POST_NOTIFICATION);
-            int value = (Integer) opPostNotificationValue.get(Integer.class);
-            return ((Integer) checkOpNoThrowMethod.invoke(mAppOps, value, uid, pkg) == AppOpsManager.MODE_ALLOWED);
-        } catch (ClassNotFoundException | NoSuchMethodException | NoSuchFieldException | InvocationTargetException | IllegalAccessException e) {
+            isOpened = NotificationManagerCompat.from(context).areNotificationsEnabled();
+        } catch (Exception e) {
             e.printStackTrace();
+            isOpened = false;
         }
-        return false;
+        return isOpened;
     }
 
+    //当通知未开启时弹出框
     private void getNotification() {
-        if (isNotificationEnabled(getContext())) {
+        if (!isNotificationEnabled(getActivity())) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                     .setCancelable(true)
-                    .setTitle("检测到通知权限未开启!")
-                    .setMessage("如果不开启权限会收不到推送通知哦~")
-                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    })
-                    .setPositiveButton("去开启", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            Intent intent = new Intent();
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-                                intent.putExtra("android.provider.extra.APP_PACKAGE", getActivity().getPackageName());
-                            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //5.0
-                                intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-                                intent.putExtra("app_package", getActivity().getPackageName());
-                                intent.putExtra("app_uid", getActivity().getApplicationInfo().uid);
-                                startActivity(intent);
-                            } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) { //4.4
-                                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                intent.addCategory(Intent.CATEGORY_DEFAULT);
-                                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
-                            } else if (Build.VERSION.SDK_INT >= 15) {
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
-                                intent.setData(Uri.fromParts("package", getActivity().getPackageName(), null));
-                            }
-                            startActivity(intent);
-                        }
+                    .setTitle(R.string.notify_authority_dialog_title)
+                    .setMessage(R.string.notify_authority_dialog_message)
+                    .setNegativeButton(R.string.dialog_button_cancel, (dialog, which) -> dialog.cancel())
+                    .setPositiveButton(R.string.notify_authority_dialog_ok_button, (dialog, which) -> {
+                        dialog.cancel();
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                        startActivity(intent);
                     });
             builder.create().show();
         }

@@ -34,4 +34,7 @@
     <string name="delete_schedule_message">Do you want to delete the selected schedule?</string>
     <string name="delete_schedule_title">Delete the schedule</string>
     <string name="local_schedule_head">Unfinished</string>
+    <string name="notify_authority_dialog_title">The notification permission is not enabled!</string>
+    <string name="notify_authority_dialog_message">If you do not enable the permission, you will not receive the push notification ~</string>
+    <string name="notify_authority_dialog_ok_button">To open it</string>
 </resources>

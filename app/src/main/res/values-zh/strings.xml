@@ -35,4 +35,7 @@
     <string name="delete_schedule_message">是否删除选中日程?</string>
     <string name="delete_schedule_title">删除日程</string>
     <string name="local_schedule_head">未完成</string>
+    <string name="notify_authority_dialog_title">检测到通知权限未开启!</string>
+    <string name="notify_authority_dialog_message">如果不开启权限会收不到推送通知哦~</string>
+    <string name="notify_authority_dialog_ok_button">去开启</string>
 </resources>

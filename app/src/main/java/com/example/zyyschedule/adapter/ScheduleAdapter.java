@@ -2,11 +2,15 @@ package com.example.zyyschedule.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.Build;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
@@ -38,6 +42,8 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
         this.mContext = mContext;
     }
 
+    @SuppressLint("RestrictedApi")
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void convert(BaseViewHolder helper, Schedule item) {
 
@@ -51,15 +57,15 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
         vm = new ViewModelProvider(owner).get(CalendarViewModel.class);
         helper.setText(R.id.schedule_title, item.getTitle());
         helper.setText(R.id.delete_radio_button, item.getTitle());
-        helper.setText(R.id.schedule_date,item.getStarttime().substring(0,4)+"年"
-        +Integer.parseInt(item.getStarttime().substring(5,7))+"月"
-                +Integer.parseInt(item.getStarttime().substring(8,10))+"日"
+        helper.setText(R.id.schedule_date, item.getStarttime().substring(0, 4) + "年"
+                + Integer.parseInt(item.getStarttime().substring(5, 7)) + "月"
+                + Integer.parseInt(item.getStarttime().substring(8, 10)) + "日"
         );
         helper.setText(R.id.schedule_time, item.getStarttime().substring(item.getStarttime().length() - 8, item.getStarttime().length() - 3));
         RadioButton radioButton = helper.getView(R.id.delete_radio_button);
         radioButton.setOnCheckedChangeListener(null);
         radioButton.setChecked(item.getEditorChecked());
-        CheckBox checkBox = helper.getView(R.id.schedule_title);
+        AppCompatCheckBox checkBox = helper.getView(R.id.schedule_title);
         checkBox.setOnCheckedChangeListener(null);
         checkBox.setChecked(item.getChecked());
         checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -88,10 +94,10 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
             helper.setTextColor(R.id.schedule_title, Color.BLACK);
             if (date.getTime() <= now.getTime()) {
                 helper.setTextColor(R.id.schedule_time, Color.RED);
-                helper.setTextColor(R.id.schedule_date,Color.RED);
+                helper.setTextColor(R.id.schedule_date, Color.RED);
             } else {
                 helper.setTextColor(R.id.schedule_time, Color.BLACK);
-                helper.setTextColor(R.id.schedule_date,Color.BLACK);
+                helper.setTextColor(R.id.schedule_date, Color.BLACK);
             }
         }
 
@@ -102,7 +108,19 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
             checkBox.setVisibility(View.VISIBLE);
             radioButton.setVisibility(View.GONE);
         }
-
-
+        switch (item.getPriority()) {
+            case 0:
+                checkBox.setSupportButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.priority_null)));
+                break;
+            case 1:
+                checkBox.setSupportButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.priority_low)));
+                break;
+            case 2:
+                checkBox.setSupportButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.priority_middle)));
+                break;
+            case 3:
+                checkBox.setSupportButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.priority_high)));
+                break;
+        }
     }
 }
