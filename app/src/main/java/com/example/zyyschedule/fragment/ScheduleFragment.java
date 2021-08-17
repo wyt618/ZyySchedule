@@ -123,19 +123,11 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
 
         //item长按事件
         labelAdapter.setOnItemLongClickListener((adapter, view, pos) -> {
-            view.setFocusable(true);
-            view.setFocusableInTouchMode(true);
-            view.requestFocus();
-            view.requestFocusFromTouch();
-            view.setOnFocusChangeListener((v, hasFocus) -> {
-                if(hasFocus){
-                    v.findViewById(R.id.trash).setVisibility(View.VISIBLE);
-                }else{
-                    v.findViewById(R.id.trash).setVisibility(View.GONE);
-                }
-            });
+            view.findViewById(R.id.trash).setVisibility(View.VISIBLE);
             return true;
         });
+
+
     }
 
 
