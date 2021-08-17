@@ -11,7 +11,12 @@
         android:icon="@drawable/ic_calendar_24"
         android:title="@string/main_menu_calendar" />
     <item
+        android:id="@+id/attentionFragment"
+        android:icon="@drawable/ic_attention"
+        android:title="@string/main_menu_attention" />
+    <item
         android:id="@+id/settingFragment"
         android:icon="@drawable/ic_setting_24"
         android:title="@string/main_menu_setting" />
+
 </menu>
