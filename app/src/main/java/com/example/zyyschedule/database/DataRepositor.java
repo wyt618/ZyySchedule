@@ -17,62 +17,67 @@ public class DataRepositor {
         scheduleDao = schenduleDataBase.getScheduleDao();
     }
 
-    public void ChangeStateSchedule(Schedule ...schedules){
+    public void ChangeStateSchedule(Schedule... schedules) {
         new ChangeStateScheduleAsyncTask(scheduleDao).execute(schedules);
     }
 
-    public void insertSchedule(Schedule ...schedules){
+    public void insertSchedule(Schedule... schedules) {
         new InsertscheduleAsyncTask(scheduleDao).execute(schedules);
     }
     public void deleteSchedule(Schedule ...schedules){
         new DeleteScheduleAsyncTask(scheduleDao).execute(schedules);
     }
-    public void updateRemindTag(Integer ...id){
+
+    public void updateRemindTag(Integer... id) {
         new updateRemindTagAsyncTask(scheduleDao).execute(id);
     }
 
-    public void deleteLabel(Label ...labels){
-        new DeleteLabelAsyncTask(labelDao,scheduleDao).execute(labels);
+    public void deleteLabel(Label... labels) {
+        new DeleteLabelAsyncTask(labelDao, scheduleDao).execute(labels);
     }
 
-    public void insertLabel(Label ...labels){
+    public void insertLabel(Label... labels) {
         new InsertLabelAsyncTask(labelDao).execute(labels);
     }
 
 
-    public LiveData<List<String>> getScheduleDayOfTag(){
+    public LiveData<List<String>> getScheduleDayOfTag() {
         return scheduleDao.getScheduleDayOfTag();
     }
 
-    public LiveData<List<Schedule>>getUnfinishedScheduleOfDay(String day){
+    public LiveData<List<Schedule>> getUnfinishedScheduleOfDay(String day) {
         return scheduleDao.getUnfinishedScheduleOfDay(day);
     }
-    public LiveData<List<Schedule>>getFinishedScheduleOfDay(String day){
+
+    public LiveData<List<Schedule>> getFinishedScheduleOfDay(String day) {
         return scheduleDao.getFinishedScheduleOfDay(day);
     }
 
-    public LiveData<List<Label>> checkLabel(String title){
+    public LiveData<List<Label>> checkLabel(String title) {
         return labelDao.checkLabel(title);
     }
 
-    public LiveData<List<Label>> getAllLabel(){
+    public LiveData<List<Label>> getAllLabel() {
         return labelDao.getAllLabel();
     }
 
-    public LiveData<List<Schedule>> getALLUnFinishOfRemind(){
+    public LiveData<List<Schedule>> getALLUnFinishOfRemind() {
         return scheduleDao.getALLUnFinishOfRemind();
     }
-    public LiveData<List<Schedule>>allUFScheduleByTime(){
+
+    public LiveData<List<Schedule>> allUFScheduleByTime() {
         return scheduleDao.allUFScheduleByTime();
     }
-    public LiveData<List<Schedule>>allFScheduleByTime(){
+
+    public LiveData<List<Schedule>> allFScheduleByTime() {
         return scheduleDao.allFScheduleByTime();
     }
 
-    public LiveData<List<Schedule>>getFScheduleOfLabel(int labelid){
+    public LiveData<List<Schedule>> getFScheduleOfLabel(int labelid) {
         return scheduleDao.getFScheduleOfLabel(labelid);
     }
-    public LiveData<List<Schedule>>getUFScheduleOfLabel(int labelid){
+
+    public LiveData<List<Schedule>> getUFScheduleOfLabel(int labelid) {
         return scheduleDao.getUFScheduleOfLabel(labelid);
     }
 
@@ -90,7 +95,7 @@ public class DataRepositor {
         }
     }
 
-    static class InsertLabelAsyncTask extends AsyncTask<Label,Void,Void>{
+    static class InsertLabelAsyncTask extends AsyncTask<Label, Void, Void> {
         private LabelDao labelDao;
 
         public InsertLabelAsyncTask(LabelDao labelDao) {
@@ -104,7 +109,7 @@ public class DataRepositor {
         }
     }
 
-    static class ChangeStateScheduleAsyncTask extends AsyncTask<Schedule,Void,Void>{
+    static class ChangeStateScheduleAsyncTask extends AsyncTask<Schedule, Void, Void> {
         private final ScheduleDao scheduleDao;
 
         public ChangeStateScheduleAsyncTask(ScheduleDao scheduleDao) {
@@ -118,11 +123,12 @@ public class DataRepositor {
         }
     }
 
-    static class DeleteLabelAsyncTask extends AsyncTask<Label,Void,Void>{
+    static class DeleteLabelAsyncTask extends AsyncTask<Label, Void, Void> {
         private LabelDao labelDao;
         private ScheduleDao scheduleDao;
 
-        public DeleteLabelAsyncTask(LabelDao labelDao,ScheduleDao scheduleDao) {
+
+        public DeleteLabelAsyncTask(LabelDao labelDao, ScheduleDao scheduleDao) {
             this.labelDao = labelDao;
             this.scheduleDao = scheduleDao;
         }
@@ -130,11 +136,13 @@ public class DataRepositor {
         @Override
         protected Void doInBackground(Label... labels) {
             labelDao.deleteLabel(labels);
-            for(int i=0;i<labels.length;i++){
-               scheduleDao.updateScheduleLabel(labels[i].getId());
+            for (int i = 0; i < labels.length; i++) {
+                scheduleDao.updateScheduleLabel(labels[i].getId());
             }
             return null;
         }
+
+
     }
     static class DeleteScheduleAsyncTask extends AsyncTask<Schedule,Void,Void>{
         private ScheduleDao scheduleDao;
@@ -150,7 +158,7 @@ public class DataRepositor {
         }
     }
 
-    static class updateRemindTagAsyncTask extends AsyncTask<Integer,Void,Void>{
+    static class updateRemindTagAsyncTask extends AsyncTask<Integer, Void, Void> {
         private ScheduleDao scheduleDao;
 
         public updateRemindTagAsyncTask(ScheduleDao scheduleDao) {

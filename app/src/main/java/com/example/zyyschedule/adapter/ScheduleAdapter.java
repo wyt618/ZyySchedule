@@ -76,6 +76,7 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
                 item.setState("0");
             }
             vm.ChangeStateSchedule(item);
+            vm.getScheduleDayOfTag();
         });
 
         radioButton.setOnClickListener(v -> {
