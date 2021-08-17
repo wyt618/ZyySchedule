@@ -5,7 +5,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
@@ -93,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
                 PendingIntent sender = PendingIntent.getBroadcast(this, schedule.getId()+i, intent, 0);
                 AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
                 am.set(AlarmManager.RTC_WAKEUP, date.getTime(), sender);
-                Log.i("label",gson.toJson(schedule));
             }
         }
     }

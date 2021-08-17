@@ -14,7 +14,8 @@
             android:screenOrientation="sensor"/>
         <activity
             android:name=".activity.MainActivity"
-            android:screenOrientation="sensor">
+            android:screenOrientation="sensor"
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

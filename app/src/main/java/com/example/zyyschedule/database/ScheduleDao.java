@@ -19,7 +19,7 @@ public interface ScheduleDao {
     void ChangeStateSchedule(Schedule ...schedules);
     @Query("SELECT * FROM Schedule WHERE starttime like :day and state = 1")
     LiveData<List<Schedule>>getFinishedScheduleOfDay(String day);
-    @Query("SELECT DISTINCT substr(starttime,0,length(starttime)-4) FROM Schedule")
+    @Query("SELECT DISTINCT substr(starttime,0,length(starttime)-7) FROM Schedule WHERE state = 0")
     LiveData<List<String>>getScheduleDayOfTag();
     @Query("DELETE FROM Schedule  WHERE labelid =:i ")
     void updateScheduleLabel(int i);

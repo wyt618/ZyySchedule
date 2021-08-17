@@ -181,7 +181,8 @@
                 android:layout_marginBottom="0dp"
                 android:src="@drawable/fab_add"
                 app:backgroundTint="@color/color_schedule_blue"
-                app:rippleColor="@color/color_schedule_start" />
+                app:rippleColor="@color/color_schedule_start"
+                />
         </RelativeLayout>
 
     </LinearLayout>

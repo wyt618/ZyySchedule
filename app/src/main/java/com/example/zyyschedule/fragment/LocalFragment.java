@@ -21,12 +21,13 @@ import com.example.zyyschedule.databinding.FragmentLocalBinding;
 import com.example.zyyschedule.databinding.ScheduleFootBinding;
 import com.example.zyyschedule.databinding.ScheduleListFinishHeadBinding;
 import com.example.zyyschedule.databinding.ScheduleListHeadBinding;
+
 import com.example.zyyschedule.viewmodel.ScheduleViewModel;
 
-import java.util.Calendar;
+
 import java.util.List;
 
-public class LocalFragment extends Fragment {
+public class LocalFragment extends Fragment  {
     private FragmentLocalBinding binding;
     private ScheduleViewModel vm;
     private ScheduleAdapter scheduleAdapter;
@@ -200,4 +201,6 @@ public class LocalFragment extends Fragment {
             finishSchedules = finishScheduleAdapter.getData();
         });
     }
+
+
 }

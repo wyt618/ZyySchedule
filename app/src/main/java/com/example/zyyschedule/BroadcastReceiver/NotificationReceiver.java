@@ -22,7 +22,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         Schedule schedule = gson.fromJson(strSchedule, Schedule.class);
         if(intent.getAction().equals("Notification_Receiver")){
               Notification.Builder notification = new Notification.Builder(context);
-              notification.setAutoCancel(true);
+              notification.setAutoCancel(false);
               notification.setSmallIcon(R.drawable.notification_icon);
               notification.setContentTitle(schedule.getTitle());
               notification.setContentText(schedule.getDetailed());
