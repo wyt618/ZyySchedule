@@ -59,11 +59,12 @@
                 android:textSize="@dimen/text_size_18sp" />
 
 
-            <Button
+            <ImageView
                 android:id="@+id/add_schedule_selectTime"
-                android:layout_width="@dimen/button_size_40dp"
-                android:layout_height="@dimen/button_size_40dp"
-                android:background="@drawable/ic_baseline_query_builder_24" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_baseline_query_builder_24"
+                android:layout_marginTop="@dimen/space_3dp"/>
 
             <TextView
                 android:id="@+id/textTime"
@@ -77,7 +78,8 @@
                 android:id="@+id/priority_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/priority_flag_null" />
+                app:srcCompat="@drawable/priority_flag_null"
+                android:layout_marginTop="@dimen/space_3dp"/>
 
             <TextView
                 android:id="@+id/text_priority"
@@ -95,11 +97,12 @@
                 android:visibility="gone"
                 />
 
-            <Button
+            <ImageView
                 android:id="@+id/label_button"
-                android:layout_width="@dimen/button_size_40dp"
-                android:layout_height="@dimen/button_size_40dp"
-                android:background="@drawable/ic_baseline_local_offer_24" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_baseline_local_offer_24"
+                android:layout_marginTop="@dimen/space_3dp"/>
 
             <TextView
                 android:id="@+id/schedule_label"
@@ -118,11 +121,12 @@
                 android:visibility="gone"
                 />
 
-            <Button
+            <ImageView
                 android:id="@+id/remind_button"
-                android:layout_width="@dimen/button_size_40dp"
-                android:layout_height="@dimen/button_size_40dp"
-                android:background="@drawable/ic_baseline_add_alert_24" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_baseline_add_alert_24"
+                android:layout_marginTop="@dimen/space_3dp"/>
             <TextView
                 android:id="@+id/remind_text"
                 android:layout_width="wrap_content"

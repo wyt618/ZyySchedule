@@ -5,7 +5,9 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -17,12 +19,13 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.zyyschedule.BroadcastReceiver.NotificationReceiver;
+import com.example.zyyschedule.broadcastreceiver.NotificationReceiver;
 import com.example.zyyschedule.R;
 import com.example.zyyschedule.database.Schedule;
 import com.example.zyyschedule.databinding.ActivityMainBinding;
 import com.example.zyyschedule.viewmodel.MainActivityViewModel;
 import com.google.gson.Gson;
+import com.jeremyliao.liveeventbus.LiveEventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,13 +52,19 @@ public class MainActivity extends AppCompatActivity {
 
         vm.getALLUnFinishOfRemind().observe(this, schedules -> {
             for(int i=0;i<schedules.size();i++){
-                if(!schedules.get(i).getRemind().isEmpty() || !schedules.get(i).isTagRemind()){
+                if(!schedules.get(i).getRemind().isEmpty() && !schedules.get(i).isTagRemind()){
                     setNotificationRemind(schedules.get(i));
                     vm.updateRemindTag(schedules.get(i).getId());
                 }
             }
         });
-
+        LiveEventBus
+                .get("some_key", String.class)
+                .observe(this, s -> {
+                    if(s.equals("gone_navigation")){
+                        binding.bottomNavigationView.setVisibility(View.GONE);
+                    }
+                });
     }
 
     //双击退出
@@ -88,8 +97,9 @@ public class MainActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 Intent intent = new Intent(this, NotificationReceiver.class);
                 intent.setAction("Notification_Receiver");
-                intent.putExtra("remind_schedule", gson.toJson(schedule));
-                PendingIntent sender = PendingIntent.getBroadcast(this, schedule.getId()+i, intent, 0);
+                intent.putExtra("remindSchedule", gson.toJson(schedule));
+                intent.putExtra("PendingIntentCode",schedule.getId()+i*1000);
+                PendingIntent sender = PendingIntent.getBroadcast(this, schedule.getId()+i*1000, intent, 0);
                 AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
                 am.set(AlarmManager.RTC_WAKEUP, date.getTime(), sender);
             }

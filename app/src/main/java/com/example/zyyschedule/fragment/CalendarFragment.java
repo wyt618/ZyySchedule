@@ -52,6 +52,7 @@ import com.example.zyyschedule.databinding.TimepickerDialogBinding;
 import com.example.zyyschedule.viewmodel.CalendarViewModel;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
+import com.jeremyliao.liveeventbus.LiveEventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -294,6 +295,9 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         });
         //完成和未完成日程item长按事件
         scheduleAdapter.setOnItemLongClickListener((adapter, view, position) -> {
+//            LiveEventBus
+//                    .get("some_key")
+//                    .post("gone_navigation");
             binding.fabBtn.setVisibility(View.GONE);
             scheduleListHeadBinding.deleteSchedule.setVisibility(View.VISIBLE);
             scheduleListHeadBinding.scheduleListHead.setVisibility(View.GONE);
