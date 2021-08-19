@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'kotlin-android'
 }
 
 android {
@@ -54,5 +55,5 @@ dependencies {
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'io.github.jeremyliao:live-event-bus-x:1.8.0'
-
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
