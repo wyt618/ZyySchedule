@@ -27,7 +27,7 @@ import java.util.*
 import kotlin.system.exitProcess
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-open class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     private var firstTime: Long = 0
     private lateinit var vm: MainActivityViewModel
     override fun onCreate(savedInstanceState: Bundle?) {

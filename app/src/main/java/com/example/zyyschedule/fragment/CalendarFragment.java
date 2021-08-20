@@ -52,7 +52,6 @@ import com.example.zyyschedule.databinding.TimepickerDialogBinding;
 import com.example.zyyschedule.viewmodel.CalendarViewModel;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarView;
-import com.jeremyliao.liveeventbus.LiveEventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -476,8 +475,9 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         priorityDialogBinding.priorityList.setLayoutManager(layoutManager);
         ArrayList<PriorityBean> priorityData = vm.PriorityListData();
-        priorityListAdapter = new PriorityListAdapter(R.layout.priority_item, priorityData);
-        priorityListAdapter.setContext(getContext());
+        priorityListAdapter = new PriorityListAdapter(R.layout.priority_item);
+        priorityListAdapter.setList(priorityData);
+        priorityListAdapter.getMContext(getContext());
         priorityListAdapter.setOnItemClickListener((adapter, view, position) -> {
             TextView text = view.findViewById(R.id.priority_title);
             ImageView flag = view.findViewById(R.id.priority_flag);

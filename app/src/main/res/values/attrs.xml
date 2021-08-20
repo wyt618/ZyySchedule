@@ -9,5 +9,8 @@
         <!-- 可滑动小球的颜色 -->
         <attr name="center_color" format="color" />
     </declare-styleable>
+    <declare-styleable name="EditTextWithClear">
+        <attr name="clearIcon" format="reference"/>
+    </declare-styleable>
 
 </resources>

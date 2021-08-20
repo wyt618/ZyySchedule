@@ -22,7 +22,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginBottom="@dimen/space_10dp">
+            android:layout_marginBottom="@dimen/space_10dp"
+            android:layout_marginTop="@dimen/space_10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -44,7 +45,7 @@
                     android:textSize="@dimen/text_size_24sp"
                     android:textColor="@color/black"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content" />
+                    android:layout_width="0dp" />
                 <ImageView
                     android:id="@+id/add_label_button"
                     android:layout_width="@dimen/space_70dp"
@@ -73,14 +74,15 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/space_18dp"
+                    android:layout_marginStart="@dimen/space_18dp"
                     android:background="@drawable/bg_add_event_set_item">
 
                     <com.example.zyyschedule.widget.EditTextWithClear
                         android:id="@+id/Label_title"
+                        style="@style/Widget.AppCompat.EditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="@dimen/space_30dp"
+                        android:layout_marginEnd="@dimen/space_30dp"
                         android:background="@color/colorTranslate"
                         android:ellipsize="start"
                         android:hint="@string/event_set_list_name"
@@ -88,7 +90,9 @@
                         android:singleLine="true"
                         android:textColor="@color/color_add_event_text"
                         android:textColorHint="@color/color_schedule_finish_title_text"
-                        android:textSize="@dimen/text_size_16sp" />
+                        android:textSize="@dimen/text_size_16sp"
+                        app:clearIcon="@drawable/ic_baseline_clear_24"
+                       />
 
 
                 </RelativeLayout>
@@ -112,7 +116,7 @@
                     android:id="@+id/LabelSetColor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/space_18dp"
+                    android:layout_marginStart="@dimen/space_18dp"
                     android:background="@drawable/bg_add_event_set_item">
 
                     <TextView

@@ -2,6 +2,7 @@ package com.example.zyyschedule.activity
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,7 +18,7 @@ import com.example.zyyschedule.databinding.ActivityAddLabelBinding
 import com.example.zyyschedule.databinding.ColorpickerDialogBinding
 import com.example.zyyschedule.viewmodel.AddLabelViewModel
 
-open class AddLabelActivity : AppCompatActivity(), View.OnClickListener {
+class AddLabelActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityAddLabelBinding
     private lateinit var colorPickerDialogBinding: ColorpickerDialogBinding
     private var labelColor: Int = -0x98641c
@@ -46,7 +47,7 @@ open class AddLabelActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.LabelSetColor -> gotoColorPicker()
-            R.id.add_label_exit -> this.finish()
+            R.id.add_label_exit ->  this.finish()
             R.id.add_label_button -> addLabel()
         }
     }
@@ -64,40 +65,42 @@ open class AddLabelActivity : AppCompatActivity(), View.OnClickListener {
                 binding.vLabelSetColor.setBackgroundColor(labelColor)
                 dialog.dismiss()
             }
-            setNeutralButton(R.string.dialog_button_cancel){ dialog: DialogInterface, _: Int ->
+            setNeutralButton(R.string.dialog_button_cancel) { dialog: DialogInterface, _: Int ->
                 dialog.dismiss()
             }
         }
         builder.create().show()
     }
 
-    private fun addLabel(){
-        if(binding.LabelTitle.text!!.isNotBlank()){
-            val titleText:String = binding.LabelTitle.text.toString()
-            vm.checkLabelTitle(titleText).observe(this,){labels->
-                if(labels.size!=0){
-                    val titleDouble:AlertDialog.Builder = AlertDialog.Builder(this)
+    private fun addLabel() {
+        if (binding.LabelTitle.text!!.isNotBlank()) {
+            val titleText: String = binding.LabelTitle.text.toString()
+            vm.checkLabelTitle(titleText).observe(this) { labels ->
+                if (labels.size != 0) {
+                    val titleDouble: AlertDialog.Builder = AlertDialog.Builder(this)
                     titleDouble.apply {
                         setMessage(R.string.check_labeltitle_messgae)
                         setPositiveButton(R.string.add_label_dialog_neturl) { dialog: DialogInterface, _: Int ->
                             dialog.dismiss()
                         }
                     }
-                }else{
+                    titleDouble.show()
+                } else {
                     label = Label()
                     label.apply {
                         color = labelColor
                         title = binding.LabelTitle.text.toString()
                     }
                     vm.insertLabel(label)
-                    this.finish()
+                    val intent = Intent(this, MainActivity::class.java)
+                    this.startActivity(intent)
                 }
             }
-        }else{
-            val titleBlankDialog:AlertDialog.Builder = AlertDialog.Builder(this)
+        } else {
+            val titleBlankDialog: AlertDialog.Builder = AlertDialog.Builder(this)
             titleBlankDialog.apply {
                 setMessage(R.string.add_label_dialog_messgae)
-                setPositiveButton(R.string.add_label_dialog_neturl){ dialog: DialogInterface, _: Int ->
+                setPositiveButton(R.string.add_label_dialog_neturl) { dialog: DialogInterface, _: Int ->
                     dialog.dismiss()
                 }
             }
