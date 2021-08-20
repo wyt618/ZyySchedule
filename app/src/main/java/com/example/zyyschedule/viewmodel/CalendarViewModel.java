@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.zyyschedule.PriorityBean;
 import com.example.zyyschedule.RemindBean;
-import com.example.zyyschedule.database.DataRepositor;
+import com.example.zyyschedule.database.DataRepository;
 import com.example.zyyschedule.database.Label;
 import com.example.zyyschedule.database.Schedule;
 
@@ -29,7 +29,7 @@ public class CalendarViewModel extends AndroidViewModel {
     public MutableLiveData<String> getPriority() {
         return priority;
     }
-    private final DataRepositor dataRepositor;
+    private final DataRepository dataRepository;
     private PriorityBean priorityBean;
     private RemindBean remindBean;
 
@@ -39,7 +39,7 @@ public class CalendarViewModel extends AndroidViewModel {
 
     public CalendarViewModel(@NonNull Application application) {
         super(application);
-        dataRepositor = new DataRepositor(application);
+        dataRepository = new DataRepository(application);
         Calendar calendar = Calendar.getInstance();
         day = calendar.get(Calendar.DAY_OF_MONTH);
         AddScheduleDateAgo = new MutableLiveData<>();
@@ -55,25 +55,25 @@ public class CalendarViewModel extends AndroidViewModel {
         remindtext.setValue("无提醒");
     }
     public void insertSchedule(Schedule ...schedules){
-        dataRepositor.insertSchedule(schedules);
+        dataRepository.insertSchedule(schedules);
     }
 
     public void deleteSchedule(Schedule ...schedules){
-        dataRepositor.deleteSchedule(schedules);
+        dataRepository.deleteSchedule(schedules);
     }
 
     public LiveData<List<Label>>getAllLabel(){
-        return dataRepositor.getAllLabel();
+        return dataRepository.getAllLabel();
     }
 
     public LiveData<List<Schedule>>getUnfinishedScheduleOfDay(String day){
-       return dataRepositor.getUnfinishedScheduleOfDay(day);
+       return dataRepository.getUnfinishedScheduleOfDay(day);
     }
     public LiveData<List<Schedule>>getFinishedScheduleOfDay(String day){
-        return dataRepositor.getFinishedScheduleOfDay(day);
+        return dataRepository.getFinishedScheduleOfDay(day);
     }
     public LiveData<List<String>> getScheduleDayOfTag(){
-        return dataRepositor.getScheduleDayOfTag();
+        return dataRepository.getScheduleDayOfTag();
     }
 
     public MutableLiveData<String> getAddScheduleDateAgo() {
@@ -92,7 +92,7 @@ public class CalendarViewModel extends AndroidViewModel {
         AddScheduleTime = addScheduleTime;
     }
     public void ChangeStateSchedule(Schedule ...schedules){
-        dataRepositor.ChangeStateSchedule(schedules);
+        dataRepository.ChangeStateSchedule(schedules);
     }
 
     public int getDay() {

@@ -7,11 +7,11 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-public class DataRepositor {
+public class DataRepository {
     private LabelDao labelDao;
     private ScheduleDao scheduleDao;
 
-    public DataRepositor(Context context) {
+    public DataRepository(Context context) {
         SchenduleDataBase schenduleDataBase = SchenduleDataBase.getDataBase(context);
         labelDao = schenduleDataBase.getLabelDao();
         scheduleDao = schenduleDataBase.getScheduleDao();

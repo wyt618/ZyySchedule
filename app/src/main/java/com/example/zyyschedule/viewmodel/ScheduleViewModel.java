@@ -6,51 +6,51 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.zyyschedule.database.DataRepositor;
+import com.example.zyyschedule.database.DataRepository;
 import com.example.zyyschedule.database.Label;
 import com.example.zyyschedule.database.Schedule;
 
 import java.util.List;
 
 public class ScheduleViewModel extends AndroidViewModel {
-    private final DataRepositor dataRepositor;
+    private final DataRepository dataRepository;
 
 
 
     public ScheduleViewModel(@NonNull Application application) {
         super(application);
-        dataRepositor = new DataRepositor(application);
+        dataRepository = new DataRepository(application);
 
     }
     public LiveData<List<Label>> getAllLabel(){
-        return dataRepositor.getAllLabel();
+        return dataRepository.getAllLabel();
     }
 
     public void deleteLabel(Label ...labels){
-        dataRepositor.deleteLabel(labels);
+        dataRepository.deleteLabel(labels);
     }
     public LiveData<List<Schedule>>getUnfinishedScheduleOfDay(String day){
-        return dataRepositor.getUnfinishedScheduleOfDay(day);
+        return dataRepository.getUnfinishedScheduleOfDay(day);
     }
     public LiveData<List<Schedule>>getFinishedScheduleOfDay(String day){
-        return dataRepositor.getFinishedScheduleOfDay(day);
+        return dataRepository.getFinishedScheduleOfDay(day);
     }
     public void deleteSchedule(Schedule ...schedules){
-        dataRepositor.deleteSchedule(schedules);
+        dataRepository.deleteSchedule(schedules);
     }
 
     public LiveData<List<Schedule>>allUFScheduleByTime(){
-       return dataRepositor.allUFScheduleByTime();
+       return dataRepository.allUFScheduleByTime();
     }
     public LiveData<List<Schedule>>allFScheduleByTime(){
-        return dataRepositor.allFScheduleByTime();
+        return dataRepository.allFScheduleByTime();
     }
 
     public LiveData<List<Schedule>>getFScheduleOfLabel(int labelid){
-        return dataRepositor.getFScheduleOfLabel(labelid);
+        return dataRepository.getFScheduleOfLabel(labelid);
     }
     public LiveData<List<Schedule>>getUFScheduleOfLabel(int labelid){
-        return dataRepositor.getUFScheduleOfLabel(labelid);
+        return dataRepository.getUFScheduleOfLabel(labelid);
     }
 
 }

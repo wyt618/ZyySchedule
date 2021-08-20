@@ -5,7 +5,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
@@ -27,9 +26,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.system.exitProcess
 
-class MainActivity : AppCompatActivity() {
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+open class MainActivity : AppCompatActivity() {
     private var firstTime: Long = 0
-    private var vm: MainActivityViewModel? = null
+    private lateinit var vm: MainActivityViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding: ActivityMainBinding =  DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -39,11 +39,11 @@ class MainActivity : AppCompatActivity() {
         val configuration: AppBarConfiguration=AppBarConfiguration.Builder(binding.bottomNavigationView.menu).build()
         NavigationUI.setupActionBarWithNavController(this, navController, configuration)
         NavigationUI.setupWithNavController(binding.bottomNavigationView, navController)
-        vm!!.allUnFinishOfRemind.observe(this, { schedules: List<Schedule> ->
+        vm.allUnFinishOfRemind.observe(this, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 if (schedules[i].remind.isNotEmpty() && !schedules[i].isTagRemind) {
                     setNotificationRemind(schedules[i])
-                    vm!!.updateRemindTag(schedules[i].id)
+                    vm.updateRemindTag(schedules[i].id)
                 }
             }
         })
@@ -74,11 +74,11 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SimpleDateFormat")
     private fun setNotificationRemind(schedule: Schedule){
-        val remind = schedule.remind.split(",").toTypedArray()
+        val remind = schedule.remind.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()
         val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         var date = Date()
         val now = Date()
-        for(i in 0..remind.size ){
+        for(i in remind.indices ){
             try {
                 date = std.parse(remind[i])
             }catch (ignored: Exception){
