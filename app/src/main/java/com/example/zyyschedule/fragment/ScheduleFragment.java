@@ -118,7 +118,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener {
             WindowManager m = getActivity().getWindowManager();
             DisplayMetrics d = new DisplayMetrics();
             m.getDefaultDisplay().getMetrics(d);
-            params.x = view.getWidth()-21;
+            params.x = view.getWidth()-50;
             params.y = -d.heightPixels / 2+view.getTop()+427;
             deleteDialog.getWindow().setAttributes(params);
             deleteDialog.getWindow().setGravity(Gravity.START);

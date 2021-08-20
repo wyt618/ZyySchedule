@@ -7,7 +7,7 @@
     android:background="?attr/selectableItemBackground"
     android:layout_marginStart="@dimen/space_6dp">
 
-    <CheckBox
+    <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/remind_check_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

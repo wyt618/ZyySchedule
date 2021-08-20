@@ -76,7 +76,7 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener {
         if (binding.LabelTitle.text!!.isNotBlank()) {
             val titleText: String = binding.LabelTitle.text.toString()
             vm.checkLabelTitle(titleText).observe(this) { labels ->
-                if (labels.size != 0) {
+                if (labels.isNotEmpty()) {
                     val titleDouble: AlertDialog.Builder = AlertDialog.Builder(this)
                     titleDouble.apply {
                         setMessage(R.string.check_labeltitle_messgae)

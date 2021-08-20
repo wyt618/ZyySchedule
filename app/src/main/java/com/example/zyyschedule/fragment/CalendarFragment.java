@@ -283,7 +283,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         remindListHeadBinding.remindHeadBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 remindListHeadBinding.remindHeadBox.setClickable(false);
-                remindAdapter.addRemind = new StringBuffer("无提醒");
+                remindAdapter.setAddRemind(new StringBuffer("无提醒"));
                 for (int i = 0; i < remindAdapter.getData().size(); i++) {
                     remindAdapter.getData().get(i).setRemindIsChecked(false);
                     remindAdapter.notifyDataSetChanged();
@@ -537,10 +537,10 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         builder.setTitle(R.string.remind_dialog_title)
                 .setView(remindDialogBinding.getRoot())
                 .setPositiveButton(R.string.dialog_button_finish, (dialog, which) -> {
-                    if (remindAdapter.addRemind.toString().equals("无提醒")) {
-                        addScheduleBinding.remindText.setText(remindAdapter.addRemind.toString());
+                    if (remindAdapter.getAddRemind().toString().equals("无提醒")) {
+                        addScheduleBinding.remindText.setText(remindAdapter.getAddRemind().toString());
                     } else {
-                        addScheduleBinding.remindText.setText(remindAdapter.addRemind.substring(4, remindAdapter.addRemind.length()));
+                        addScheduleBinding.remindText.setText(remindAdapter.getAddRemind().substring(4, remindAdapter.getAddRemind().length()));
                     }
                     getNotification();
                 })
@@ -589,7 +589,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     //将提醒字符转化为时间字符
     private String RemindChangeTime() {
         String remindtime;
-        remindtime = remindAdapter.addRemind.toString();
+        remindtime = remindAdapter.getAddRemind().toString();
         if (remindtime.equals("无提醒")) {
             remindtime = "";
         } else {
