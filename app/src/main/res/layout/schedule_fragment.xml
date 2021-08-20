@@ -78,7 +78,7 @@
                 android:id="@+id/label_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/space_250dp"
-                android:layout_marginLeft="@dimen/space_30dp"
+                android:layout_marginStart="@dimen/space_10dp"
                 android:layout_marginTop="@dimen/space_250dp" />
 
         </com.google.android.material.navigation.NavigationView>

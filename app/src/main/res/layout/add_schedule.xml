@@ -78,7 +78,7 @@
                 android:id="@+id/priority_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/priority_flag_null"
+                app:srcCompat="@drawable/priority_flag"
                 android:layout_marginTop="@dimen/space_3dp"/>
 
             <TextView

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -12,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
 import com.example.zyyschedule.R;
@@ -25,6 +28,7 @@ import java.util.Date;
 public class RemindDialogReceiver extends BroadcastReceiver {
     private RemindGlobalDialogBinding binding;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onReceive(Context context, Intent intent) {
         Gson gson = new Gson();
@@ -64,20 +68,24 @@ public class RemindDialogReceiver extends BroadcastReceiver {
             }
             return false;
         });//设置back退出弹窗
-        switch (schedule.getPriority()) {
-            case 0:
-                binding.priorityIcon.setImageResource(R.drawable.priority_flag_null);
-                break;
-            case 1:
-                binding.priorityIcon.setImageResource(R.drawable.priority_flag_low);
-                break;
-            case 2:
-                binding.priorityIcon.setImageResource(R.drawable.priority_flag_middle);
-                break;
-            case 3:
-                binding.priorityIcon.setImageResource(R.drawable.priority_flag_high);
-                break;
+        Drawable flagDrawable = ContextCompat.getDrawable(context, R.drawable.priority_flag);
+        if (flagDrawable != null) {
+            switch (schedule.getPriority()) {
+                case 0:
+                    flagDrawable.setTint(ContextCompat.getColor(context, R.color.priority_null));
+                    break;
+                case 1:
+                    flagDrawable.setTint(ContextCompat.getColor(context, R.color.priority_low));
+                    break;
+                case 2:
+                    flagDrawable.setTint(ContextCompat.getColor(context, R.color.priority_middle));
+                    break;
+                case 3:
+                    flagDrawable.setTint(ContextCompat.getColor(context, R.color.priority_high));
+                    break;
+            }
         }
+        binding.priorityIcon.setImageDrawable(flagDrawable);
         if (schedule.getPriority() != 0) {
             binding.priorityIcon.setVisibility(View.VISIBLE);
         }

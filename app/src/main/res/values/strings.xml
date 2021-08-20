@@ -12,7 +12,7 @@
     <string name="add_schedule_timepicker">To choose time</string>
     <string name="title_today">Today</string>
     <string name="title_local_schedule">Local schedule</string>
-    <string name="title_not_classified">Not classified</string>
+    <string name="title_not_classified">No Label</string>
     <string name="title_plus_list">Add a label</string>
     <string name="cancel">Clear</string>
     <string name="schedule_setting">Add labels</string>

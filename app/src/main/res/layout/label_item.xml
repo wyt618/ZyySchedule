@@ -13,31 +13,16 @@
         android:paddingTop="@dimen/space_10dp"
         android:background="?attr/selectableItemBackground">
 
-
-        <LinearLayout
-            android:id="@+id/label_color_view"
-            android:layout_width="@dimen/space_3dp"
-            android:layout_height="@dimen/space_20dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.039"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        </LinearLayout>
-
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/label_color_view"
+            app:layout_constraintHorizontal_bias="0.041"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.58"
-            app:srcCompat="@drawable/ic_label_24" />
+            app:srcCompat="@drawable/ic_schedule_24" />
 
         <TextView
             android:id="@+id/label_name"
@@ -50,10 +35,9 @@
             android:textSize="@dimen/text_size_18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.033"
             app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.58" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/label_id"

@@ -174,16 +174,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginEnd="5dp"
-                android:layout_marginRight="5dp"
                 android:layout_marginBottom="0dp"
                 android:src="@drawable/fab_add"
                 app:backgroundTint="@color/color_schedule_blue"
                 app:rippleColor="@color/color_schedule_start"
                 />
+            <LinearLayout
+                android:id="@+id/bottom_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@android:color/darker_gray">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    />
+            </LinearLayout>
         </RelativeLayout>
+
 
     </LinearLayout>
 
