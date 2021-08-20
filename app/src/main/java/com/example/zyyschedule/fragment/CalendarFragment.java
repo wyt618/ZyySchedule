@@ -286,7 +286,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 remindListHeadBinding.remindHeadBox.setClickable(false);
                 remindAdapter.addRemind = new StringBuffer("无提醒");
                 for (int i = 0; i < remindAdapter.getData().size(); i++) {
-                    remindAdapter.getData().get(i).setRemindisChecked(false);
+                    remindAdapter.getData().get(i).setRemindIsChecked(false);
                     remindAdapter.notifyDataSetChanged();
                 }
             } else {
@@ -475,8 +475,8 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         priorityDialogBinding.priorityList.setLayoutManager(layoutManager);
-        ArrayList<PriorityBean> prioritydata = vm.PriorityListData();
-        priorityListAdapter = new PriorityListAdapter(R.layout.priority_item, prioritydata);
+        ArrayList<PriorityBean> priorityData = vm.PriorityListData();
+        priorityListAdapter = new PriorityListAdapter(R.layout.priority_item, priorityData);
         priorityListAdapter.setContext(getContext());
         priorityListAdapter.setOnItemClickListener((adapter, view, position) -> {
             TextView text = view.findViewById(R.id.priority_title);
@@ -523,7 +523,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     private void gotoAddRemind() {
         int flag = 0;
         for (int i = 0; i < remindAdapter.getData().size(); i++) {
-            if (!remindAdapter.getData().get(i).isRemindisChecked()) {
+            if (!remindAdapter.getData().get(i).getRemindIsChecked()) {
                 flag = flag + 1;
             }
         }

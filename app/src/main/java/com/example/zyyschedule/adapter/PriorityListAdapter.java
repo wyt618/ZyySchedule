@@ -27,17 +27,17 @@ public class PriorityListAdapter extends BaseQuickAdapter<PriorityBean, BaseView
 
     @Override
     protected void convert(BaseViewHolder helper, PriorityBean item) {
-        helper.setText(R.id.priority_title, item.getPrioritytitle());
-        if (item.getPrioritytype() == 0) {
+        helper.setText(R.id.priority_title, item.getPriorityTitle());
+        if (item.getPriorityType() == 0) {
             helper.setTextColor(R.id.priority_title, ContextCompat.getColor(context, R.color.priority_null));
             helper.setImageResource(R.id.priority_flag, R.drawable.priority_flag_null);
-        } else if (item.getPrioritytype() == 1) {
+        } else if (item.getPriorityType() == 1) {
             helper.setTextColor(R.id.priority_title, ContextCompat.getColor(context, R.color.priority_low));
             helper.setImageResource(R.id.priority_flag, R.drawable.priority_flag_low);
-        } else if (item.getPrioritytype() == 2) {
+        } else if (item.getPriorityType() == 2) {
             helper.setTextColor(R.id.priority_title, ContextCompat.getColor(context, R.color.priority_middle));
             helper.setImageResource(R.id.priority_flag, R.drawable.priority_flag_middle);
-        } else if (item.getPrioritytype() == 3) {
+        } else if (item.getPriorityType() == 3) {
             helper.setTextColor(R.id.priority_title, ContextCompat.getColor(context, R.color.priority_high));
             helper.setImageResource(R.id.priority_flag, R.drawable.priority_flag_high);
         }

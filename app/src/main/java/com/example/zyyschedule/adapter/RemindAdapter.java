@@ -20,19 +20,19 @@ public class RemindAdapter extends BaseQuickAdapter<RemindBean, BaseViewHolder> 
 
     @Override
     protected void convert(BaseViewHolder helper, RemindBean item) {
-        helper.setText(R.id.remind_check_box, item.getRemindtitle());
+        helper.setText(R.id.remind_check_box, item.getRemindTitle());
         CheckBox checkBox = helper.getView(R.id.remind_check_box);
         checkBox.setOnCheckedChangeListener(null);
-        checkBox.setChecked(item.isRemindisChecked());
+        checkBox.setChecked(item.getRemindIsChecked());
         checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            item.setRemindisChecked(isChecked);
+            item.setRemindIsChecked(isChecked);
             if (isChecked) {
                 remindListHeadBinding.remindHeadBox.setChecked(false);
-                addRemind.append("," + item.getRemindtitle());
+                addRemind.append(",").append(item.getRemindTitle());
             } else {
                 int flag = 0;
                 for (int i = 0; i < getData().size(); i++) {
-                    if (!getData().get(i).isRemindisChecked()) {
+                    if (!getData().get(i).getRemindIsChecked()) {
                         flag = flag + 1;
                     }
                 }
@@ -40,7 +40,7 @@ public class RemindAdapter extends BaseQuickAdapter<RemindBean, BaseViewHolder> 
                     remindListHeadBinding.remindHeadBox.setChecked(true);
                     addRemind = new StringBuffer("无提醒");
                 }
-                addRemind = new StringBuffer(addRemind.toString().replace("," + item.getRemindtitle(), ""));
+                addRemind = new StringBuffer(addRemind.toString().replace("," + item.getRemindTitle(), ""));
             }
         });
     }
