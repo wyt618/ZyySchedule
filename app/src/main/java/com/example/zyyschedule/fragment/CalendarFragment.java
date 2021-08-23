@@ -561,17 +561,17 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     private void AddSchedule() {
         Schedule schedule = new Schedule();
         String starttime = selectYear + "-" + ProcessingTime(selectMonth) + "-" + ProcessingTime(selectDay) + " " + vm.AddScheduleTime.getValue() + ":00";
-        schedule.setStarttime(starttime);
-        schedule.setEndtime(null);
+        schedule.setStartTime(starttime);
+        schedule.setEndTime(null);
         schedule.setRemind(RemindChangeTime());
         schedule.setTitle(addScheduleBinding.editText.getText().toString());
         schedule.setDetailed(null);
         schedule.setState("0");
         schedule.setPriority(Integer.parseInt(addScheduleBinding.priorityId.getText().toString()));
         if (addScheduleBinding.scheduleLabelId.getText().toString().trim().isEmpty()) {
-            schedule.setLabelid(0);
+            schedule.setLabelId(0);
         } else {
-            schedule.setLabelid(Integer.parseInt(addScheduleBinding.scheduleLabelId.getText().toString().trim()));
+            schedule.setLabelId(Integer.parseInt(addScheduleBinding.scheduleLabelId.getText().toString().trim()));
         }
         vm.insertSchedule(schedule);
         UpdateScheduleList();
@@ -728,12 +728,12 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 .setMessage(R.string.delete_schedule_message)
                 .setPositiveButton(R.string.dialog_button_ok, (dialog, which) -> {
                     for (int i = 0; i < Schedules.size(); i++) {
-                        if (Schedules.get(i).getEditorChecked()) {
+                        if (Schedules.get(i).isEditorChecked()) {
                             vm.deleteSchedule(Schedules.get(i));
                         }
                     }
                     for (int i = 0; i < finishSchedules.size(); i++) {
-                        if (finishSchedules.get(i).getEditorChecked()) {
+                        if (finishSchedules.get(i).isEditorChecked()) {
                             vm.deleteSchedule(finishSchedules.get(i));
                         }
                     }

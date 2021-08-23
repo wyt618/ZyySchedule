@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -22,17 +23,17 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityAddLabelBinding
     private lateinit var colorPickerDialogBinding: ColorpickerDialogBinding
     private var labelColor: Int = -0x98641c
-    private lateinit var vm: AddLabelViewModel
+    private val vm: AddLabelViewModel by viewModels()
     private lateinit var label: Label
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_add_label)
+        binding = ActivityAddLabelBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         supportActionBar?.hide()
-        colorPickerDialogBinding = ColorpickerDialogBinding.inflate(LayoutInflater.from(this))
+        colorPickerDialogBinding = ColorpickerDialogBinding.inflate(layoutInflater)
         binding.LabelSetColor.setOnClickListener(this)
-        vm = ViewModelProvider(this).get(AddLabelViewModel::class.java)
         colorPickerDialogBinding.colorPickView.setOnColorChangedListener { a: Int, r: Int, g: Int, b: Int ->
             colorPickerDialogBinding.txtColor.apply {
                 text = "R:$r\tG:$g\tB:$b\t" + colorPickerDialogBinding.colorPickView.colorStr
@@ -47,7 +48,7 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.LabelSetColor -> gotoColorPicker()
-            R.id.add_label_exit ->  this.finish()
+            R.id.add_label_exit -> this.finish()
             R.id.add_label_button -> addLabel()
         }
     }

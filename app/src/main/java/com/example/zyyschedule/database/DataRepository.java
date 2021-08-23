@@ -12,9 +12,9 @@ public class DataRepository {
     private ScheduleDao scheduleDao;
 
     public DataRepository(Context context) {
-        SchenduleDataBase schenduleDataBase = SchenduleDataBase.getDataBase(context);
-        labelDao = schenduleDataBase.getLabelDao();
-        scheduleDao = schenduleDataBase.getScheduleDao();
+        ScheduleDataBase scheduleDataBase =  ScheduleDataBase.Companion.getDataBase(context);
+        labelDao = scheduleDataBase.getLabelDao();
+        scheduleDao = scheduleDataBase.getScheduleDao();
     }
 
     public void ChangeStateSchedule(Schedule... schedules) {

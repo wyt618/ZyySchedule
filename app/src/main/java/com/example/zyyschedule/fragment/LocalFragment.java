@@ -149,12 +149,12 @@ public class LocalFragment extends Fragment  {
         builder.setMessage(R.string.delete_schedule_message)
                 .setPositiveButton(R.string.dialog_button_ok, (dialog, which) -> {
                     for (int i = 0; i < Schedules.size(); i++) {
-                        if (Schedules.get(i).getEditorChecked()) {
+                        if (Schedules.get(i).isEditorChecked()) {
                             vm.deleteSchedule(Schedules.get(i));
                         }
                     }
                     for (int i = 0; i < finishSchedules.size(); i++) {
-                        if (finishSchedules.get(i).getEditorChecked()) {
+                        if (finishSchedules.get(i).isEditorChecked()) {
                             vm.deleteSchedule(finishSchedules.get(i));
                         }
                     }

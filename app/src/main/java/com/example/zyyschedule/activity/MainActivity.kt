@@ -8,9 +8,8 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
@@ -29,19 +28,20 @@ import kotlin.system.exitProcess
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class MainActivity : AppCompatActivity() {
     private var firstTime: Long = 0
-    private lateinit var vm: MainActivityViewModel
+    private val vm: MainActivityViewModel by viewModels()
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding: ActivityMainBinding =  DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         supportActionBar?.hide()
-        vm = ViewModelProvider(this).get(MainActivityViewModel::class.java)
-        val navController:NavController = Navigation.findNavController(this, R.id.fragment)
-        val configuration: AppBarConfiguration=AppBarConfiguration.Builder(binding.bottomNavigationView.menu).build()
+        val navController: NavController = Navigation.findNavController(this, R.id.fragment)
+        val configuration: AppBarConfiguration = AppBarConfiguration.Builder(binding.bottomNavigationView.menu).build()
         NavigationUI.setupActionBarWithNavController(this, navController, configuration)
         NavigationUI.setupWithNavController(binding.bottomNavigationView, navController)
         vm.allUnFinishOfRemind.observe(this, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
-                if (schedules[i].remind.isNotEmpty() && !schedules[i].isTagRemind) {
+                if (schedules[i].remind?.isNotEmpty() == true && !schedules[i].tagRemind) {
                     setNotificationRemind(schedules[i])
                     vm.updateRemindTag(schedules[i].id)
                 }
@@ -73,23 +73,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun setNotificationRemind(schedule: Schedule){
-        val remind = schedule.remind.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()
+    private fun setNotificationRemind(schedule: Schedule) {
+        val remind = schedule.remind?.split(",")?.dropLastWhile { it.isEmpty() }?.toTypedArray()
         val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         var date = Date()
         val now = Date()
-        for(i in remind.indices ){
+        for (i in remind?.indices!!) {
             try {
                 date = std.parse(remind[i])
-            }catch (ignored: Exception){
+            } catch (ignored: Exception) {
             }
-            if (date.time>now.time){
+            if (date.time > now.time) {
                 val gson = Gson()
                 val intent = Intent(this, NotificationReceiver::class.java)
-                intent.action ="Notification_Receiver"
+                intent.action = "Notification_Receiver"
                 intent.putExtra("remindSchedule", gson.toJson(schedule))
-                intent.putExtra("PendingIntentCode", schedule.id + i * 1000)
-                val sender = PendingIntent.getBroadcast(this, schedule.id + i * 1000, intent, 0)
+                intent.putExtra("PendingIntentCode", schedule.id?.plus(i * 1000))
+                val sender = schedule.id?.plus(i * 1000)?.let { PendingIntent.getBroadcast(this, it, intent, 0) }
                 val am = getSystemService(ALARM_SERVICE) as AlarmManager
                 am[AlarmManager.RTC_WAKEUP, date.time] = sender
             }

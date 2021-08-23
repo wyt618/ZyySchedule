@@ -6,7 +6,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.RadioButton;
 
 import androidx.annotation.RequiresApi;
@@ -50,24 +49,24 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
         Date now = new Date();
         @SuppressLint("SimpleDateFormat") SimpleDateFormat std = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
-            date = std.parse(item.getStarttime());
+            date = std.parse(item.getStartTime());
         } catch (Exception ignored) {
         }
 
         vm = new ViewModelProvider(owner).get(CalendarViewModel.class);
         helper.setText(R.id.schedule_title, item.getTitle());
         helper.setText(R.id.delete_radio_button, item.getTitle());
-        helper.setText(R.id.schedule_date, item.getStarttime().substring(0, 4) + "年"
-                + Integer.parseInt(item.getStarttime().substring(5, 7)) + "月"
-                + Integer.parseInt(item.getStarttime().substring(8, 10)) + "日"
+        helper.setText(R.id.schedule_date, item.getStartTime().substring(0, 4) + "年"
+                + Integer.parseInt(item.getStartTime().substring(5, 7)) + "月"
+                + Integer.parseInt(item.getStartTime().substring(8, 10)) + "日"
         );
-        helper.setText(R.id.schedule_time, item.getStarttime().substring(item.getStarttime().length() - 8, item.getStarttime().length() - 3));
+        helper.setText(R.id.schedule_time, item.getStartTime().substring(item.getStartTime().length() - 8, item.getStartTime().length() - 3));
         RadioButton radioButton = helper.getView(R.id.delete_radio_button);
         radioButton.setOnCheckedChangeListener(null);
-        radioButton.setChecked(item.getEditorChecked());
+        radioButton.setChecked(item.isEditorChecked());
         AppCompatCheckBox checkBox = helper.getView(R.id.schedule_title);
         checkBox.setOnCheckedChangeListener(null);
-        checkBox.setChecked(item.getChecked());
+        checkBox.setChecked(item.isChecked());
         checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             item.setChecked(isChecked);
             if (isChecked) {
@@ -80,12 +79,12 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
         });
 
         radioButton.setOnClickListener(v -> {
-            if (item.getEditorChecked()) {
+            if (item.isEditorChecked()) {
                 item.setEditorChecked(false);
             } else {
                 item.setEditorChecked(true);
             }
-            radioButton.setChecked(item.getEditorChecked());
+            radioButton.setChecked(item.isEditorChecked());
         });
 
 
@@ -102,7 +101,7 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
             }
         }
 
-        if (item.getEditor()) {
+        if (item.isEditor()) {
             checkBox.setVisibility(View.GONE);
             radioButton.setVisibility(View.VISIBLE);
         } else {

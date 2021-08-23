@@ -1,9 +1,5 @@
 package com.example.zyyschedule.adapter
 
-import android.graphics.Color
-import android.graphics.ColorFilter
-import android.graphics.DrawFilter
-import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -18,7 +14,7 @@ class LabelAdapter(layoutResId: Int) : BaseQuickAdapter<Label, BaseViewHolder>(l
         holder.setText(R.id.label_id,item.id.toString())
         val imageView:ImageView =  holder.itemView.findViewById(R.id.imageView)
         ContextCompat.getDrawable(context,R.drawable.ic_schedule_24)?.let {
-            DrawableCompat.setTint(it,item.color)
+            DrawableCompat.setTint(it,item.color as Int)
             imageView.setImageDrawable(it)
         }
     }

@@ -89,7 +89,7 @@ public class RemindDialogReceiver extends BroadcastReceiver {
         if (schedule.getPriority() != 0) {
             binding.priorityIcon.setVisibility(View.VISIBLE);
         }
-        binding.date.setText(checkNowDay(schedule.getStarttime()));
+        binding.date.setText(checkNowDay(schedule.getStartTime()));
         systemService.addView(binding.getRoot(), params);
     }
 
