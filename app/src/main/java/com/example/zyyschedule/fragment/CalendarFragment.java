@@ -171,7 +171,6 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         binding.finishScheduleList.setLayoutManager(finishscheduleLayoutManager);
         finishScheduleAdapter = new ScheduleAdapter(R.layout.schedule_item);
         finishScheduleAdapter.setOwner(this);
-        finishScheduleAdapter.setmContext(getContext());
         finishScheduleAdapter.addHeaderView(scheduleListFinishHeadBinding.getRoot());
         finishScheduleAdapter.addFooterView(finishScheduleFootBinding.getRoot());
         finishScheduleAdapter.setEmptyView(R.layout.schedule_empty);
@@ -180,7 +179,6 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         scheduleAdapter.addFooterView(scheduleFootBinding.getRoot());
         scheduleAdapter.setEmptyView(R.layout.schedule_empty);
         scheduleAdapter.setOwner(this);
-        scheduleAdapter.setmContext(getContext());
         binding.scheduleList.setAdapter(scheduleAdapter);
         binding.finishScheduleList.setAdapter(finishScheduleAdapter);
         scheduleListHeadBinding.scheduleListHead.setText(selectMonth + "月" + selectDay + "日");

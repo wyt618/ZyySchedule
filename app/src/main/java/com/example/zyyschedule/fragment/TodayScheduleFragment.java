@@ -65,12 +65,10 @@ public class TodayScheduleFragment extends Fragment {
         binding.finishScheduleList.setLayoutManager(FinishLayoutManager);
         scheduleAdapter = new ScheduleAdapter(R.layout.schedule_item);
         scheduleAdapter.setOwner(this);
-        scheduleAdapter.setmContext(getContext());
         scheduleAdapter.setHeaderView(scheduleHeadBinding.getRoot());
         scheduleAdapter.addFooterView(scheduleFootBinding.getRoot());
         finishScheduleAdapter = new ScheduleAdapter(R.layout.schedule_item);
         finishScheduleAdapter.setOwner(this);
-        finishScheduleAdapter.setmContext(getContext());
         finishScheduleAdapter.setHeaderView(scheduleListFinishHeadBinding.getRoot());
         finishScheduleAdapter.setFooterView(finishScheduleFootBinding.getRoot());
         binding.todayScheduleList.setAdapter(scheduleAdapter);

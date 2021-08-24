@@ -71,12 +71,10 @@ public class LabelFragment extends Fragment {
         binding.finishScheduleList.setLayoutManager(finishSchedule);
         scheduleAdapter = new ScheduleAdapter(R.layout.schedule_item_local);
         scheduleAdapter.setOwner(this);
-        scheduleAdapter.setmContext(getContext());
         scheduleAdapter.setHeaderView(scheduleHeadBinding.getRoot());
         scheduleAdapter.addFooterView(scheduleFootBinding.getRoot());
         finishScheduleAdapter = new ScheduleAdapter(R.layout.schedule_item_local);
         finishScheduleAdapter.setOwner(this);
-        finishScheduleAdapter.setmContext(getContext());
         finishScheduleAdapter.setHeaderView(scheduleListFinishHeadBinding.getRoot());
         finishScheduleAdapter.setFooterView(finishScheduleFootBinding.getRoot());
         binding.labelScheduleList.setAdapter(scheduleAdapter);
