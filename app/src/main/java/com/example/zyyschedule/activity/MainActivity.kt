@@ -39,11 +39,11 @@ class MainActivity : AppCompatActivity() {
         val configuration: AppBarConfiguration = AppBarConfiguration.Builder(binding.bottomNavigationView.menu).build()
         NavigationUI.setupActionBarWithNavController(this, navController, configuration)
         NavigationUI.setupWithNavController(binding.bottomNavigationView, navController)
-        vm.allUnFinishOfRemind.observe(this, { schedules: List<Schedule> ->
+        vm.getALLUnFinishOfRemind()?.observe(this, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 if (schedules[i].remind?.isNotEmpty() == true && !schedules[i].tagRemind) {
                     setNotificationRemind(schedules[i])
-                    vm.updateRemindTag(schedules[i].id)
+                    schedules[i].id?.let { vm.updateRemindTag(it) }
                 }
             }
         })

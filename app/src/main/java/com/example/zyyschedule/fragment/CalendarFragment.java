@@ -158,7 +158,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         remindLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         remindDialogBinding.remindChooseList.setLayoutManager(remindLayoutManager);
         remindDialogBinding.remindChooseList.setAdapter(remindAdapter);
-        ArrayList<RemindBean> remindlist = vm.RemindListData();
+        ArrayList<RemindBean> remindlist = vm.remindListData();
         remindAdapter.setList(remindlist);
         remindAdapter.setHeader(remindListHeadBinding);
         remindAdapter.setHeaderView(remindListHeadBinding.getRoot());
@@ -228,7 +228,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 TextView labelname = view.findViewById(R.id.label_name);
                 TextView labelid = view.findViewById(R.id.label_id);
                 addScheduleBinding.scheduleLabelId.setText(labelid.getText());
-                vm.label.setValue(labelname.getText().toString());
+                vm.getLabel().setValue(labelname.getText().toString());
                 labelChoose.dismiss();
             });
             if (labelDialogHead.getParent() != null) {
@@ -455,17 +455,17 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 .setTitle(R.string.add_schedule_timepicker)
                 .setNeutralButton(R.string.dialog_button_cancel, (dialog, which) -> dialog.dismiss())
                 .setPositiveButton(R.string.dialog_button_ok, (dialog, which) ->
-                        vm.AddScheduleTime.setValue(ProcessingTime(timePickerBinding.hourPicker.getValue()) + ":" + ProcessingTime(timePickerBinding.minePicker.getValue()))
+                        vm.getAddScheduleTime().setValue(ProcessingTime(timePickerBinding.hourPicker.getValue()) + ":" + ProcessingTime(timePickerBinding.minePicker.getValue()))
                 )
                 .setOnDismissListener(dialog -> {
                     if (addScheduleBinding.textTime.getText().toString().equals("00:00")) {
                         timePickerBinding.hourPicker.setValue(0);
                         timePickerBinding.minePicker.setValue(0);
                     } else {
-                        timePickerBinding.hourPicker.setValue(Integer.parseInt(Objects.requireNonNull(vm.AddScheduleTime.getValue()).substring(0, 2)));
-                        timePickerBinding.minePicker.setValue(Integer.parseInt(vm.AddScheduleTime.getValue().substring(3)));
+                        timePickerBinding.hourPicker.setValue(Integer.parseInt(Objects.requireNonNull(vm.getAddScheduleTime().getValue()).substring(0, 2)));
+                        timePickerBinding.minePicker.setValue(Integer.parseInt(vm.getAddScheduleTime().getValue().substring(3)));
                     }
-                    vm.AddScheduleTime.setValue(ProcessingTime(timePickerBinding.hourPicker.getValue()) + ":" + ProcessingTime(timePickerBinding.minePicker.getValue()));
+                    vm.getAddScheduleTime().setValue(ProcessingTime(timePickerBinding.hourPicker.getValue()) + ":" + ProcessingTime(timePickerBinding.minePicker.getValue()));
                 });
         builder.create().show();
     }
@@ -474,7 +474,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         priorityDialogBinding.priorityList.setLayoutManager(layoutManager);
-        ArrayList<PriorityBean> priorityData = vm.PriorityListData();
+        ArrayList<PriorityBean> priorityData = vm.priorityListData();
         priorityListAdapter = new PriorityListAdapter(R.layout.priority_item);
         priorityListAdapter.setList(priorityData);
         priorityListAdapter.getMContext(getContext());
@@ -482,8 +482,8 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
             TextView text = view.findViewById(R.id.priority_title);
             ImageView flag = view.findViewById(R.id.priority_flag);
             addScheduleBinding.textPriority.setTextColor(text.getTextColors());
-            vm.priority.setValue(text.getText().toString());
-            vm.priorityid.setValue(position);
+            vm.getPriority().setValue(text.getText().toString());
+            vm.getPriorityid().setValue(position);
             addScheduleBinding.priorityButton.setImageDrawable((flag.getDrawable()));
             priorityDialog.dismiss();
         });
@@ -560,7 +560,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     //新增日程到数据库
     private void AddSchedule() {
         Schedule schedule = new Schedule();
-        String starttime = selectYear + "-" + ProcessingTime(selectMonth) + "-" + ProcessingTime(selectDay) + " " + vm.AddScheduleTime.getValue() + ":00";
+        String starttime = selectYear + "-" + ProcessingTime(selectMonth) + "-" + ProcessingTime(selectDay) + " " + vm.getAddScheduleTime().getValue() + ":00";
         schedule.setStartTime(starttime);
         schedule.setEndTime(null);
         schedule.setRemind(RemindChangeTime());

@@ -74,7 +74,7 @@ public class ScheduleAdapter extends BaseQuickAdapter<Schedule, BaseViewHolder> 
             } else {
                 item.setState("0");
             }
-            vm.ChangeStateSchedule(item);
+            vm.changeStateSchedule(item);
             vm.getScheduleDayOfTag();
         });
 
