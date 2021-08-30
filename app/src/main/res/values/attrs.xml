@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="color_picker">
+    <declare-styleable name="ColorPickView">
 
         <!-- 背景圆的半径 -->
         <attr name="circle_radius" format="dimension" />
@@ -9,6 +9,8 @@
         <!-- 可滑动小球的颜色 -->
         <attr name="center_color" format="color" />
     </declare-styleable>
+
+
     <declare-styleable name="EditTextWithClear">
         <attr name="clearIcon" format="reference"/>
     </declare-styleable>
