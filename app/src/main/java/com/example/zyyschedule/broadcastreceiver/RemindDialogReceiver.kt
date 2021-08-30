@@ -15,12 +15,12 @@ import com.example.zyyschedule.databinding.RemindGlobalDialogBinding
 import com.google.gson.Gson
 import java.util.*
 
-@Suppress("DEPRECATED_IDENTITY_EQUALS")
+@Suppress("DEPRECATED_IDENTITY_EQUALS", "DEPRECATION")
 class RemindDialogReceiver : BroadcastReceiver() {
     private lateinit var binding: RemindGlobalDialogBinding
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onReceive(context: Context?, intent: Intent?) {
-        val gson: Gson = Gson()
+        val gson = Gson()
         val strSchedule = intent!!.getStringExtra("remindSchedule")
         val schedule: Schedule = gson.fromJson(strSchedule, Schedule::class.java)
         val systemService: WindowManager = context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager

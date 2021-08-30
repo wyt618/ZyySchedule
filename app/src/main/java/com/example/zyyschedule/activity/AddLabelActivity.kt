@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.viewModels
@@ -32,14 +33,20 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
         colorPickerDialogBinding = ColorpickerDialogBinding.inflate(layoutInflater)
         binding.LabelSetColor.setOnClickListener(this)
         colorPickerDialogBinding.colorPickView.setOnColorChangedListener(this)
+        binding.addLabelExit.setOnClickListener(this)
+        binding.addLabelButton.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.LabelSetColor -> gotoColorPicker()
-            R.id.add_label_exit -> this.finish()
-            R.id.add_label_button -> addLabel()
+        v?.let {
+            when (it.id) {
+                R.id.add_label_exit -> this.finish()
+                R.id.add_label_button -> addLabel()
+                R.id.LabelSetColor -> gotoColorPicker()
+                else -> {}
+            }
         }
+
     }
 
     private fun gotoColorPicker() {
@@ -106,8 +113,6 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
             setTextColor(Color.argb(a, r, g, b))
         }
         labelColor = Color.argb(a, r, g, b)
-        binding.addLabelExit.setOnClickListener(this)
-        binding.addLabelButton.setOnClickListener(this)
     }
 
 }

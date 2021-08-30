@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,7 +40,9 @@ import com.example.zyyschedule.database.Schedule;
 import com.example.zyyschedule.databinding.AddScheduleBinding;
 import com.example.zyyschedule.databinding.AllLabelDialogBinding;
 import com.example.zyyschedule.databinding.CalendarFragmentBinding;
+import com.example.zyyschedule.databinding.DialogDateBinding;
 import com.example.zyyschedule.databinding.FinishScheduleFootBinding;
+import com.example.zyyschedule.databinding.LabelDialogHeadBinding;
 import com.example.zyyschedule.databinding.PriorityDialogBinding;
 import com.example.zyyschedule.databinding.RemindDialogBinding;
 import com.example.zyyschedule.databinding.RemindListHeadBinding;
@@ -65,12 +66,17 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
 
     private CalendarViewModel vm;
     private CalendarFragmentBinding binding;
-    private View dialog;
-    private DatePicker datePicker;
-    private AlertDialog.Builder builder;
+    private DialogDateBinding dateJumpDialog;
     private AddScheduleBinding addScheduleBinding;
     private TimepickerDialogBinding timePickerBinding;
     private PriorityDialogBinding priorityDialogBinding;
+    private RemindListHeadBinding remindListHeadBinding;
+    private ScheduleAdapter scheduleAdapter;
+    private ScheduleListHeadBinding scheduleListHeadBinding;
+    private ScheduleAdapter finishScheduleAdapter;
+    private ScheduleFootBinding scheduleFootBinding;
+    private ScheduleListFinishHeadBinding scheduleListFinishHeadBinding;
+    private FinishScheduleFootBinding finishScheduleFootBinding;
     private int selectYear;
     private int selectMonth;
     private int selectDay;
@@ -82,26 +88,19 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
     private final LabelAdapter labelAdapter = new LabelAdapter(R.layout.label_item);
     private final RemindAdapter remindAdapter = new RemindAdapter(R.layout.remind_item);
     private AlertDialog labelChoose;
-    private View labelDialogHead;
+    private LabelDialogHeadBinding labelDialogHeadBinding;
     private AlertDialog addSchedule;
     private AlertDialog remindDialog;
-    private RemindListHeadBinding remindListHeadBinding;
-    private ScheduleAdapter scheduleAdapter;
-    private ScheduleListHeadBinding scheduleListHeadBinding;
-    private ScheduleAdapter finishScheduleAdapter;
-    private ScheduleFootBinding scheduleFootBinding;
-    private ScheduleListFinishHeadBinding scheduleListFinishHeadBinding;
-    private FinishScheduleFootBinding finishScheduleFootBinding;
     private List<Schedule> Schedules;
     private List<Schedule> finishSchedules;
-
+    private AlertDialog.Builder builder;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         builder = new AlertDialog.Builder(getContext());
         binding = DataBindingUtil.inflate(inflater, R.layout.calendar_fragment, container, false);
-        dialog = inflater.inflate(R.layout.dialog_date, null);
-        labelDialogHead = inflater.inflate(R.layout.label_dialog_head, null);
+        dateJumpDialog = DataBindingUtil.inflate(inflater,R.layout.dialog_date,container, false);
+        labelDialogHeadBinding = DataBindingUtil.inflate(inflater,R.layout.label_dialog_head,container, false);
         addScheduleBinding = DataBindingUtil.inflate(inflater, R.layout.add_schedule, container, false);
         timePickerBinding = DataBindingUtil.inflate(inflater, R.layout.timepicker_dialog, container, false);
         priorityDialogBinding = DataBindingUtil.inflate(inflater, R.layout.priority_dialog, container, false);
@@ -112,7 +111,6 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         scheduleFootBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_foot, container, false);
         scheduleListFinishHeadBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_list_finish_head, container, false);
         finishScheduleFootBinding = DataBindingUtil.inflate(inflater, R.layout.finish_schedule_foot, container, false);
-        datePicker = dialog.findViewById(R.id.date_picker);
         return binding.getRoot();
     }
 
@@ -182,7 +180,7 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         binding.scheduleList.setAdapter(scheduleAdapter);
         binding.finishScheduleList.setAdapter(finishScheduleAdapter);
         scheduleListHeadBinding.scheduleListHead.setText(selectMonth + "月" + selectDay + "日");
-        labelDialogHead.setOnClickListener(v -> {
+        labelDialogHeadBinding.getRoot().setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), AddLabelActivity.class);
             startActivity(intent);
         });
@@ -190,6 +188,9 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
             scheduleListHeadBinding.deleteSchedule.setVisibility(View.GONE);
             scheduleListHeadBinding.scheduleListHead.setVisibility(View.VISIBLE);
             scheduleListHeadBinding.scheduleDeleteBack.setVisibility(View.GONE);
+            scheduleListFinishHeadBinding.deleteSchedule.setVisibility(View.GONE);
+            scheduleListFinishHeadBinding.scheduleListFinish.setVisibility(View.VISIBLE);
+            scheduleListFinishHeadBinding.scheduleDeleteBack.setVisibility(View.GONE);
             binding.fabBtn.setVisibility(View.VISIBLE);
             for (int i = 0; i < Schedules.size(); i++) {
                 Schedules.get(i).setEditor(false);
@@ -204,6 +205,9 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
             scheduleListFinishHeadBinding.deleteSchedule.setVisibility(View.GONE);
             scheduleListFinishHeadBinding.scheduleListFinish.setVisibility(View.VISIBLE);
             scheduleListFinishHeadBinding.scheduleDeleteBack.setVisibility(View.GONE);
+            scheduleListHeadBinding.deleteSchedule.setVisibility(View.GONE);
+            scheduleListHeadBinding.scheduleListHead.setVisibility(View.VISIBLE);
+            scheduleListHeadBinding.scheduleDeleteBack.setVisibility(View.GONE);
             binding.fabBtn.setVisibility(View.VISIBLE);
             for (int i = 0; i < Schedules.size(); i++) {
                 Schedules.get(i).setEditor(false);
@@ -229,11 +233,11 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 vm.getLabel().setValue(labelname.getText().toString());
                 labelChoose.dismiss();
             });
-            if (labelDialogHead.getParent() != null) {
-                ViewGroup vg = (ViewGroup) labelDialogHead.getParent();
-                vg.removeView(labelDialogHead);
+            if (labelDialogHeadBinding.getRoot().getParent() != null) {
+                ViewGroup vg = (ViewGroup) labelDialogHeadBinding.getRoot().getParent();
+                vg.removeView(labelDialogHeadBinding.getRoot());
             }
-            labelAdapter.addHeaderView(labelDialogHead);
+            labelAdapter.addHeaderView(labelDialogHeadBinding.getRoot());
         });
 
         //设置新增日程对话框有内容时唤醒按钮
@@ -263,15 +267,15 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
 
         //实现长按日期跳转
         binding.tvMonthDay.setOnLongClickListener(v -> {
-            if (dialog.getParent() != null) {
-                ViewGroup vg = (ViewGroup) dialog.getParent();
-                vg.removeView(dialog);
+            if (dateJumpDialog.getRoot().getParent() != null) {
+                ViewGroup vg = (ViewGroup) dateJumpDialog.getRoot().getParent();
+                vg.removeView(dateJumpDialog.getRoot());
             }
-            builder.setView(dialog)
+            builder.setView(dateJumpDialog.getRoot())
                     .setTitle(R.string.clendar_dialog_title)
                     .setPositiveButton(R.string.dialog_button_ok, (dialog, which) -> {
-                        binding.calendarView.scrollToCalendar(datePicker.getYear(), datePicker.getMonth() + 1, datePicker.getDayOfMonth());
-                        Toast.makeText(getContext(), datePicker.getYear() + "年" + (datePicker.getMonth() + 1) + "月" + datePicker.getDayOfMonth() + "日", Toast.LENGTH_SHORT).show();
+                        binding.calendarView.scrollToCalendar(dateJumpDialog.datePicker.getYear(), dateJumpDialog.datePicker.getMonth() + 1, dateJumpDialog.datePicker.getDayOfMonth());
+                        Toast.makeText(getContext(), dateJumpDialog.datePicker.getYear() + "年" + (dateJumpDialog.datePicker.getMonth() + 1) + "月" + dateJumpDialog.datePicker.getDayOfMonth() + "日", Toast.LENGTH_SHORT).show();
                     })
                     .setNeutralButton(R.string.dialog_button_cancel, (dialog, which) -> dialog.dismiss());
             builder.create().show();
