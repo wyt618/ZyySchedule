@@ -7,6 +7,17 @@
         android:layout_height="match_parent"
         android:background="@color/schedule_background"
         tools:context=".fragment.LabelFragment">
+        <ImageView
+            android:id="@+id/empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_check"
+            app:tint="@color/E"
+            tools:ignore="ContentDescription"/>
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/label_schedule"
@@ -41,17 +52,7 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <ImageView
-            android:id="@+id/empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_check"
-            app:tint="@color/E"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="ContentDescription" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

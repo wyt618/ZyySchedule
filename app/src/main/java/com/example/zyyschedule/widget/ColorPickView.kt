@@ -168,7 +168,7 @@ class ColorPickView @JvmOverloads constructor(
 
 
     //颜色发生变化的回调接口
-    public interface OnColorChangedListener {
+    interface OnColorChangedListener {
         fun onColorChange(a: Int, r: Int, g: Int, b: Int)
     }
 

@@ -94,7 +94,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
             val params = deleteDialog.window!!.attributes
             val d =  requireContext().resources!!.displayMetrics
             params.x = view.width - 50
-            params.y = -d.heightPixels / 2 + view.top + 427
+            params.y = -d.heightPixels / 2 + view.top + 430
             deleteDialog.window!!.attributes = params
             deleteDialog.window!!.setGravity(Gravity.START)
             labelItemEditorButton.findViewById<View>(R.id.delete_button).setOnClickListener {

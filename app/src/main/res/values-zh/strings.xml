@@ -16,6 +16,7 @@
     <string name="title_not_classified">无标签</string>
     <string name="title_plus_list">添加标签</string>
     <string name="cancel">返回</string>
+    <string name="check_all">全选</string>
     <string name="schedule_setting">添加标签</string>
     <string name="finish">完成</string>
     <string name="event_set_list_name">标签名称</string>
@@ -38,4 +39,5 @@
     <string name="notify_authority_dialog_title">检测到通知权限未开启!</string>
     <string name="notify_authority_dialog_message">如果不开启权限会收不到推送通知哦~</string>
     <string name="notify_authority_dialog_ok_button">去开启</string>
+    <string name="edit_toolbar_title">选中0项</string>
 </resources>

@@ -31,6 +31,7 @@ import com.example.zyyschedule.viewmodel.CalendarViewModel
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.Calendar.Scheme
 import com.haibin.calendarview.CalendarView
+import com.jeremyliao.liveeventbus.LiveEventBus
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -103,6 +104,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         binding.tvLunar.text = "今日"
         binding.calendarView.setOnCalendarSelectListener(this)
         binding.fabBtn.setOnClickListener(this)
+        binding.goBack.setOnClickListener(this)
         binding.vm = vm
         binding.lifecycleOwner = this
         addScheduleBinding.addScheduleSelectTime.setOnClickListener(this)
@@ -152,47 +154,30 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         binding.scheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
         scheduleListHeadBinding.scheduleListHead.text = selectMonth.toString() + "月" + selectDay + "日"
+        LiveEventBus.get("MainA_CalendarF", String::class.java)
+                .observe(this,{
+                    when(it){
+                        "goto_delete_dialog" -> gotoDeleteDialog()
+                    }
+                })
+
         labelDialogHeadBinding.root.setOnClickListener {
             val intent = Intent(activity, AddLabelActivity::class.java)
             startActivity(intent)
         }
-        scheduleListHeadBinding.scheduleDeleteBack.setOnClickListener {
-            scheduleListHeadBinding.deleteSchedule.visibility = View.GONE
-            scheduleListHeadBinding.scheduleListHead.visibility = View.VISIBLE
-            scheduleListHeadBinding.scheduleDeleteBack.visibility = View.GONE
-            scheduleListFinishHeadBinding.deleteSchedule.visibility = View.GONE
-            scheduleListFinishHeadBinding.scheduleListFinish.visibility = View.VISIBLE
-            scheduleListFinishHeadBinding.scheduleDeleteBack.visibility = View.GONE
-            binding.fabBtn.visibility = View.VISIBLE
-            for (i in mSchedules.indices) {
-                mSchedules[i].isEditor = false
+        //监听进入编辑状态下选中的日程条目数
+        vm.editItemSize.observe(viewLifecycleOwner, {
+            binding.goBackText.text = "选中${it}项"
+            if(it>0){
+                LiveEventBus
+                        .get("CalendarF_MainA", String::class.java)
+                        .post("enabled_true")
+            }else{
+                LiveEventBus
+                        .get("CalendarF_MainA", String::class.java)
+                        .post("enabled_false")
             }
-            for (i in mFinishSchedules.indices) {
-                mFinishSchedules[i].isEditor = false
-            }
-            scheduleAdapter.notifyDataSetChanged()
-            finishScheduleAdapter.notifyDataSetChanged()
-        }
-        scheduleListFinishHeadBinding.scheduleDeleteBack.setOnClickListener {
-            scheduleListFinishHeadBinding.deleteSchedule.visibility = View.GONE
-            scheduleListFinishHeadBinding.scheduleListFinish.visibility = View.VISIBLE
-            scheduleListFinishHeadBinding.scheduleDeleteBack.visibility = View.GONE
-            scheduleListHeadBinding.deleteSchedule.visibility = View.GONE
-            scheduleListHeadBinding.scheduleListHead.visibility = View.VISIBLE
-            scheduleListHeadBinding.scheduleDeleteBack.visibility = View.GONE
-            binding.fabBtn.visibility = View.VISIBLE
-            for (i in mSchedules.indices) {
-                mSchedules[i].isEditor = false
-            }
-            for (i in mFinishSchedules.indices) {
-                mFinishSchedules[i].isEditor = false
-            }
-            scheduleAdapter.notifyDataSetChanged()
-            finishScheduleAdapter.notifyDataSetChanged()
-        }
-        scheduleListHeadBinding.deleteSchedule.setOnClickListener { gotoDeleteDialog() }
-        scheduleListFinishHeadBinding.deleteSchedule.setOnClickListener { gotoDeleteDialog() }
-
+        })
         //对标签数据进行监听，刷新标签选择对话框，对话框点击事件
         vm.getAllLabel()!!.observe(viewLifecycleOwner, { labels: List<Label>? ->
             labelAdapter.setList(labels)
@@ -259,13 +244,12 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
         //完成和未完成日程item长按事件
         scheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
-//            LiveEventBus
-//                    .get("some_key")
-//                    .post("gone_navigation");
+            binding.rlTool.visibility = View.GONE
+            binding.editTool.visibility = View.VISIBLE
+            LiveEventBus
+                    .get("CalendarF_MainA", String::class.java)
+                    .post("gone_navigation")
             binding.fabBtn.visibility = View.GONE
-            scheduleListHeadBinding.deleteSchedule.visibility = View.VISIBLE
-            scheduleListHeadBinding.scheduleListHead.visibility = View.GONE
-            scheduleListHeadBinding.scheduleDeleteBack.visibility = View.VISIBLE
             for (i in mSchedules.indices) {
                 mSchedules[i].isEditor = true
             }
@@ -277,15 +261,12 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             true
         }
         finishScheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
+            binding.rlTool.visibility = View.GONE
+            binding.editTool.visibility = View.VISIBLE
+            LiveEventBus
+                    .get("CalendarF_MainA", String::class.java)
+                    .post("gone_navigation")
             binding.fabBtn.visibility = View.GONE
-            scheduleListHeadBinding.deleteSchedule.visibility = View.VISIBLE
-            scheduleListHeadBinding.scheduleListHead.visibility = View.GONE
-            scheduleListHeadBinding.scheduleDeleteBack.visibility = View.VISIBLE
-            if (scheduleAdapter.data.size == 0) {
-                scheduleListFinishHeadBinding.deleteSchedule.visibility = View.VISIBLE
-                scheduleListFinishHeadBinding.scheduleListFinish.visibility = View.GONE
-                scheduleListFinishHeadBinding.scheduleDeleteBack.visibility = View.VISIBLE
-            }
             for (i in mSchedules.indices) {
                 mSchedules[i].isEditor = true
             }
@@ -314,11 +295,29 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 R.id.label_button, R.id.schedule_label -> gotoChooseLabel()
                 R.id.remind_button, R.id.remind_text -> gotoAddRemind()
                 R.id.send_schedule -> addSchedule()
+                R.id.go_back -> exitEditor()
             }
         }
     }
 
     override fun onCalendarOutOfRange(calendar: Calendar?) {}
+
+    private fun exitEditor(){
+        binding.fabBtn.visibility = View.VISIBLE
+        LiveEventBus
+                .get("CalendarF_MainA", String::class.java)
+                .post("visible_navigation")
+        binding.editTool.visibility = View.GONE
+        binding.rlTool.visibility = View.VISIBLE
+        for (i in mSchedules.indices) {
+            mSchedules[i].isEditor = false
+        }
+        for (i in mFinishSchedules.indices) {
+            mFinishSchedules[i].isEditor = false
+        }
+        scheduleAdapter.notifyDataSetChanged()
+        finishScheduleAdapter.notifyDataSetChanged()
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onCalendarSelect(calendar: Calendar?, isClick: Boolean) {
@@ -331,9 +330,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         binding.tvYear.text = calendar.year.toString()
         binding.tvLunar.text = calendar.lunar
         scheduleListHeadBinding.scheduleListHead.text = selectMonth.toString() + "月" + selectDay + "日"
-        scheduleListHeadBinding.deleteSchedule.visibility = View.GONE
         scheduleListHeadBinding.scheduleListHead.visibility = View.VISIBLE
-        scheduleListHeadBinding.scheduleDeleteBack.visibility = View.GONE
         updateScheduleList()
         setCalendarTag()
     }
@@ -530,80 +527,80 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
 
     //处理提醒与时间的方法
     private fun remindToTime(remindType: Int): String {
-        var remindtime: String
+        var remindTime: String
         var date = Date()
-        remindtime = selectYear.toString() + "-" + selectMonth + "-" + selectDay + " " + addScheduleBinding.textTime.text + ":" + "00"
+        remindTime = selectYear.toString() + "-" + selectMonth + "-" + selectDay + " " + addScheduleBinding.textTime.text + ":" + "00"
         @SuppressLint("SimpleDateFormat") val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         try {
-            date = std.parse(remindtime)
+            date = std.parse(remindTime)
         } catch (ignored: Exception) {
         }
         when (remindType) {
             1 -> {
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             2 -> {
                 date.time = date.time - 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             3 -> {
                 date.time = date.time - 5 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             4 -> {
                 date.time = date.time - 10 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             5 -> {
                 date.time = date.time - 15 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             6 -> {
                 date.time = date.time - 20 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             7 -> {
                 date.time = date.time - 25 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             8 -> {
                 date.time = date.time - 30 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             9 -> {
                 date.time = date.time - 45 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             10 -> {
                 date.time = date.time - 60 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             11 -> {
                 date.time = date.time - 2 * 60 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             12 -> {
                 date.time = date.time - 3 * 60 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             13 -> {
                 date.time = date.time - 12 * 60 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             14 -> {
                 date.time = date.time - 24 * 60 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             15 -> {
                 date.time = date.time - 2 * 24 * 60 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
             16 -> {
                 date.time = date.time - 7 * 24 * 60 * 60 * 1000
-                remindtime = std.format(date)
+                remindTime = std.format(date)
             }
         }
-        return remindtime
+        return remindTime
     }
 
     //检测提醒是否过期
@@ -644,12 +641,11 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     dialog.dismiss()
                     updateScheduleList()
                     binding.fabBtn.visibility = View.VISIBLE
-                    scheduleListFinishHeadBinding.deleteSchedule.visibility = View.GONE
-                    scheduleListFinishHeadBinding.scheduleListFinish.visibility = View.VISIBLE
-                    scheduleListFinishHeadBinding.scheduleDeleteBack.visibility = View.GONE
-                    scheduleListHeadBinding.deleteSchedule.visibility = View.GONE
-                    scheduleListHeadBinding.scheduleListHead.visibility = View.VISIBLE
-                    scheduleListHeadBinding.scheduleDeleteBack.visibility = View.GONE
+                    LiveEventBus
+                            .get("CalendarF_MainA", String::class.java)
+                            .post("visible_navigation")
+                    binding.editTool.visibility = View.GONE
+                    binding.rlTool.visibility = View.VISIBLE
                     setCalendarTag()
                 }
                 .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
@@ -710,6 +706,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             }
             finishScheduleAdapter.setList(schedules)
             mFinishSchedules = finishScheduleAdapter.data
+            finishScheduleAdapter.otherDate = scheduleAdapter.data
+            scheduleAdapter.otherDate = finishScheduleAdapter.data
         })
     }
 

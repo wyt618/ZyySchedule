@@ -18,12 +18,14 @@ import com.example.zyyschedule.database.Schedule
 import com.example.zyyschedule.viewmodel.CalendarViewModel
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "CAST_NEVER_SUCCEEDS")
 class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHolder>(layoutResId) {
     private lateinit var owner: ViewModelStoreOwner
     private lateinit var vm: CalendarViewModel
     private lateinit var date: Date
+    var otherDate:List<Schedule>? = null
 
     fun setOwner(owner: ViewModelStoreOwner) {
         this.owner = owner
@@ -46,13 +48,26 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
                 + item.startTime?.substring(5, 7)?.toInt() + "月"
                 + item.startTime?.substring(8, 10)?.toInt() + "日")
         holder.setText(R.id.schedule_time, item.startTime?.substring(item.startTime!!.length - 8, item.startTime!!.length - 3))
-
         val radioButton:AppCompatRadioButton = holder.getView(R.id.delete_radio_button)
         radioButton.setOnCheckedChangeListener(null)
         radioButton.isChecked = item.isEditorChecked
-        radioButton.setOnCheckedChangeListener { _: CompoundButton, _: Boolean ->
+        radioButton.setOnClickListener{
+            var number = 0
             item.isEditorChecked = !item.isEditorChecked
             radioButton.isChecked = item.isEditorChecked
+            for(i in data){
+                if(i.isEditorChecked){
+                    number += 1
+                }
+            }
+            otherDate?.let {
+                for(i in it){
+                    if(i.isEditorChecked){
+                        number += 1
+                    }
+                }
+            }
+            vm.editItemSize.value = number
         }
 
         val checkBox:AppCompatCheckBox = holder.getView(R.id.schedule_title)
@@ -79,7 +94,7 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
             }else{
                 holder.setTextColor(R.id.schedule_time, Color.BLACK)
                 holder.setTextColor(R.id.schedule_date, Color.BLACK)
-            }
+        }
         }
 
         if(item.isEditor){

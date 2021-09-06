@@ -60,48 +60,10 @@ class TodayScheduleFragment:Fragment() {
         binding.finishScheduleList.adapter = finishScheduleAdapter
         scheduleHeadBinding.scheduleListHead.setText(R.string.title_today)
 
-        scheduleHeadBinding.scheduleDeleteBack.setOnClickListener {
-            scheduleHeadBinding.deleteSchedule.visibility = View.GONE
-            scheduleHeadBinding.scheduleListHead.visibility = View.VISIBLE
-            scheduleHeadBinding.scheduleDeleteBack.visibility = View.GONE
-            scheduleListFinishHeadBinding.deleteSchedule.visibility = View.GONE
-            scheduleListFinishHeadBinding.scheduleListFinish.visibility = View.VISIBLE
-            scheduleListFinishHeadBinding.scheduleDeleteBack.visibility = View.GONE
-            for (i in mSchedules.indices) {
-                mSchedules[i].isEditor = false
-            }
-            for (i in mFinishSchedules.indices) {
-                mFinishSchedules[i].isEditor = false
-            }
-            scheduleAdapter.notifyDataSetChanged()
-            finishScheduleAdapter.notifyDataSetChanged()
-        }
-
-        scheduleListFinishHeadBinding.scheduleDeleteBack.setOnClickListener {
-            scheduleListFinishHeadBinding.deleteSchedule.visibility = View.GONE
-            scheduleListFinishHeadBinding.scheduleListFinish.visibility = View.VISIBLE
-            scheduleListFinishHeadBinding.scheduleDeleteBack.visibility = View.GONE
-            scheduleHeadBinding.deleteSchedule.visibility = View.GONE
-            scheduleHeadBinding.scheduleListHead.visibility = View.VISIBLE
-            scheduleHeadBinding.scheduleDeleteBack.visibility = View.GONE
-            for (i in mSchedules.indices) {
-                mSchedules[i].isEditor = false
-            }
-            for (i in mFinishSchedules.indices) {
-                mFinishSchedules[i].isEditor = false
-            }
-            scheduleAdapter.notifyDataSetChanged()
-            finishScheduleAdapter.notifyDataSetChanged()
-        }
-
-        scheduleHeadBinding.deleteSchedule.setOnClickListener { gotoDeleteDialog() }
-        scheduleListFinishHeadBinding.deleteSchedule.setOnClickListener { gotoDeleteDialog() }
 
         //完成和未完成日程item长按事件
         scheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
-            scheduleHeadBinding.deleteSchedule.visibility = View.VISIBLE
-            scheduleHeadBinding.scheduleListHead.visibility = View.GONE
-            scheduleHeadBinding.scheduleDeleteBack.visibility = View.VISIBLE
+
             for (i in mSchedules.indices) {
                 mSchedules[i].isEditor = true
             }
@@ -114,14 +76,6 @@ class TodayScheduleFragment:Fragment() {
         }
 
         finishScheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
-            scheduleHeadBinding.deleteSchedule.visibility = View.VISIBLE
-            scheduleHeadBinding.scheduleListHead.visibility = View.GONE
-            scheduleHeadBinding.scheduleDeleteBack.visibility = View.VISIBLE
-            if (scheduleAdapter.data.size == 0) {
-                scheduleListFinishHeadBinding.deleteSchedule.visibility = View.VISIBLE
-                scheduleListFinishHeadBinding.scheduleListFinish.visibility = View.GONE
-                scheduleListFinishHeadBinding.scheduleDeleteBack.visibility = View.VISIBLE
-            }
             for (i in mSchedules.indices) {
                 mSchedules[i].isEditor = true
             }
@@ -165,6 +119,8 @@ class TodayScheduleFragment:Fragment() {
             }
             finishScheduleAdapter.setList(schedules)
             mFinishSchedules = finishScheduleAdapter.data
+            finishScheduleAdapter.otherDate = scheduleAdapter.data
+            scheduleAdapter.otherDate = finishScheduleAdapter.data
         })
     }
 
@@ -192,12 +148,8 @@ class TodayScheduleFragment:Fragment() {
                     }
                     dialog.dismiss()
                     updateScheduleList()
-                    scheduleListFinishHeadBinding.deleteSchedule.visibility = View.GONE
                     scheduleListFinishHeadBinding.scheduleListFinish.visibility = View.VISIBLE
-                    scheduleListFinishHeadBinding.scheduleDeleteBack.visibility = View.GONE
-                    scheduleHeadBinding.deleteSchedule.visibility = View.GONE
                     scheduleHeadBinding.scheduleListHead.visibility = View.VISIBLE
-                    scheduleHeadBinding.scheduleDeleteBack.visibility = View.GONE
                 }
                 .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
         builder.create().show()

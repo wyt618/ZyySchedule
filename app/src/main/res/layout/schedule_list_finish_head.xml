@@ -18,14 +18,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/schedule_delete_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/cancel"
-                android:textColor="@color/color_schedule_start"
-                android:textSize="@dimen/text_size_24sp"
-                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/schedule_list_finish"
@@ -41,33 +33,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.022" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <LinearLayout
-                android:id="@+id/delete_schedule"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/space_10dp"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/delete_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_2dp"
-                    app:srcCompat="@drawable/ic_baseline_delete_outline_24" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/delete_button_text"
-                    android:textColor="@color/color_schedule_start"
-                    android:textSize="@dimen/text_size_24sp" />
-            </LinearLayout>
         </LinearLayout>
 
 

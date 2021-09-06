@@ -19,14 +19,6 @@
             android:paddingStart="@dimen/space_14dp"
             android:orientation="horizontal">
             <TextView
-                android:id="@+id/schedule_delete_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:textSize="@dimen/text_size_24sp"
-                android:textColor="@color/color_schedule_start"
-                android:text="@string/cancel"/>
-            <TextView
                 android:id="@+id/schedule_list_head"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -39,31 +31,6 @@
                 android:textColor="@color/color_schedule_start"
                 android:textSize="@dimen/text_size_24sp"/>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-            <LinearLayout
-                android:id="@+id/delete_schedule"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginEnd="@dimen/space_10dp"
-                android:visibility="gone">
-            <ImageView
-                android:id="@+id/delete_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_baseline_delete_outline_24"
-                android:layout_marginTop="@dimen/space_2dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/delete_button_text"
-                android:textSize="@dimen/text_size_24sp"
-                android:textColor="@color/color_schedule_start"
-                />
-            </LinearLayout>
         </LinearLayout>
 
 

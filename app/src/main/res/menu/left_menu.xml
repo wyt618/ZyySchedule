@@ -4,7 +4,7 @@
     <item tools:ignore="MenuTitle" />
     <item
         android:id="@+id/today"
-        android:icon="@drawable/ic_inbox"
+        android:icon="@drawable/ic_today_schedule"
         android:title="@string/title_today" />
 
     <item

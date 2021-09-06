@@ -27,6 +27,10 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     private var dataRepository: DataRepository = DataRepository(application)
     private lateinit var priorityBean: PriorityBean
     private lateinit var remindBean: RemindBean
+    var editItemSize:MutableLiveData<Int> = MutableLiveData()
+
+
+
 
     init {
         val calendar = Calendar.getInstance()
