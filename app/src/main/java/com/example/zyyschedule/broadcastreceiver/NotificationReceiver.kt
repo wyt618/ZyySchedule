@@ -27,6 +27,7 @@ class NotificationReceiver : BroadcastReceiver() {
             notification.setDefaults(Notification.DEFAULT_SOUND or Notification.DEFAULT_VIBRATE)
             val remindDialogReceiver = Intent("com.example.zyyschedule.broadcastreceiver.RemindDialogReceiver")
             remindDialogReceiver.putExtra("remindSchedule", intent.getStringExtra("remindSchedule"))
+            remindDialogReceiver.putExtra("LabelTitle",intent.getStringExtra("LabelTitle"))
             val toRemindDialog = PendingIntent.getBroadcast(context, intent.getIntExtra("PendingIntentCode", 0) + 10000, remindDialogReceiver, 0)
             notification.setContentIntent(toRemindDialog)
             schedule.id?.let {

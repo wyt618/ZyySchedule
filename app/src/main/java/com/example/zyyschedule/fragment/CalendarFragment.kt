@@ -154,7 +154,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         binding.scheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
         scheduleListHeadBinding.scheduleListHead.text = selectMonth.toString() + "月" + selectDay + "日"
-        LiveEventBus.get("MainA_CalendarF", String::class.java)
+        LiveEventBus.get("MainA_SomeF", String::class.java)
                 .observe(this,{
                     when(it){
                         "goto_delete_dialog" -> gotoDeleteDialog()
@@ -165,21 +165,32 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             val intent = Intent(activity, AddLabelActivity::class.java)
             startActivity(intent)
         }
-        //监听进入编辑状态下选中的日程条目数
-        vm.editItemSize.observe(viewLifecycleOwner, {
+        scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner,{
             binding.goBackText.text = "选中${it}项"
             if(it>0){
                 LiveEventBus
-                        .get("CalendarF_MainA", String::class.java)
+                        .get("SomeF_MainA", String::class.java)
                         .post("enabled_true")
             }else{
                 LiveEventBus
-                        .get("CalendarF_MainA", String::class.java)
+                        .get("SomeF_MainA", String::class.java)
+                        .post("enabled_false")
+            }
+        })
+        finishScheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
+            binding.goBackText.text = "选中${it}项"
+            if (it > 0) {
+                LiveEventBus
+                        .get("SomeF_MainA", String::class.java)
+                        .post("enabled_true")
+            } else {
+                LiveEventBus
+                        .get("SomeF_MainA", String::class.java)
                         .post("enabled_false")
             }
         })
         //对标签数据进行监听，刷新标签选择对话框，对话框点击事件
-        vm.getAllLabel()!!.observe(viewLifecycleOwner, { labels: List<Label>? ->
+        vm.getAllLabel().observe(viewLifecycleOwner, { labels: List<Label>? ->
             labelAdapter.setList(labels)
             labelAdapter.notifyDataSetChanged()
             labelAdapter.setOnItemClickListener { _: BaseQuickAdapter<*, *>?, view: View, _: Int ->
@@ -247,7 +258,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             binding.rlTool.visibility = View.GONE
             binding.editTool.visibility = View.VISIBLE
             LiveEventBus
-                    .get("CalendarF_MainA", String::class.java)
+                    .get("SomeF_MainA", String::class.java)
                     .post("gone_navigation")
             binding.fabBtn.visibility = View.GONE
             for (i in mSchedules.indices) {
@@ -264,7 +275,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             binding.rlTool.visibility = View.GONE
             binding.editTool.visibility = View.VISIBLE
             LiveEventBus
-                    .get("CalendarF_MainA", String::class.java)
+                    .get("SomeF_MainA", String::class.java)
                     .post("gone_navigation")
             binding.fabBtn.visibility = View.GONE
             for (i in mSchedules.indices) {
@@ -305,7 +316,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private fun exitEditor(){
         binding.fabBtn.visibility = View.VISIBLE
         LiveEventBus
-                .get("CalendarF_MainA", String::class.java)
+                .get("SomeF_MainA", String::class.java)
                 .post("visible_navigation")
         binding.editTool.visibility = View.GONE
         binding.rlTool.visibility = View.VISIBLE
@@ -500,105 +511,28 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
 
     //将提醒字符转化为时间字符
     private fun remindChangeTime(): String {
-        var remindtime: String
-        remindtime = remindAdapter.addRemind.toString()
-        if (remindtime == "无提醒") {
-            remindtime = ""
-        } else {
-            remindtime = remindtime.replace("无提醒", "")
-            remindtime = remindtime.replace(",准时", remindToTime(1) + ",")
-            remindtime = remindtime.replace(",提前1分钟", remindToTime(2) + ",")
-            remindtime = remindtime.replace(",提前5分钟", remindToTime(3) + ",")
-            remindtime = remindtime.replace(",提前10分钟", remindToTime(4) + ",")
-            remindtime = remindtime.replace(",提前15分钟", remindToTime(5) + ",")
-            remindtime = remindtime.replace(",提前20分钟", remindToTime(6) + ",")
-            remindtime = remindtime.replace(",提前25分钟", remindToTime(7) + ",")
-            remindtime = remindtime.replace(",提前30分钟", remindToTime(8) + ",")
-            remindtime = remindtime.replace(",提前45分钟", remindToTime(9) + ",")
-            remindtime = remindtime.replace(",提前1个小时", remindToTime(10) + ",")
-            remindtime = remindtime.replace(",提前2个小时", remindToTime(11) + ",")
-            remindtime = remindtime.replace(",提前3个小时", remindToTime(12) + ",")
-            remindtime = remindtime.replace(",提前12个小时", remindToTime(13) + ",")
-            remindtime = remindtime.replace(",提前1天", remindToTime(14) + ",")
-            remindtime = remindtime.replace(",提前2天", remindToTime(15) + ",")
-        }
-        return remindtime
-    }
-
-    //处理提醒与时间的方法
-    private fun remindToTime(remindType: Int): String {
         var remindTime: String
-        var date = Date()
-        remindTime = selectYear.toString() + "-" + selectMonth + "-" + selectDay + " " + addScheduleBinding.textTime.text + ":" + "00"
-        @SuppressLint("SimpleDateFormat") val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        try {
-            date = std.parse(remindTime)
-        } catch (ignored: Exception) {
-        }
-        when (remindType) {
-            1 -> {
-                remindTime = std.format(date)
-            }
-            2 -> {
-                date.time = date.time - 60 * 1000
-                remindTime = std.format(date)
-            }
-            3 -> {
-                date.time = date.time - 5 * 60 * 1000
-                remindTime = std.format(date)
-            }
-            4 -> {
-                date.time = date.time - 10 * 60 * 1000
-                remindTime = std.format(date)
-            }
-            5 -> {
-                date.time = date.time - 15 * 60 * 1000
-                remindTime = std.format(date)
-            }
-            6 -> {
-                date.time = date.time - 20 * 60 * 1000
-                remindTime = std.format(date)
-            }
-            7 -> {
-                date.time = date.time - 25 * 60 * 1000
-                remindTime = std.format(date)
-            }
-            8 -> {
-                date.time = date.time - 30 * 60 * 1000
-                remindTime = std.format(date)
-            }
-            9 -> {
-                date.time = date.time - 45 * 60 * 1000
-                remindTime = std.format(date)
-            }
-            10 -> {
-                date.time = date.time - 60 * 60 * 1000
-                remindTime = std.format(date)
-            }
-            11 -> {
-                date.time = date.time - 2 * 60 * 60 * 1000
-                remindTime = std.format(date)
-            }
-            12 -> {
-                date.time = date.time - 3 * 60 * 60 * 1000
-                remindTime = std.format(date)
-            }
-            13 -> {
-                date.time = date.time - 12 * 60 * 60 * 1000
-                remindTime = std.format(date)
-            }
-            14 -> {
-                date.time = date.time - 24 * 60 * 60 * 1000
-                remindTime = std.format(date)
-            }
-            15 -> {
-                date.time = date.time - 2 * 24 * 60 * 60 * 1000
-                remindTime = std.format(date)
-            }
-            16 -> {
-                date.time = date.time - 7 * 24 * 60 * 60 * 1000
-                remindTime = std.format(date)
-            }
+        remindTime = remindAdapter.addRemind.toString()
+        if (remindTime == "无提醒") {
+            remindTime = ""
+        } else {
+            vm.getDateForRemindToTime(selectYear,selectMonth,selectDay,addScheduleBinding.textTime.text.toString())
+            remindTime = remindTime.replace("无提醒", "")
+            remindTime = remindTime.replace(",准时", vm.remindToTime(1) + ",")
+            remindTime = remindTime.replace(",提前1分钟", vm.remindToTime(2) + ",")
+            remindTime = remindTime.replace(",提前5分钟", vm.remindToTime(3) + ",")
+            remindTime = remindTime.replace(",提前10分钟", vm.remindToTime(4) + ",")
+            remindTime = remindTime.replace(",提前15分钟", vm.remindToTime(5) + ",")
+            remindTime = remindTime.replace(",提前20分钟", vm.remindToTime(6) + ",")
+            remindTime = remindTime.replace(",提前25分钟", vm.remindToTime(7) + ",")
+            remindTime = remindTime.replace(",提前30分钟", vm.remindToTime(8) + ",")
+            remindTime = remindTime.replace(",提前45分钟", vm.remindToTime(9) + ",")
+            remindTime = remindTime.replace(",提前1个小时", vm.remindToTime(10) + ",")
+            remindTime = remindTime.replace(",提前2个小时", vm.remindToTime(11) + ",")
+            remindTime = remindTime.replace(",提前3个小时", vm.remindToTime(12) + ",")
+            remindTime = remindTime.replace(",提前12个小时", vm.remindToTime(13) + ",")
+            remindTime = remindTime.replace(",提前1天", vm.remindToTime(14) + ",")
+            remindTime = remindTime.replace(",提前2天", vm.remindToTime(15) + ",")
         }
         return remindTime
     }
@@ -642,7 +576,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     updateScheduleList()
                     binding.fabBtn.visibility = View.VISIBLE
                     LiveEventBus
-                            .get("CalendarF_MainA", String::class.java)
+                            .get("SomeF_MainA", String::class.java)
                             .post("visible_navigation")
                     binding.editTool.visibility = View.GONE
                     binding.rlTool.visibility = View.VISIBLE
@@ -655,7 +589,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     //遍历日期设置日历标记
     private fun setCalendarTag() {
         val map: MutableMap<String, Calendar> = HashMap()
-        vm.getScheduleDayOfTag()!!.observe(viewLifecycleOwner, { strings: List<String> ->
+        vm.getScheduleDayOfTag().observe(viewLifecycleOwner, { strings: List<String> ->
             for (i in strings.indices) {
                 map[getSchemeCalendar(strings[i].substring(0, 4).toInt(), strings[i].substring(5, 7).toInt(), strings[i].substring(8, 10).toInt()).toString()] = getSchemeCalendar(strings[i].substring(0, 4).toInt(), strings[i].substring(5, 7).toInt(), strings[i].substring(8, 10).toInt())
             }
@@ -679,7 +613,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     //添加日程列表
     private fun updateScheduleList() {
         val day = "%" + selectYear + "-" + processingTime(selectMonth) + "-" + processingTime(selectDay) + "%"
-        vm.getUnfinishedScheduleOfDay(day)!!.observe(viewLifecycleOwner, { schedules: List<Schedule> ->
+        vm.getUnfinishedScheduleOfDay(day).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 schedules[i].isChecked = false
             }
@@ -693,7 +627,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             scheduleAdapter.setList(schedules)
             mSchedules = scheduleAdapter.data
         })
-        vm.getFinishedScheduleOfDay(day)!!.observe(viewLifecycleOwner, { schedules: List<Schedule> ->
+        vm.getFinishedScheduleOfDay(day).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 schedules[i].isChecked = true
             }

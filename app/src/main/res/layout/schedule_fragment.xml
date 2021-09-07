@@ -19,7 +19,12 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/space_50dp"
+                android:orientation="vertical">
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/schedule_titleBar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/space_50dp"
                 android:background="@color/color_schedule_blue"
@@ -54,7 +59,41 @@
                     app:srcCompat="@drawable/menu_more" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/edit_tool"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/space_50dp"
+                    android:background="@color/calendar_background"
+                    android:visibility="gone">
 
+                    <ImageView
+                        android:id="@+id/go_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.020"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.642"
+                        app:srcCompat="@drawable/ic_baseline_return_24" />
+
+                    <TextView
+                        android:id="@+id/go_back_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/edit_toolbar_title"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.010"
+                        app:layout_constraintStart_toEndOf="@+id/go_back"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.515"
+                        android:textSize="@dimen/text_size_24sp"
+                        android:textColor="@color/black"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
             <FrameLayout
                 android:id="@+id/scheduleFragment"
                 android:layout_width="match_parent"

@@ -2,6 +2,7 @@ package com.example.zyyschedule.fragment
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.example.zyyschedule.adapter.ScheduleAdapter
 import com.example.zyyschedule.database.Schedule
 import com.example.zyyschedule.databinding.*
 import com.example.zyyschedule.viewmodel.ScheduleViewModel
+import com.jeremyliao.liveeventbus.LiveEventBus
 import java.util.*
 
 class TodayScheduleFragment:Fragment() {
@@ -59,11 +61,42 @@ class TodayScheduleFragment:Fragment() {
         binding.todayScheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
         scheduleHeadBinding.scheduleListHead.setText(R.string.title_today)
-
-
+        scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
+            LiveEventBus
+                    .get("pitchOnNumber", Int::class.java)
+                    .post(it)
+            if (it > 0) {
+                LiveEventBus
+                        .get("SomeF_MainA", String::class.java)
+                        .post("enabled_true")
+            } else {
+                LiveEventBus
+                        .get("SomeF_MainA", String::class.java)
+                        .post("enabled_false")
+            }
+        })
+        finishScheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
+            LiveEventBus
+                    .get("pitchOnNumber", Int::class.java)
+                    .post(it)
+            if (it > 0) {
+                LiveEventBus
+                        .get("SomeF_MainA", String::class.java)
+                        .post("enabled_true")
+            } else {
+                LiveEventBus
+                        .get("SomeF_MainA", String::class.java)
+                        .post("enabled_false")
+            }
+        })
         //完成和未完成日程item长按事件
         scheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
-
+            LiveEventBus
+                    .get("SomeF_ScheduleF", String::class.java)
+                    .post("gone_titleBar")
+            LiveEventBus
+                    .get("SomeF_MainA",String::class.java)
+                    .post("gone_navigation")
             for (i in mSchedules.indices) {
                 mSchedules[i].isEditor = true
             }
@@ -76,6 +109,12 @@ class TodayScheduleFragment:Fragment() {
         }
 
         finishScheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
+            LiveEventBus
+                    .get("SomeF_ScheduleF", String::class.java)
+                    .post("gone_navigation")
+            LiveEventBus
+                    .get("SomeF_MainA",String::class.java)
+                    .post("gone_navigation")
             for (i in mSchedules.indices) {
                 mSchedules[i].isEditor = true
             }
@@ -92,7 +131,7 @@ class TodayScheduleFragment:Fragment() {
     private fun updateScheduleList() {
         val calendar = Calendar.getInstance()
         val day = "%" + calendar[Calendar.YEAR] + "-" + processingTime(calendar[Calendar.MONTH] + 1) + "-" + processingTime(calendar[Calendar.DAY_OF_MONTH]) + "%"
-        vm.getUnfinishedScheduleOfDay(day)!!.observe(viewLifecycleOwner, { schedules: List<Schedule> ->
+        vm.getUnfinishedScheduleOfDay(day).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 schedules[i].isChecked = false
             }
@@ -106,7 +145,7 @@ class TodayScheduleFragment:Fragment() {
             scheduleAdapter.setList(schedules)
             mSchedules = scheduleAdapter.data
         })
-        vm.getFinishedScheduleOfDay(day)!!.observe(viewLifecycleOwner, { schedules: List<Schedule> ->
+        vm.getFinishedScheduleOfDay(day).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 schedules[i].isChecked = true
             }

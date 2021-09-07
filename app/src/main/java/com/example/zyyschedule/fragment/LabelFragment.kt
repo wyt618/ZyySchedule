@@ -111,7 +111,7 @@ class LabelFragment(labelId: Int):Fragment() {
     }
 
     private fun updateScheduleList() {
-        vm.getUFScheduleOfLabel(mLabelId)!!.observe(viewLifecycleOwner, { schedules: List<Schedule> ->
+        vm.getUFScheduleOfLabel(mLabelId).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 schedules[i].isChecked = false
             }
@@ -125,7 +125,7 @@ class LabelFragment(labelId: Int):Fragment() {
             scheduleAdapter.setList(schedules)
             mSchedules = scheduleAdapter.data
         })
-        vm.getFScheduleOfLabel(mLabelId)!!.observe(viewLifecycleOwner, { schedules: List<Schedule> ->
+        vm.getFScheduleOfLabel(mLabelId).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 schedules[i].isChecked = true
             }

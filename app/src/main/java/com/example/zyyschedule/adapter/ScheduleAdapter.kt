@@ -9,6 +9,7 @@ import android.widget.CompoundButton
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -18,7 +19,6 @@ import com.example.zyyschedule.database.Schedule
 import com.example.zyyschedule.viewmodel.CalendarViewModel
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "CAST_NEVER_SUCCEEDS")
 class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHolder>(layoutResId) {
@@ -26,6 +26,7 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
     private lateinit var vm: CalendarViewModel
     private lateinit var date: Date
     var otherDate:List<Schedule>? = null
+    var pitchOnNumber:MutableLiveData<Int> = MutableLiveData(0)
 
     fun setOwner(owner: ViewModelStoreOwner) {
         this.owner = owner
@@ -67,7 +68,7 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
                     }
                 }
             }
-            vm.editItemSize.value = number
+            pitchOnNumber.value = number
         }
 
         val checkBox:AppCompatCheckBox = holder.getView(R.id.schedule_title)

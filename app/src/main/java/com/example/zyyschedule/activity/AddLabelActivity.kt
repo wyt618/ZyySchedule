@@ -42,7 +42,8 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
                 R.id.add_label_exit -> this.finish()
                 R.id.add_label_button -> addLabel()
                 R.id.LabelSetColor -> gotoColorPicker()
-                else -> {}
+                else -> {
+                }
             }
         }
 
@@ -71,7 +72,7 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
     private fun addLabel() {
         if (binding.LabelTitle.text!!.isNotBlank()) {
             val titleText: String = binding.LabelTitle.text.toString()
-            vm.checkLabelTitle(titleText)?.observe(this) { labels ->
+            vm.checkLabelTitle(titleText).observe(this) { labels ->
                 if (labels.isNotEmpty()) {
                     val titleDouble: AlertDialog.Builder = AlertDialog.Builder(this)
                     titleDouble.apply {

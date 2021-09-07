@@ -25,6 +25,7 @@ import com.example.zyyschedule.adapter.LabelAdapter
 import com.example.zyyschedule.database.Label
 import com.example.zyyschedule.databinding.ScheduleFragmentBinding
 import com.example.zyyschedule.viewmodel.ScheduleViewModel
+import com.jeremyliao.liveeventbus.LiveEventBus
 
 
 class ScheduleFragment : Fragment(), View.OnClickListener {
@@ -41,7 +42,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    @SuppressLint("WrongConstant")
+    @SuppressLint("WrongConstant", "SetTextI18n")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         gotoTodayScheduleFragment()
@@ -51,6 +52,30 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
         binding.labelRecyclerview.adapter = labelAdapter
         binding.ivMainMenu.setOnClickListener(this)
         binding.drawerLayout.setOnClickListener(this)
+        LiveEventBus.get("SomeF_ScheduleF", String::class.java)
+                .observe(this,{s:String ->
+                    when(s){
+                        "gone_titleBar" ->{
+                            binding.scheduleTitleBar.visibility =View.GONE
+                            binding.editTool.visibility = View.VISIBLE
+                        }
+                    }
+                })
+        LiveEventBus
+                .get("pitchOnNumber", Int::class.java)
+                .observe(viewLifecycleOwner,{
+                    binding.goBackText.text = "选中${it}项"
+                    if(it>0){
+                        LiveEventBus
+                                .get("SomeF_MainA", String::class.java)
+                                .post("enabled_true")
+                    }else{
+                        LiveEventBus
+                                .get("SomeF_MainA", String::class.java)
+                                .post("enabled_false")
+                    }
+                })
+        // 侧滑菜单点击事件
         binding.navView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.today -> gotoTodayScheduleFragment()
@@ -60,7 +85,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
             }
             true
         }
-        vm.getAllLabel()!!.observe(viewLifecycleOwner, { labels: List<Label>? ->
+        vm.getAllLabel().observe(viewLifecycleOwner, { labels: List<Label>? ->
             labelAdapter.setList(labels)
             labelAdapter.notifyDataSetChanged()
         })

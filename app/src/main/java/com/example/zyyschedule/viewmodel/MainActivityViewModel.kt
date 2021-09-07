@@ -13,16 +13,8 @@ import kotlinx.coroutines.launch
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
     private val dataRepository: DataRepository = DataRepository(application)
 
-    fun getALLUnFinishOfRemind(): LiveData<List<Schedule>>? {
-        var aLLUnFinishOfRemind: LiveData<List<Schedule>>? = null
-        viewModelScope.launch {
-            try {
-                aLLUnFinishOfRemind = dataRepository.getALLUnFinishOfRemind()
-            } catch (e: Exception) {
-                Log.i("main", "获取所有日程提醒失败：$e")
-            }
-        }
-        return aLLUnFinishOfRemind
+    fun getALLUnFinishOfRemind(): LiveData<List<Schedule>> {
+        return dataRepository.getALLUnFinishOfRemind()
     }
 
     fun updateRemindTag(vararg id: Int) {
@@ -40,9 +32,13 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
             try {
                 dataRepository.deleteSchedule(*schedules)
             } catch (e: Exception) {
-                Log.i("calendar", "删除日程失败：$e")
+                Log.i("main", "删除日程失败：$e")
             }
         }
+    }
+
+    fun getLabelTitle(id:Int):LiveData<String>{
+        return dataRepository.getLabelTitle(id)
     }
 
 }

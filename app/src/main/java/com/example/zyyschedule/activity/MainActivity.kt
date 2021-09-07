@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
@@ -43,11 +44,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val configuration: AppBarConfiguration = AppBarConfiguration.Builder(binding.bottomNavigationView.menu).build()
         NavigationUI.setupActionBarWithNavController(this, navController, configuration)
         NavigationUI.setupWithNavController(binding.bottomNavigationView, navController)
-        vm.getALLUnFinishOfRemind()?.observe(this, { schedules: List<Schedule> ->
+        vm.getALLUnFinishOfRemind().observe(this, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 if (schedules[i].remind?.isNotEmpty() == true && !schedules[i].tagRemind) {
-                    setNotificationRemind(schedules[i])
-                    schedules[i].id?.let { vm.updateRemindTag(it) }
+                    var labelTitle: String?
+                    schedules[i].labelId?.let { labelId ->
+                        vm.getLabelTitle(labelId).observe(this) {
+                            labelTitle = it
+                            setNotificationRemind(schedules[i], labelTitle)
+                            schedules[i].id?.let {id-> vm.updateRemindTag(id) }
+                        }
+                    }
                 }
             }
         })
@@ -72,7 +79,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             binding.timeButton.setImageDrawable(it)
         }
         LiveEventBus
-                .get("CalendarF_MainA", String::class.java)
+                .get("SomeF_MainA", String::class.java)
                 .observe(this, { s: String ->
                     when (s) {
                         "gone_navigation" -> {
@@ -106,7 +113,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun setNotificationRemind(schedule: Schedule) {
+    private fun setNotificationRemind(schedule: Schedule,labelTitle:String?) {
         val remind = schedule.remind?.split(",")?.dropLastWhile { it.isEmpty() }?.toTypedArray()
         val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         var date = Date()
@@ -122,9 +129,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 intent.action = "Notification_Receiver"
                 intent.putExtra("remindSchedule", gson.toJson(schedule))
                 intent.putExtra("PendingIntentCode", schedule.id?.plus(i * 1000))
+                intent.putExtra("LabelTitle", labelTitle)
                 val sender = schedule.id?.plus(i * 1000)?.let { PendingIntent.getBroadcast(this, it, intent, 0) }
                 val am = getSystemService(ALARM_SERVICE) as AlarmManager
                 am[AlarmManager.RTC_WAKEUP, date.time] = sender
+                Log.i("MainActivity", "setNotificationRemind:${labelTitle} ${intent.getStringExtra("LabelTitle")} ")
             }
         }
     }
@@ -134,7 +143,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             when (it.id) {
                 R.id.delete_button -> {
                     LiveEventBus
-                            .get("MainA_CalendarF", String::class.java)
+                            .get("MainA_SomeF", String::class.java)
                             .post("goto_delete_dialog")
                 }
             }

@@ -1,6 +1,7 @@
 package com.example.zyyschedule.database
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 
 
@@ -41,43 +42,47 @@ class DataRepository(context: Context) {
     }
 
 
-    suspend fun getScheduleDayOfTag(): LiveData<List<String>> {
+    fun getScheduleDayOfTag(): LiveData<List<String>> {
         return scheduleDao.getScheduleDayOfTag()
     }
 
-    suspend fun getUnfinishedScheduleOfDay(day: String): LiveData<List<Schedule>> {
+    fun getUnfinishedScheduleOfDay(day: String): LiveData<List<Schedule>> {
         return scheduleDao.getUnfinishedScheduleOfDay(day)
     }
 
-    suspend fun getFinishedScheduleOfDay(day: String?): LiveData<List<Schedule>> {
+    fun getFinishedScheduleOfDay(day: String?): LiveData<List<Schedule>> {
         return scheduleDao.getFinishedScheduleOfDay(day)
     }
 
-    suspend fun checkLabel(title: String): LiveData<List<Label>> {
+    fun checkLabel(title: String): LiveData<List<Label>> {
         return labelDao.checkLabel(title)
     }
 
-    suspend fun getAllLabel(): LiveData<List<Label>>{
+    fun getAllLabel(): LiveData<List<Label>>{
         return labelDao.getAllLabel()
     }
 
-    suspend fun getALLUnFinishOfRemind(): LiveData<List<Schedule>> {
+    fun getLabelTitle(id:Int):LiveData<String>{
+        return labelDao.getLabelTitle(id)
+    }
+
+    fun getALLUnFinishOfRemind(): LiveData<List<Schedule>> {
         return scheduleDao.getALLUnFinishOfRemind()
     }
 
-    suspend fun allUFScheduleByTime(): LiveData<List<Schedule>> {
+    fun allUFScheduleByTime(): LiveData<List<Schedule>> {
         return  scheduleDao.allUFScheduleByTime()
     }
 
-    suspend fun allFScheduleByTime(): LiveData<List<Schedule>> {
+    fun allFScheduleByTime(): LiveData<List<Schedule>> {
         return  scheduleDao.allFScheduleByTime()
     }
 
-    suspend fun getFScheduleOfLabel(labelId: Int): LiveData<List<Schedule>> {
+    fun getFScheduleOfLabel(labelId: Int): LiveData<List<Schedule>> {
         return  scheduleDao.getFScheduleOfLabel(labelId)
     }
 
-    suspend fun getUFScheduleOfLabel(labelId: Int): LiveData<List<Schedule>> {
+    fun getUFScheduleOfLabel(labelId: Int): LiveData<List<Schedule>> {
         return scheduleDao.getUFScheduleOfLabel(labelId)
     }
 }

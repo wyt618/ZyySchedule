@@ -74,6 +74,7 @@ class RemindDialogReceiver : BroadcastReceiver() {
             binding.priorityIcon.visibility = View.GONE
         }
         binding.date.text = schedule.startTime?.let { checkNowDay(it) }
+        binding.labelText.text = intent.getStringExtra("LabelTitle")
         systemService.addView(binding.root, params)
     }
 

@@ -112,7 +112,7 @@ class LocalFragment : Fragment() {
     }
 
     private fun updateScheduleList() {
-        vm.allUFScheduleByTime()!!.observe(viewLifecycleOwner, { schedules: List<Schedule> ->
+        vm.allUFScheduleByTime().observe(viewLifecycleOwner, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 schedules[i].isChecked = false
             }
@@ -126,7 +126,7 @@ class LocalFragment : Fragment() {
             scheduleAdapter.setList(schedules)
             mSchedules = scheduleAdapter.data
         })
-        vm.allFScheduleByTime()!!.observe(viewLifecycleOwner, { schedules: List<Schedule> ->
+        vm.allFScheduleByTime().observe(viewLifecycleOwner, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 schedules[i].isChecked = true
             }

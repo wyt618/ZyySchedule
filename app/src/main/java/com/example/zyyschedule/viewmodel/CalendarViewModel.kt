@@ -1,5 +1,6 @@
 package com.example.zyyschedule.viewmodel
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -13,6 +14,7 @@ import com.example.zyyschedule.database.Label
 import com.example.zyyschedule.database.Schedule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.*
 
 class CalendarViewModel(application: Application) : AndroidViewModel(application) {
@@ -27,8 +29,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     private var dataRepository: DataRepository = DataRepository(application)
     private lateinit var priorityBean: PriorityBean
     private lateinit var remindBean: RemindBean
-    var editItemSize:MutableLiveData<Int> = MutableLiveData()
-
+    private lateinit var remindTime: String
 
 
 
@@ -47,6 +48,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         priorityid.value = 0
         remindText.value = "无提醒"
     }
+
 
     fun addScheduleDateAgo(selYear: Int, selMonth: Int, selDay: Int, toYear: Int, toMonth: Int, today: Int) {
         dateAgo = if (selYear > toYear) {
@@ -218,52 +220,20 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getAllLabel(): LiveData<List<Label>>? {
-        var allLabel: LiveData<List<Label>>? = null
-        viewModelScope.launch {
-            try {
-                allLabel = dataRepository.getAllLabel()
-            } catch (e: Exception) {
-                Log.i("calendar", "获取全部标签失败：$e")
-            }
-        }
-        return allLabel
+    fun getAllLabel(): LiveData<List<Label>> {
+        return dataRepository.getAllLabel()
     }
 
-    fun getUnfinishedScheduleOfDay(day: String): LiveData<List<Schedule>>? {
-        var unfinishedScheduleOfDay: LiveData<List<Schedule>>? = null
-        viewModelScope.launch {
-            try {
-                unfinishedScheduleOfDay = dataRepository.getUnfinishedScheduleOfDay(day)
-            } catch (e: Exception) {
-                Log.i("calendar", "获取某天未完日程失败：$e")
-            }
-        }
-        return unfinishedScheduleOfDay
+    fun getUnfinishedScheduleOfDay(day: String): LiveData<List<Schedule>> {
+        return dataRepository.getUnfinishedScheduleOfDay(day)
     }
 
-    fun getFinishedScheduleOfDay(day: String): LiveData<List<Schedule>>? {
-        var finishedScheduleOfDay: LiveData<List<Schedule>>? = null
-        viewModelScope.launch {
-            try {
-                finishedScheduleOfDay = dataRepository.getFinishedScheduleOfDay(day)
-            } catch (e: Exception) {
-                Log.i("calendar", "获取某天已完日程失败：$e")
-            }
-        }
-        return finishedScheduleOfDay
+    fun getFinishedScheduleOfDay(day: String): LiveData<List<Schedule>> {
+        return dataRepository.getFinishedScheduleOfDay(day)
     }
 
-    fun getScheduleDayOfTag(): LiveData<List<String>>? {
-        var scheduleDayOfTag: LiveData<List<String>>? = null
-        viewModelScope.launch {
-            try {
-                scheduleDayOfTag = dataRepository.getScheduleDayOfTag()
-            } catch (e: Exception) {
-                Log.i("calendar", "获取日历已有日程天数标记失败：$e")
-            }
-        }
-        return scheduleDayOfTag
+    fun getScheduleDayOfTag(): LiveData<List<String>> {
+        return dataRepository.getScheduleDayOfTag()
     }
 
     fun changeStateSchedule(vararg schedules: Schedule) {
@@ -274,5 +244,83 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
                 Log.i("calendar", "修改日程状态失败：$e")
             }
         }
+    }
+    fun getDateForRemindToTime(selectYear:Int,selectMonth:Int,selectDay:Int,time:String){
+        remindTime = "$selectYear-$selectMonth-$selectDay $time:00"
+    }
+    //处理提醒与时间的方法
+    fun remindToTime(remindType: Int): String {
+        var date = Date()
+        @SuppressLint("SimpleDateFormat") val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        try {
+            date = std.parse(remindTime)
+        } catch (ignored: Exception) {
+        }
+        when (remindType) {
+            1 -> {
+                remindTime = std.format(date)
+            }
+            2 -> {
+                date.time = date.time - 60 * 1000
+                remindTime = std.format(date)
+            }
+            3 -> {
+                date.time = date.time - 5 * 60 * 1000
+                remindTime = std.format(date)
+            }
+            4 -> {
+                date.time = date.time - 10 * 60 * 1000
+                remindTime = std.format(date)
+            }
+            5 -> {
+                date.time = date.time - 15 * 60 * 1000
+                remindTime = std.format(date)
+            }
+            6 -> {
+                date.time = date.time - 20 * 60 * 1000
+                remindTime = std.format(date)
+            }
+            7 -> {
+                date.time = date.time - 25 * 60 * 1000
+                remindTime = std.format(date)
+            }
+            8 -> {
+                date.time = date.time - 30 * 60 * 1000
+                remindTime = std.format(date)
+            }
+            9 -> {
+                date.time = date.time - 45 * 60 * 1000
+                remindTime = std.format(date)
+            }
+            10 -> {
+                date.time = date.time - 60 * 60 * 1000
+                remindTime = std.format(date)
+            }
+            11 -> {
+                date.time = date.time - 2 * 60 * 60 * 1000
+                remindTime = std.format(date)
+            }
+            12 -> {
+                date.time = date.time - 3 * 60 * 60 * 1000
+                remindTime = std.format(date)
+            }
+            13 -> {
+                date.time = date.time - 12 * 60 * 60 * 1000
+                remindTime = std.format(date)
+            }
+            14 -> {
+                date.time = date.time - 24 * 60 * 60 * 1000
+                remindTime = std.format(date)
+            }
+            15 -> {
+                date.time = date.time - 2 * 24 * 60 * 60 * 1000
+                remindTime = std.format(date)
+            }
+            16 -> {
+                date.time = date.time - 7 * 24 * 60 * 60 * 1000
+                remindTime = std.format(date)
+            }
+        }
+        return remindTime
     }
 }
