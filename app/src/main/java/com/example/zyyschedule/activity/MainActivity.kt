@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.deleteButton.setOnClickListener(this)
         supportActionBar?.hide()
         val navController: NavController = Navigation.findNavController(this, R.id.fragment)
         val configuration: AppBarConfiguration = AppBarConfiguration.Builder(binding.bottomNavigationView.menu).build()
@@ -58,40 +57,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         })
-        binding.deleteButton.isClickable = false
-        binding.moreButton.isClickable = false
-        binding.labelButton.isClickable = false
-        binding.timeButton.isClickable = false
-        ContextCompat.getDrawable(this, R.drawable.ic_baseline_delete_outline_24)?.let {
-            DrawableCompat.setTint(it, Color.GRAY)
-            binding.deleteButton.setImageDrawable(it)
-        }
-        ContextCompat.getDrawable(this, R.drawable.ic_baseline_more_24)?.let {
-            DrawableCompat.setTint(it, Color.GRAY)
-            binding.moreButton.setImageDrawable(it)
-        }
-        ContextCompat.getDrawable(this, R.drawable.ic_schedule_24)?.let {
-            DrawableCompat.setTint(it, Color.GRAY)
-            binding.labelButton.setImageDrawable(it)
-        }
-        ContextCompat.getDrawable(this, R.drawable.ic_calendar_toolbar)?.let {
-            DrawableCompat.setTint(it, Color.GRAY)
-            binding.timeButton.setImageDrawable(it)
-        }
         LiveEventBus
                 .get("SomeF_MainA", String::class.java)
                 .observe(this, { s: String ->
                     when (s) {
                         "gone_navigation" -> {
                             binding.bottomNavigationView.visibility = View.GONE
-                            binding.editorLayout.visibility = View.VISIBLE
                         }
                         "visible_navigation" -> {
                             binding.bottomNavigationView.visibility = View.VISIBLE
-                            binding.editorLayout.visibility = View.GONE
                         }
-                        "enabled_true" -> enabledTrue()
-                        "enabled_false" -> enabledFalse()
                     }
                 })
 
@@ -133,68 +108,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 val sender = schedule.id?.plus(i * 1000)?.let { PendingIntent.getBroadcast(this, it, intent, 0) }
                 val am = getSystemService(ALARM_SERVICE) as AlarmManager
                 am[AlarmManager.RTC_WAKEUP, date.time] = sender
-                Log.i("MainActivity", "setNotificationRemind:${labelTitle} ${intent.getStringExtra("LabelTitle")} ")
             }
         }
     }
 
     override fun onClick(v: View?) {
-        v?.let {
-            when (it.id) {
-                R.id.delete_button -> {
-                    LiveEventBus
-                            .get("MainA_SomeF", String::class.java)
-                            .post("goto_delete_dialog")
-                }
-            }
-        }
     }
 
-
-    private fun enabledTrue() {
-        binding.deleteButton.isClickable = true
-        binding.moreButton.isClickable = true
-        binding.labelButton.isClickable = true
-        binding.timeButton.isClickable = true
-        ContextCompat.getDrawable(this, R.drawable.ic_baseline_delete_outline_24)?.let {
-            DrawableCompat.setTint(it, Color.BLACK)
-            binding.deleteButton.setImageDrawable(it)
-        }
-        ContextCompat.getDrawable(this, R.drawable.ic_baseline_more_24)?.let {
-            DrawableCompat.setTint(it, Color.BLACK)
-            binding.moreButton.setImageDrawable(it)
-        }
-        ContextCompat.getDrawable(this, R.drawable.ic_schedule_24)?.let {
-            DrawableCompat.setTint(it, Color.BLACK)
-            binding.labelButton.setImageDrawable(it)
-        }
-        ContextCompat.getDrawable(this, R.drawable.ic_calendar_toolbar)?.let {
-            DrawableCompat.setTint(it, Color.BLACK)
-            binding.timeButton.setImageDrawable(it)
-        }
-    }
-
-    private fun enabledFalse() {
-        binding.deleteButton.isClickable = false
-        binding.moreButton.isClickable = false
-        binding.labelButton.isClickable = false
-        binding.timeButton.isClickable = false
-        ContextCompat.getDrawable(this, R.drawable.ic_baseline_delete_outline_24)?.let {
-            DrawableCompat.setTint(it, Color.GRAY)
-            binding.deleteButton.setImageDrawable(it)
-        }
-        ContextCompat.getDrawable(this, R.drawable.ic_baseline_more_24)?.let {
-            DrawableCompat.setTint(it, Color.GRAY)
-            binding.moreButton.setImageDrawable(it)
-        }
-        ContextCompat.getDrawable(this, R.drawable.ic_schedule_24)?.let {
-            DrawableCompat.setTint(it, Color.GRAY)
-            binding.labelButton.setImageDrawable(it)
-        }
-        ContextCompat.getDrawable(this, R.drawable.ic_calendar_toolbar)?.let {
-            DrawableCompat.setTint(it, Color.GRAY)
-            binding.timeButton.setImageDrawable(it)
-        }
-    }
 
 }

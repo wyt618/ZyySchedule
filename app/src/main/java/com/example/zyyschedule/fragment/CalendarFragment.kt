@@ -3,6 +3,7 @@ package com.example.zyyschedule.fragment
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -13,6 +14,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -116,6 +119,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         addScheduleBinding.remindButton.setOnClickListener(this)
         addScheduleBinding.remindText.setOnClickListener(this)
         addScheduleBinding.sendSchedule.setOnClickListener(this)
+        binding.deleteButton.setOnClickListener(this)
         addScheduleBinding.vm = vm
         addScheduleBinding.lifecycleOwner = this
         timePickerBinding.hourPicker.maxValue = 23
@@ -154,12 +158,27 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         binding.scheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
         scheduleListHeadBinding.scheduleListHead.text = selectMonth.toString() + "月" + selectDay + "日"
-        LiveEventBus.get("MainA_SomeF", String::class.java)
-                .observe(this,{
-                    when(it){
-                        "goto_delete_dialog" -> gotoDeleteDialog()
-                    }
-                })
+
+        binding.deleteButton.isClickable = false
+        binding.moreButton.isClickable = false
+        binding.labelButton.isClickable = false
+        binding.timeButton.isClickable = false
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_delete_outline_24)?.let {
+            DrawableCompat.setTint(it, Color.GRAY)
+            binding.deleteButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_more_24)?.let {
+            DrawableCompat.setTint(it, Color.GRAY)
+            binding.moreButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_schedule_24)?.let {
+            DrawableCompat.setTint(it, Color.GRAY)
+            binding.labelButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_calendar_toolbar)?.let {
+            DrawableCompat.setTint(it, Color.GRAY)
+            binding.timeButton.setImageDrawable(it)
+        }
 
         labelDialogHeadBinding.root.setOnClickListener {
             val intent = Intent(activity, AddLabelActivity::class.java)
@@ -168,25 +187,17 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner,{
             binding.goBackText.text = "选中${it}项"
             if(it>0){
-                LiveEventBus
-                        .get("SomeF_MainA", String::class.java)
-                        .post("enabled_true")
+                enabledTrue()
             }else{
-                LiveEventBus
-                        .get("SomeF_MainA", String::class.java)
-                        .post("enabled_false")
+                enabledFalse()
             }
         })
         finishScheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
             binding.goBackText.text = "选中${it}项"
             if (it > 0) {
-                LiveEventBus
-                        .get("SomeF_MainA", String::class.java)
-                        .post("enabled_true")
+                enabledTrue()
             } else {
-                LiveEventBus
-                        .get("SomeF_MainA", String::class.java)
-                        .post("enabled_false")
+                enabledFalse()
             }
         })
         //对标签数据进行监听，刷新标签选择对话框，对话框点击事件
@@ -257,6 +268,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         scheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
             binding.rlTool.visibility = View.GONE
             binding.editTool.visibility = View.VISIBLE
+            binding.editorLayout.visibility = View.VISIBLE
             LiveEventBus
                     .get("SomeF_MainA", String::class.java)
                     .post("gone_navigation")
@@ -274,6 +286,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         finishScheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
             binding.rlTool.visibility = View.GONE
             binding.editTool.visibility = View.VISIBLE
+            binding.editorLayout.visibility = View.VISIBLE
             LiveEventBus
                     .get("SomeF_MainA", String::class.java)
                     .post("gone_navigation")
@@ -307,6 +320,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 R.id.remind_button, R.id.remind_text -> gotoAddRemind()
                 R.id.send_schedule -> addSchedule()
                 R.id.go_back -> exitEditor()
+                R.id.delete_button ->gotoDeleteDialog()
             }
         }
     }
@@ -318,6 +332,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         LiveEventBus
                 .get("SomeF_MainA", String::class.java)
                 .post("visible_navigation")
+        binding.editorLayout.visibility = View.GONE
         binding.editTool.visibility = View.GONE
         binding.rlTool.visibility = View.VISIBLE
         for (i in mSchedules.indices) {
@@ -578,6 +593,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     LiveEventBus
                             .get("SomeF_MainA", String::class.java)
                             .post("visible_navigation")
+                    binding.editorLayout.visibility = View.GONE
                     binding.editTool.visibility = View.GONE
                     binding.rlTool.visibility = View.VISIBLE
                     setCalendarTag()
@@ -681,6 +697,54 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                         startActivity(intent)
                     }
             builder.create().show()
+        }
+    }
+
+    //控制编辑栏按钮可以点击
+    private fun enabledTrue() {
+        binding.deleteButton.isClickable = true
+        binding.moreButton.isClickable = true
+        binding.labelButton.isClickable = true
+        binding.timeButton.isClickable = true
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_delete_outline_24)?.let {
+            DrawableCompat.setTint(it, Color.BLACK)
+            binding.deleteButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_more_24)?.let {
+            DrawableCompat.setTint(it, Color.BLACK)
+            binding.moreButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_schedule_24)?.let {
+            DrawableCompat.setTint(it, Color.BLACK)
+            binding.labelButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_calendar_toolbar)?.let {
+            DrawableCompat.setTint(it, Color.BLACK)
+            binding.timeButton.setImageDrawable(it)
+        }
+    }
+
+    //控制编辑栏按钮不可点击
+    private fun enabledFalse() {
+        binding.deleteButton.isClickable = false
+        binding.moreButton.isClickable = false
+        binding.labelButton.isClickable = false
+        binding.timeButton.isClickable = false
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_delete_outline_24)?.let {
+            DrawableCompat.setTint(it, Color.GRAY)
+            binding.deleteButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_more_24)?.let {
+            DrawableCompat.setTint(it, Color.GRAY)
+            binding.moreButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_schedule_24)?.let {
+            DrawableCompat.setTint(it, Color.GRAY)
+            binding.labelButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_calendar_toolbar)?.let {
+            DrawableCompat.setTint(it, Color.GRAY)
+            binding.timeButton.setImageDrawable(it)
         }
     }
 

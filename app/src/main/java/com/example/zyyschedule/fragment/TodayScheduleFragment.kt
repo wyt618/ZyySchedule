@@ -2,7 +2,6 @@ package com.example.zyyschedule.fragment
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,6 +60,22 @@ class TodayScheduleFragment:Fragment() {
         binding.todayScheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
         scheduleHeadBinding.scheduleListHead.setText(R.string.title_today)
+        LiveEventBus.get("ScheduleF_SomeF",String::class.java)
+                .observe(viewLifecycleOwner,{
+                    when(it){
+                        "adapterComeBack" -> {
+                            for (i in mSchedules.indices) {
+                                mSchedules[i].isEditor = false
+                            }
+                            for (i in mFinishSchedules.indices) {
+                                mFinishSchedules[i].isEditor = false
+                            }
+                            scheduleAdapter.notifyDataSetChanged()
+                            finishScheduleAdapter.notifyDataSetChanged()
+                        }
+                    }
+                })
+
         scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
             LiveEventBus
                     .get("pitchOnNumber", Int::class.java)
@@ -111,7 +126,7 @@ class TodayScheduleFragment:Fragment() {
         finishScheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
             LiveEventBus
                     .get("SomeF_ScheduleF", String::class.java)
-                    .post("gone_navigation")
+                    .post("gone_titleBar")
             LiveEventBus
                     .get("SomeF_MainA",String::class.java)
                     .post("gone_navigation")

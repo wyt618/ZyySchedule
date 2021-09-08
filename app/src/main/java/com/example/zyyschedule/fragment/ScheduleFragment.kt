@@ -52,24 +52,25 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
         binding.labelRecyclerview.adapter = labelAdapter
         binding.ivMainMenu.setOnClickListener(this)
         binding.drawerLayout.setOnClickListener(this)
+        binding.goBack.setOnClickListener(this)
         LiveEventBus.get("SomeF_ScheduleF", String::class.java)
-                .observe(this,{s:String ->
-                    when(s){
-                        "gone_titleBar" ->{
-                            binding.scheduleTitleBar.visibility =View.GONE
+                .observe(this, { s: String ->
+                    when (s) {
+                        "gone_titleBar" -> {
+                            binding.scheduleTitleBar.visibility = View.GONE
                             binding.editTool.visibility = View.VISIBLE
                         }
                     }
                 })
         LiveEventBus
                 .get("pitchOnNumber", Int::class.java)
-                .observe(viewLifecycleOwner,{
+                .observe(viewLifecycleOwner, {
                     binding.goBackText.text = "选中${it}项"
-                    if(it>0){
+                    if (it > 0) {
                         LiveEventBus
                                 .get("SomeF_MainA", String::class.java)
                                 .post("enabled_true")
-                    }else{
+                    } else {
                         LiveEventBus
                                 .get("SomeF_MainA", String::class.java)
                                 .post("enabled_false")
@@ -117,7 +118,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
             deleteDialog.show()
             deleteDialog.window!!.setLayout(66, 66)
             val params = deleteDialog.window!!.attributes
-            val d =  requireContext().resources!!.displayMetrics
+            val d = requireContext().resources!!.displayMetrics
             params.x = view.width - 50
             params.y = -d.heightPixels / 2 + view.top + 430
             deleteDialog.window!!.attributes = params
@@ -137,7 +138,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
                 val dialog = builder1.create()
                 dialog.window!!.setBackgroundDrawableResource(R.drawable.delete_dialog)
                 dialog.show()
-                val d1 =  requireContext().resources!!.displayMetrics
+                val d1 = requireContext().resources!!.displayMetrics
                 val p = dialog.window!!.attributes
                 p.width = d1.widthPixels / 3
                 p.height = d1.heightPixels / 5
@@ -153,11 +154,22 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
     @SuppressLint("WrongConstant")
     override fun onClick(v: View?) {
         v?.let {
-            if(it.id == R.id.ivMainMenu){
-                binding.drawerLayout.openDrawer(Gravity.START)
+            when (it.id) {
+                R.id.ivMainMenu -> binding.drawerLayout.openDrawer(Gravity.START)
+                R.id.go_back -> exitEditor()
             }
         }
     }
+
+    private fun exitEditor() {
+        binding.editTool.visibility = View.GONE
+        binding.scheduleTitleBar.visibility = View.VISIBLE
+        LiveEventBus.get("ScheduleF_SomeF", String::class.java)
+                .post("adapterComeBack")
+        LiveEventBus.get("SomeF_MainA", String::class.java)
+                .post("visible_navigation")
+    }
+
 
     @SuppressLint("WrongConstant")
     private fun gotoTodayScheduleFragment() {

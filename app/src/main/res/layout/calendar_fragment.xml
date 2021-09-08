@@ -223,6 +223,67 @@
                 app:backgroundTint="@color/color_schedule_blue"
                 app:rippleColor="@color/color_schedule_start" />
 
+            <LinearLayout
+                android:id="@+id/editor_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/space_55dp"
+                android:background="@android:color/darker_gray"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:layout_alignParentBottom="true"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/space_18dp"
+                    android:layout_marginStart="@dimen/space_24dp"
+                    android:textColor="@color/color_schedule_start"
+                    android:text="@string/check_all"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+                <ImageView
+                    android:id="@+id/time_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:paddingTop="@dimen/space_18dp"
+                    android:paddingEnd="@dimen/space_30dp"
+                    android:paddingStart="@dimen/space_30dp"
+                    app:srcCompat="@drawable/ic_calendar_toolbar" />
+
+                <ImageView
+                    android:id="@+id/label_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:paddingTop="@dimen/space_18dp"
+                    android:paddingEnd="@dimen/space_30dp"
+                    android:paddingStart="@dimen/space_30dp"
+                    app:srcCompat="@drawable/ic_schedule_24" />
+
+                <ImageView
+                    android:id="@+id/delete_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:paddingTop="@dimen/space_18dp"
+                    android:paddingEnd="@dimen/space_60dp"
+                    android:paddingStart="@dimen/space_30dp"
+                    app:srcCompat="@drawable/ic_baseline_delete_outline_24" />
+
+                <ImageView
+                    android:id="@+id/more_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="@dimen/space_30dp"
+                    android:paddingTop="@dimen/space_18dp"
+                    app:srcCompat="@drawable/ic_baseline_more_24" />
+            </LinearLayout>
+
         </RelativeLayout>
 
 

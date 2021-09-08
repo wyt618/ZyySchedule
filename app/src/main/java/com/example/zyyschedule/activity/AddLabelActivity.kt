@@ -34,6 +34,7 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
         colorPickerDialogBinding.colorPickView.setOnColorChangedListener(this)
         binding.addLabelExit.setOnClickListener(this)
         binding.addLabelButton.setOnClickListener(this)
+        binding.addLabelTitle.performClick()
     }
 
     override fun onClick(v: View?) {
