@@ -2,24 +2,27 @@ package com.example.zyyschedule.activity
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
+import android.app.AlertDialog
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Intent
-import android.graphics.Color
+import android.content.IntentFilter
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.provider.Settings
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.example.zyyschedule.R
 import com.example.zyyschedule.broadcastreceiver.NotificationReceiver
+import com.example.zyyschedule.broadcastreceiver.RemindDialogReceiver
 import com.example.zyyschedule.database.Schedule
 import com.example.zyyschedule.databinding.ActivityMainBinding
 import com.example.zyyschedule.viewmodel.MainActivityViewModel
@@ -31,6 +34,8 @@ import kotlin.system.exitProcess
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class MainActivity : AppCompatActivity(), View.OnClickListener {
+    private val actionRegistered = "RemindDialogReceiver"
+    private lateinit var receiver: BroadcastReceiver
     private var firstTime: Long = 0
     private val vm: MainActivityViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
@@ -69,7 +74,28 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     }
                 })
-
+        //是否有全局弹窗权限判断
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                val builder = AlertDialog.Builder(this)
+                        .setCancelable(true)
+                        .setTitle(R.string.popup_window_permissions_title)
+                        .setMessage(R.string.popup_window_permissions_message)
+                        .setNegativeButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.cancel() }
+                        .setPositiveButton(R.string.notify_authority_dialog_ok_button) { dialog, _ ->
+                            dialog.cancel()
+                            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                            intent.data = Uri.parse("package:$packageName")
+                            startActivity(intent)
+                        }
+                builder.create().show()
+            }
+        }
+        //动态注册广播
+        receiver = RemindDialogReceiver()
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(actionRegistered)
+        registerReceiver(receiver,intentFilter)
     }
 
 
@@ -116,4 +142,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(receiver)
+    }
 }

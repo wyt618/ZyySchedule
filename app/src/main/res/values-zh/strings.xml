@@ -38,6 +38,8 @@
     <string name="local_schedule_head">未完成</string>
     <string name="notify_authority_dialog_title">检测到通知权限未开启!</string>
     <string name="notify_authority_dialog_message">如果不开启权限会收不到推送通知哦~</string>
+    <string name="popup_window_permissions_title">检测到全局弹窗未开启!</string>
+    <string name="popup_window_permissions_message">如果不开启权限日程提醒无法弹窗哦~</string>
     <string name="notify_authority_dialog_ok_button">去开启</string>
     <string name="edit_toolbar_title">选中0项</string>
 </resources>

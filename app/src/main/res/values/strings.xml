@@ -39,4 +39,6 @@
     <string name="notify_authority_dialog_message">If you do not enable the permission, you will not receive the push notification ~</string>
     <string name="notify_authority_dialog_ok_button">To open it</string>
     <string name="edit_toolbar_title">Selected item 0</string>
+    <string name="popup_window_permissions_title">Global popover not open detected!</string>
+    <string name="popup_window_permissions_message">If you do not enable the permission schedule reminder window can not pop oh~</string>
 </resources>

@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class CalendarViewModel(application: Application) : AndroidViewModel(application) {
     var day = 0
     var addScheduleDateAgo: MutableLiveData<String>

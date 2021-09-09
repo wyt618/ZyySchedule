@@ -18,6 +18,7 @@ import java.util.*
 @Suppress("DEPRECATED_IDENTITY_EQUALS", "DEPRECATION")
 class RemindDialogReceiver : BroadcastReceiver() {
     private lateinit var binding: RemindGlobalDialogBinding
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onReceive(context: Context?, intent: Intent?) {
         val gson = Gson()
@@ -26,6 +27,9 @@ class RemindDialogReceiver : BroadcastReceiver() {
         val systemService: WindowManager = context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val params = WindowManager.LayoutParams()
         binding = RemindGlobalDialogBinding.inflate(LayoutInflater.from(context))
+        if (binding.root.parent != null) {
+            return
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
@@ -54,13 +58,13 @@ class RemindDialogReceiver : BroadcastReceiver() {
             if (keyCode === KeyEvent.KEYCODE_BACK) {
                 systemService.removeView(binding.root)
                 true
-            }else{
+            } else {
                 false
             }
         }
         val flagDrawable = ContextCompat.getDrawable(context, R.drawable.priority_flag)
-        if(flagDrawable != null){
-            when(schedule.priority){
+        if (flagDrawable != null) {
+            when (schedule.priority) {
                 0 -> flagDrawable.setTint(ContextCompat.getColor(context, R.color.priority_null))
                 1 -> flagDrawable.setTint(ContextCompat.getColor(context, R.color.priority_low))
                 2 -> flagDrawable.setTint(ContextCompat.getColor(context, R.color.priority_middle))
@@ -70,7 +74,7 @@ class RemindDialogReceiver : BroadcastReceiver() {
         binding.priorityIcon.setImageDrawable(flagDrawable)
         if (schedule.priority != 0) {
             binding.priorityIcon.visibility = View.VISIBLE
-        }else{
+        } else {
             binding.priorityIcon.visibility = View.GONE
         }
         binding.date.text = schedule.startTime?.let { checkNowDay(it) }

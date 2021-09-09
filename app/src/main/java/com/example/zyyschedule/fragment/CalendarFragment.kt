@@ -2,6 +2,8 @@ package com.example.zyyschedule.fragment
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.Notification
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -10,6 +12,7 @@ import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -20,6 +23,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.NotificationUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.example.zyyschedule.R
 import com.example.zyyschedule.activity.AddLabelActivity
@@ -184,11 +188,11 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             val intent = Intent(activity, AddLabelActivity::class.java)
             startActivity(intent)
         }
-        scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner,{
+        scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
             binding.goBackText.text = "选中${it}项"
-            if(it>0){
+            if (it > 0) {
                 enabledTrue()
-            }else{
+            } else {
                 enabledFalse()
             }
         })
@@ -320,14 +324,14 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 R.id.remind_button, R.id.remind_text -> gotoAddRemind()
                 R.id.send_schedule -> addSchedule()
                 R.id.go_back -> exitEditor()
-                R.id.delete_button ->gotoDeleteDialog()
+                R.id.delete_button -> gotoDeleteDialog()
             }
         }
     }
 
     override fun onCalendarOutOfRange(calendar: Calendar?) {}
 
-    private fun exitEditor(){
+    private fun exitEditor() {
         binding.fabBtn.visibility = View.VISIBLE
         LiveEventBus
                 .get("SomeF_MainA", String::class.java)
@@ -376,12 +380,15 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         val window = addSchedule.window
         window!!.setGravity(Gravity.BOTTOM)
         window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-        val d =  requireContext().resources!!.displayMetrics
+        val d = requireContext().resources!!.displayMetrics
         val p = addSchedule.window!!.attributes
         p.width = d.widthPixels
         addSchedule.window!!.attributes = p
         addSchedule.window!!.setBackgroundDrawableResource(R.drawable.add_schedule)
         addSchedule.setOnDismissListener { binding.fabBtn.visibility = View.VISIBLE }
+        addScheduleBinding.editText.requestFocus()
+        val imm: InputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 
     //选择时间对话框
@@ -455,7 +462,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         labelChoose = builder.create()
         labelChoose.window!!.setBackgroundDrawableResource(R.drawable.dialog_background)
         labelChoose.show()
-        val d =  requireContext().resources!!.displayMetrics
+        val d = requireContext().resources!!.displayMetrics
         val p = labelChoose.window!!.attributes
         p.width = d.widthPixels / 3
         p.height = d.heightPixels / 2
@@ -490,7 +497,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         remindDialog = builder.create()
         remindDialog.window!!.setBackgroundDrawableResource(R.drawable.dialog_background)
         remindDialog.show()
-        val d =  requireContext().resources!!.displayMetrics
+        val d = requireContext().resources!!.displayMetrics
         val p = remindDialog.window!!.attributes
         p.width = d.widthPixels / 3
         p.height = d.heightPixels / 2
@@ -531,7 +538,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         if (remindTime == "无提醒") {
             remindTime = ""
         } else {
-            vm.getDateForRemindToTime(selectYear,selectMonth,selectDay,addScheduleBinding.textTime.text.toString())
+            vm.getDateForRemindToTime(selectYear, selectMonth, selectDay, addScheduleBinding.textTime.text.toString())
             remindTime = remindTime.replace("无提醒", "")
             remindTime = remindTime.replace(",准时", vm.remindToTime(1) + ",")
             remindTime = remindTime.replace(",提前1分钟", vm.remindToTime(2) + ",")
@@ -671,19 +678,9 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     }
 
 
-    //检测通知是否开启的方法
-    private fun isNotificationEnabled(): Boolean {
-        return try {
-                NotificationManagerCompat.from(requireContext()).areNotificationsEnabled()
-            } catch (e: java.lang.Exception) {
-                e.printStackTrace()
-                false
-            }
-    }
-
     //当通知未开启时弹出框
     private fun getNotification() {
-        if (!isNotificationEnabled()) {
+        if (!NotificationUtils.areNotificationsEnabled()) {
             val builder = AlertDialog.Builder(context)
                     .setCancelable(true)
                     .setTitle(R.string.notify_authority_dialog_title)

@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.zyyschedule">
 
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
         android:allowBackup="true"
@@ -30,15 +31,6 @@
             android:name=".broadcastreceiver.NotificationReceiver"
             android:enabled="true"
             android:exported="false"/>
-
-        <receiver
-            android:name=".broadcastreceiver.RemindDialogReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.example.zyyschedule.broadcastreceiver.RemindDialogReceiver" />
-            </intent-filter>
-        </receiver>
 
     </application>
 

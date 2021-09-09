@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -34,7 +35,9 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
         colorPickerDialogBinding.colorPickView.setOnColorChangedListener(this)
         binding.addLabelExit.setOnClickListener(this)
         binding.addLabelButton.setOnClickListener(this)
-        binding.addLabelTitle.performClick()
+        binding.LabelTitle.requestFocus()
+        val imm:InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(binding.LabelTitle,InputMethodManager.SHOW_FORCED)
     }
 
     override fun onClick(v: View?) {
