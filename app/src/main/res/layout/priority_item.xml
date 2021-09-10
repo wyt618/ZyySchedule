@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/space_50dp"
+    android:layout_height="@dimen/space_36dp"
     android:orientation="horizontal"
     android:background="?attr/selectableItemBackground">
 
@@ -15,7 +15,7 @@
 
     <TextView
         android:id="@+id/priority_title"
-        android:layout_width="143dp"
+        android:layout_width="@dimen/space_143dp"
         android:layout_height="match_parent"
         android:textSize="@dimen/text_size_24sp"
         app:layout_constraintBottom_toBottomOf="parent"

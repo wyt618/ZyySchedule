@@ -46,8 +46,7 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
                 R.id.add_label_exit -> this.finish()
                 R.id.add_label_button -> addLabel()
                 R.id.LabelSetColor -> gotoColorPicker()
-                else -> {
-                }
+                else -> { }
             }
         }
 

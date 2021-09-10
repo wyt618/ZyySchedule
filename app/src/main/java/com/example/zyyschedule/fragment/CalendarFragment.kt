@@ -363,6 +363,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         scheduleListHeadBinding.scheduleListHead.visibility = View.VISIBLE
         updateScheduleList()
         setCalendarTag()
+        exitEditor()
     }
 
     //添加日程悬浮窗显示

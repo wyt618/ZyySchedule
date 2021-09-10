@@ -39,13 +39,16 @@
     <dimen name="space_20dp">20dp</dimen>
     <dimen name="space_24dp">24dp</dimen>
     <dimen name="space_30dp">30dp</dimen>
+    <dimen name="space_36dp">36dp</dimen>
     <dimen name="space_50dp">50dp</dimen>
     <dimen name="space_52dp">52dp</dimen>
     <dimen name="space_55dp">55dp</dimen>
     <dimen name="space_60dp">60dp</dimen>
     <dimen name="space_67dp">67dp</dimen>
     <dimen name="space_70dp">70dp</dimen>
+    <dimen name="space_143dp">143dp</dimen>
     <dimen name="space_250dp">250dp</dimen>
+
 
     <dimen name="menu_item_border_width">1dp</dimen>
     <dimen name="menu_item_height">50dp</dimen>

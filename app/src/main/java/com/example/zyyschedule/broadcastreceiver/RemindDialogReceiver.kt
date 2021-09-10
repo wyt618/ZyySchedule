@@ -24,7 +24,7 @@ class RemindDialogReceiver : BroadcastReceiver() {
         val gson = Gson()
         val strSchedule = intent!!.getStringExtra("remindSchedule")
         val schedule: Schedule = gson.fromJson(strSchedule, Schedule::class.java)
-        val systemService: WindowManager = context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val windowManager: WindowManager = context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val params = WindowManager.LayoutParams()
         binding = RemindGlobalDialogBinding.inflate(LayoutInflater.from(context))
         if (binding.root.parent != null) {
@@ -48,7 +48,8 @@ class RemindDialogReceiver : BroadcastReceiver() {
             val rect = Rect()
             binding.remindDialog.getGlobalVisibleRect(rect)
             if (!rect.contains(x, y)) {
-                systemService.removeView(binding.root)
+                binding.remindDialog.visibility = View.GONE
+                binding.root.visibility = View.GONE
             }
             binding.root.performClick()
             true
@@ -56,7 +57,7 @@ class RemindDialogReceiver : BroadcastReceiver() {
 
         binding.root.setOnKeyListener { _, keyCode, _ ->
             if (keyCode === KeyEvent.KEYCODE_BACK) {
-                systemService.removeView(binding.root)
+                windowManager.removeView(binding.root)
                 true
             } else {
                 false
@@ -79,7 +80,7 @@ class RemindDialogReceiver : BroadcastReceiver() {
         }
         binding.date.text = schedule.startTime?.let { checkNowDay(it) }
         binding.labelText.text = intent.getStringExtra("LabelTitle")
-        systemService.addView(binding.root, params)
+        windowManager.addView(binding.root, params)
     }
 
     private fun checkNowDay(scheduleDate: String): String {
