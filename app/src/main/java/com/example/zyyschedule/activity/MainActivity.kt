@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
@@ -113,7 +114,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         return super.onKeyDown(keyCode, event)
     }
 
-    @SuppressLint("SimpleDateFormat")
+    @SuppressLint("SimpleDateFormat", "UnspecifiedImmutableFlag")
     private fun setNotificationRemind(schedule: Schedule, labelTitle: String?) {
         val remind = schedule.remind?.split(",")?.dropLastWhile { it.isEmpty() }?.toTypedArray()
         val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -131,7 +132,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 intent.putExtra("remindSchedule", gson.toJson(schedule))
                 intent.putExtra("PendingIntentCode", schedule.id?.plus(i * 1000))
                 intent.putExtra("LabelTitle", labelTitle)
-                val sender = schedule.id?.plus(i * 1000)?.let { PendingIntent.getBroadcast(this, it, intent, 0) }
+                val sender = schedule.id?.plus(i * 1000)?.let { PendingIntent.getBroadcast(this, it, intent, FLAG_UPDATE_CURRENT) }
                 val am = getSystemService(ALARM_SERVICE) as AlarmManager
                 am[AlarmManager.RTC_WAKEUP, date.time] = sender
             }

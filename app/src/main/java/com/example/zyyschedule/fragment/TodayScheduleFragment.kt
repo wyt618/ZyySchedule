@@ -1,5 +1,6 @@
 package com.example.zyyschedule.fragment
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
@@ -21,6 +22,7 @@ import com.example.zyyschedule.viewmodel.ScheduleViewModel
 import com.jeremyliao.liveeventbus.LiveEventBus
 import java.util.*
 
+@SuppressLint("NotifyDataSetChanged")
 class TodayScheduleFragment : Fragment(), View.OnClickListener {
     private lateinit var binding: FragmentTodayScheduleBinding
     private val vm: ScheduleViewModel by viewModels()
@@ -34,18 +36,28 @@ class TodayScheduleFragment : Fragment(), View.OnClickListener {
     private lateinit var finishScheduleFootBinding: FinishScheduleFootBinding
     private lateinit var builder: AlertDialog.Builder
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_today_schedule, container, false)
-        scheduleHeadBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_list_head, container, false)
-        scheduleFootBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_foot, container, false)
-        scheduleListFinishHeadBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_list_finish_head, container, false)
-        finishScheduleFootBinding = DataBindingUtil.inflate(inflater, R.layout.finish_schedule_foot, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_today_schedule, container, false)
+        scheduleHeadBinding =
+            DataBindingUtil.inflate(inflater, R.layout.schedule_list_head, container, false)
+        scheduleFootBinding =
+            DataBindingUtil.inflate(inflater, R.layout.schedule_foot, container, false)
+        scheduleListFinishHeadBinding =
+            DataBindingUtil.inflate(inflater, R.layout.schedule_list_finish_head, container, false)
+        finishScheduleFootBinding =
+            DataBindingUtil.inflate(inflater, R.layout.finish_schedule_foot, container, false)
         builder = AlertDialog.Builder(context)
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.deleteButton.setOnClickListener(this)
         val toDayLayoutManager = LinearLayoutManager(context)
         toDayLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -65,26 +77,26 @@ class TodayScheduleFragment : Fragment(), View.OnClickListener {
         binding.finishScheduleList.adapter = finishScheduleAdapter
         scheduleHeadBinding.scheduleListHead.setText(R.string.title_today)
         LiveEventBus.get("ScheduleF_SomeF", String::class.java)
-                .observe(viewLifecycleOwner, {
-                    when (it) {
-                        "adapterComeBack" -> {
-                            for (i in mSchedules.indices) {
-                                mSchedules[i].isEditor = false
-                            }
-                            for (i in mFinishSchedules.indices) {
-                                mFinishSchedules[i].isEditor = false
-                            }
-                            scheduleAdapter.notifyDataSetChanged()
-                            finishScheduleAdapter.notifyDataSetChanged()
-                            binding.editorLayout.visibility = View.GONE
+            .observe(viewLifecycleOwner, {
+                when (it) {
+                    "adapterComeBack" -> {
+                        for (i in mSchedules.indices) {
+                            mSchedules[i].isEditor = false
                         }
+                        for (i in mFinishSchedules.indices) {
+                            mFinishSchedules[i].isEditor = false
+                        }
+                        scheduleAdapter.notifyDataSetChanged()
+                        finishScheduleAdapter.notifyDataSetChanged()
+                        binding.editorLayout.visibility = View.GONE
                     }
-                })
+                }
+            })
         //编辑模式下选中的监听
         scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
             LiveEventBus
-                    .get("pitchOnNumber", Int::class.java)
-                    .post(it)
+                .get("pitchOnNumber", Int::class.java)
+                .post(it)
             if (it > 0) {
                 enabledTrue()
             } else {
@@ -93,8 +105,8 @@ class TodayScheduleFragment : Fragment(), View.OnClickListener {
         })
         finishScheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
             LiveEventBus
-                    .get("pitchOnNumber", Int::class.java)
-                    .post(it)
+                .get("pitchOnNumber", Int::class.java)
+                .post(it)
             if (it > 0) {
                 enabledTrue()
             } else {
@@ -105,11 +117,11 @@ class TodayScheduleFragment : Fragment(), View.OnClickListener {
         scheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
             binding.editorLayout.visibility = View.VISIBLE
             LiveEventBus
-                    .get("SomeF_ScheduleF", String::class.java)
-                    .post("gone_titleBar")
+                .get("SomeF_ScheduleF", String::class.java)
+                .post("gone_titleBar")
             LiveEventBus
-                    .get("SomeF_MainA", String::class.java)
-                    .post("gone_navigation")
+                .get("SomeF_MainA", String::class.java)
+                .post("gone_navigation")
             for (i in mSchedules.indices) {
                 mSchedules[i].isEditor = true
             }
@@ -124,11 +136,11 @@ class TodayScheduleFragment : Fragment(), View.OnClickListener {
         finishScheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
             binding.editorLayout.visibility = View.VISIBLE
             LiveEventBus
-                    .get("SomeF_ScheduleF", String::class.java)
-                    .post("gone_titleBar")
+                .get("SomeF_ScheduleF", String::class.java)
+                .post("gone_titleBar")
             LiveEventBus
-                    .get("SomeF_MainA", String::class.java)
-                    .post("gone_navigation")
+                .get("SomeF_MainA", String::class.java)
+                .post("gone_navigation")
             for (i in mSchedules.indices) {
                 mSchedules[i].isEditor = true
             }
@@ -152,21 +164,25 @@ class TodayScheduleFragment : Fragment(), View.OnClickListener {
 
     private fun updateScheduleList() {
         val calendar = Calendar.getInstance()
-        val day = "%" + calendar[Calendar.YEAR] + "-" + processingTime(calendar[Calendar.MONTH] + 1) + "-" + processingTime(calendar[Calendar.DAY_OF_MONTH]) + "%"
-        vm.getUnfinishedScheduleOfDay(day).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
-            for (i in schedules.indices) {
-                schedules[i].isChecked = false
-            }
-            if (schedules.isEmpty()) {
-                scheduleHeadBinding.root.visibility = View.GONE
-                scheduleFootBinding.root.visibility = View.GONE
-            } else {
-                scheduleHeadBinding.root.visibility = View.VISIBLE
-                scheduleFootBinding.root.visibility = View.VISIBLE
-            }
-            scheduleAdapter.setList(schedules)
-            mSchedules = scheduleAdapter.data
-        })
+        val day =
+            "%" + calendar[Calendar.YEAR] + "-" + processingTime(calendar[Calendar.MONTH] + 1) + "-" + processingTime(
+                calendar[Calendar.DAY_OF_MONTH]
+            ) + "%"
+        vm.getUnfinishedScheduleOfDay(day)
+            .observe(viewLifecycleOwner, { schedules: List<Schedule> ->
+                for (i in schedules.indices) {
+                    schedules[i].isChecked = false
+                }
+                if (schedules.isEmpty()) {
+                    scheduleHeadBinding.root.visibility = View.GONE
+                    scheduleFootBinding.root.visibility = View.GONE
+                } else {
+                    scheduleHeadBinding.root.visibility = View.VISIBLE
+                    scheduleFootBinding.root.visibility = View.VISIBLE
+                }
+                scheduleAdapter.setList(schedules)
+                mSchedules = scheduleAdapter.data
+            })
         vm.getFinishedScheduleOfDay(day).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 schedules[i].isChecked = true
@@ -196,24 +212,24 @@ class TodayScheduleFragment : Fragment(), View.OnClickListener {
     private fun gotoDeleteDialog() {
         builder = AlertDialog.Builder(context)
         builder.setMessage(R.string.delete_schedule_message)
-                .setPositiveButton(R.string.dialog_button_ok) { dialog, _ ->
-                    for (i in mSchedules.indices) {
-                        if (mSchedules[i].isEditorChecked) {
-                            vm.deleteSchedule(mSchedules[i])
-                        }
+            .setPositiveButton(R.string.dialog_button_ok) { dialog, _ ->
+                for (i in mSchedules.indices) {
+                    if (mSchedules[i].isEditorChecked) {
+                        vm.deleteSchedule(mSchedules[i])
                     }
-                    for (i in mFinishSchedules.indices) {
-                        if (mFinishSchedules[i].isEditorChecked) {
-                            vm.deleteSchedule(mFinishSchedules[i])
-                        }
-                    }
-                    dialog.dismiss()
-                    updateScheduleList()
-                    binding.editorLayout.visibility = View.GONE
-                    LiveEventBus.get("SomeF_ScheduleF", String::class.java)
-                            .post("visibility_titleBar")
                 }
-                .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
+                for (i in mFinishSchedules.indices) {
+                    if (mFinishSchedules[i].isEditorChecked) {
+                        vm.deleteSchedule(mFinishSchedules[i])
+                    }
+                }
+                dialog.dismiss()
+                updateScheduleList()
+                binding.editorLayout.visibility = View.GONE
+                LiveEventBus.get("SomeF_ScheduleF", String::class.java)
+                    .post("visibility_titleBar")
+            }
+            .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
         builder.create().show()
     }
 

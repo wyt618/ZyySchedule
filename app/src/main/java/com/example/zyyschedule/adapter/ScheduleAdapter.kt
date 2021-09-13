@@ -45,10 +45,15 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
         vm = ViewModelProvider(owner).get(CalendarViewModel::class.java)
         holder.setText(R.id.schedule_title, item.title)
         holder.setText(R.id.delete_radio_button, item.title)
-        holder.setText(R.id.schedule_date, item.startTime?.substring(0, 4) + "年"
-                + item.startTime?.substring(5, 7)?.toInt() + "月"
-                + item.startTime?.substring(8, 10)?.toInt() + "日")
-        holder.setText(R.id.schedule_time, item.startTime?.substring(item.startTime!!.length - 8, item.startTime!!.length - 3))
+        holder.setText(
+            R.id.schedule_date, item.startTime?.substring(0, 4) + "年"
+                    + item.startTime?.substring(5, 7)?.toInt() + "月"
+                    + item.startTime?.substring(8, 10)?.toInt() + "日"
+        )
+        holder.setText(
+            R.id.schedule_time,
+            item.startTime?.substring(item.startTime!!.length - 8, item.startTime!!.length - 3)
+        )
         val radioButton: AppCompatRadioButton = holder.getView(R.id.delete_radio_button)
         radioButton.setOnCheckedChangeListener(null)
         radioButton.isChecked = item.isEditorChecked
@@ -86,7 +91,10 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
         }
 
         if (item.state.equals("1")) {
-            holder.setTextColor(R.id.schedule_title, ContextCompat.getColor(context, R.color.color_schedule_grey))
+            holder.setTextColor(
+                R.id.schedule_title,
+                ContextCompat.getColor(context, R.color.color_schedule_grey)
+            )
         } else {
             holder.setTextColor(R.id.schedule_title, Color.BLACK)
             if (date.time <= now.time) {
@@ -107,10 +115,14 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
         }
 
         when (item.priority) {
-            0 -> checkBox.supportButtonTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.priority_null))
-            1 -> checkBox.supportButtonTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.priority_low))
-            2 -> checkBox.supportButtonTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.priority_middle))
-            3 -> checkBox.supportButtonTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.priority_high))
+            0 -> checkBox.supportButtonTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.priority_null))
+            1 -> checkBox.supportButtonTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.priority_low))
+            2 -> checkBox.supportButtonTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.priority_middle))
+            3 -> checkBox.supportButtonTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.priority_high))
         }
 
     }

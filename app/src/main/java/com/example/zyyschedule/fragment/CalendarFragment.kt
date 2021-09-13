@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -43,7 +42,7 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 import java.text.SimpleDateFormat
 import java.util.*
 
-@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "NotifyDataSetChanged")
 class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalendarSelectListener {
     private val vm: CalendarViewModel by viewModels()
     private lateinit var binding: CalendarFragmentBinding
@@ -79,27 +78,42 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private var selectDay: Int = 0
     private lateinit var time: java.util.Calendar
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         builder = AlertDialog.Builder(context)
         binding = DataBindingUtil.inflate(inflater, R.layout.calendar_fragment, container, false)
         dateJumpDialog = DataBindingUtil.inflate(inflater, R.layout.dialog_date, container, false)
-        labelDialogHeadBinding = DataBindingUtil.inflate(inflater, R.layout.label_dialog_head, container, false)
-        addScheduleBinding = DataBindingUtil.inflate(inflater, R.layout.add_schedule, container, false)
-        timePickerBinding = DataBindingUtil.inflate(inflater, R.layout.timepicker_dialog, container, false)
-        priorityDialogBinding = DataBindingUtil.inflate(inflater, R.layout.priority_dialog, container, false)
-        labelBinding = DataBindingUtil.inflate(inflater, R.layout.all_label_dialog, container, false)
-        remindDialogBinding = DataBindingUtil.inflate(inflater, R.layout.remind_dialog, container, false)
-        remindListHeadBinding = DataBindingUtil.inflate(inflater, R.layout.remind_list_head, container, false)
-        scheduleListHeadBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_list_head, container, false)
-        scheduleFootBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_foot, container, false)
-        scheduleListFinishHeadBinding = DataBindingUtil.inflate(inflater, R.layout.schedule_list_finish_head, container, false)
-        finishScheduleFootBinding = DataBindingUtil.inflate(inflater, R.layout.finish_schedule_foot, container, false)
+        labelDialogHeadBinding =
+            DataBindingUtil.inflate(inflater, R.layout.label_dialog_head, container, false)
+        addScheduleBinding =
+            DataBindingUtil.inflate(inflater, R.layout.add_schedule, container, false)
+        timePickerBinding =
+            DataBindingUtil.inflate(inflater, R.layout.timepicker_dialog, container, false)
+        priorityDialogBinding =
+            DataBindingUtil.inflate(inflater, R.layout.priority_dialog, container, false)
+        labelBinding =
+            DataBindingUtil.inflate(inflater, R.layout.all_label_dialog, container, false)
+        remindDialogBinding =
+            DataBindingUtil.inflate(inflater, R.layout.remind_dialog, container, false)
+        remindListHeadBinding =
+            DataBindingUtil.inflate(inflater, R.layout.remind_list_head, container, false)
+        scheduleListHeadBinding =
+            DataBindingUtil.inflate(inflater, R.layout.schedule_list_head, container, false)
+        scheduleFootBinding =
+            DataBindingUtil.inflate(inflater, R.layout.schedule_foot, container, false)
+        scheduleListFinishHeadBinding =
+            DataBindingUtil.inflate(inflater, R.layout.schedule_list_finish_head, container, false)
+        finishScheduleFootBinding =
+            DataBindingUtil.inflate(inflater, R.layout.finish_schedule_foot, container, false)
         return binding.root
     }
 
     @SuppressLint("SetTextI18n")
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         time = java.util.Calendar.getInstance()
         selectYear = binding.calendarView.curYear
         selectMonth = binding.calendarView.curMonth
@@ -108,7 +122,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         binding.flCurrent.setOnClickListener(this)
         binding.tvYear.text = binding.calendarView.curYear.toString()
-        binding.tvMonthDay.text = binding.calendarView.curMonth.toString() + "月" + binding.calendarView.curDay + "日"
+        binding.tvMonthDay.text =
+            binding.calendarView.curMonth.toString() + "月" + binding.calendarView.curDay + "日"
         binding.tvLunar.text = "今日"
         binding.calendarView.setOnCalendarSelectListener(this)
         binding.fabBtn.setOnClickListener(this)
@@ -143,7 +158,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         remindAdapter.setList(remindList)
         remindAdapter.setHeader(remindListHeadBinding)
         remindAdapter.setHeaderView(remindListHeadBinding.root)
-        scheduleListHeadBinding.scheduleListHead.text = selectMonth.toString() + "月" + selectDay + "日"
+        scheduleListHeadBinding.scheduleListHead.text =
+            selectMonth.toString() + "月" + selectDay + "日"
         val scheduleLayoutManager = LinearLayoutManager(context)
         scheduleLayoutManager.orientation = LinearLayoutManager.VERTICAL
         binding.scheduleList.layoutManager = scheduleLayoutManager
@@ -162,7 +178,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         scheduleAdapter.setOwner(this)
         binding.scheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
-        scheduleListHeadBinding.scheduleListHead.text = selectMonth.toString() + "月" + selectDay + "日"
+        scheduleListHeadBinding.scheduleListHead.text =
+            selectMonth.toString() + "月" + selectDay + "日"
         enabledFalse()
         labelDialogHeadBinding.root.setOnClickListener {
             val intent = Intent(activity, AddLabelActivity::class.java)
@@ -188,7 +205,9 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         //对标签数据进行监听，刷新标签选择对话框，对话框点击事件
         vm.getAllLabel().observe(viewLifecycleOwner, { labels: List<Label>? ->
             labelAdapter.setList(labels)
-            labelAdapter.notifyDataSetChanged()
+            if (labels != null) {
+                labelAdapter.notifyItemChanged(labels.size)
+            }
             labelAdapter.setOnItemClickListener { _: BaseQuickAdapter<*, *>?, view: View, _: Int ->
                 val labelName = view.findViewById<TextView>(R.id.label_name)
                 val labelId = view.findViewById<TextView>(R.id.label_id)
@@ -226,12 +245,20 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 vg.removeView(dateJumpDialog.root)
             }
             builder.setView(dateJumpDialog.root)
-                    .setTitle(R.string.calendar_dialog_title)
-                    .setPositiveButton(R.string.dialog_button_ok) { _, _ ->
-                        binding.calendarView.scrollToCalendar(dateJumpDialog.datePicker.year, dateJumpDialog.datePicker.month + 1, dateJumpDialog.datePicker.dayOfMonth)
-                        Toast.makeText(context, dateJumpDialog.datePicker.year.toString() + "年" + (dateJumpDialog.datePicker.month + 1) + "月" + dateJumpDialog.datePicker.dayOfMonth + "日", Toast.LENGTH_SHORT).show()
-                    }
-                    .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
+                .setTitle(R.string.calendar_dialog_title)
+                .setPositiveButton(R.string.dialog_button_ok) { _, _ ->
+                    binding.calendarView.scrollToCalendar(
+                        dateJumpDialog.datePicker.year,
+                        dateJumpDialog.datePicker.month + 1,
+                        dateJumpDialog.datePicker.dayOfMonth
+                    )
+                    Toast.makeText(
+                        context,
+                        dateJumpDialog.datePicker.year.toString() + "年" + (dateJumpDialog.datePicker.month + 1) + "月" + dateJumpDialog.datePicker.dayOfMonth + "日",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
             builder.create().show()
             true
         }
@@ -255,8 +282,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             binding.editTool.visibility = View.VISIBLE
             binding.editorLayout.visibility = View.VISIBLE
             LiveEventBus
-                    .get("SomeF_MainA", String::class.java)
-                    .post("gone_navigation")
+                .get("SomeF_MainA", String::class.java)
+                .post("gone_navigation")
             binding.fabBtn.visibility = View.GONE
             for (i in mSchedules.indices) {
                 mSchedules[i].isEditor = true
@@ -273,8 +300,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             binding.editTool.visibility = View.VISIBLE
             binding.editorLayout.visibility = View.VISIBLE
             LiveEventBus
-                    .get("SomeF_MainA", String::class.java)
-                    .post("gone_navigation")
+                .get("SomeF_MainA", String::class.java)
+                .post("gone_navigation")
             binding.fabBtn.visibility = View.GONE
             for (i in mSchedules.indices) {
                 mSchedules[i].isEditor = true
@@ -298,7 +325,14 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 R.id.fl_current -> binding.calendarView.scrollToCurrent()
                 R.id.fab_btn -> {
                     gotoAddSchedule()
-                    vm.addScheduleDateAgo(selectYear, selectMonth, selectDay, binding.calendarView.curYear, binding.calendarView.curMonth, binding.calendarView.curDay)
+                    vm.addScheduleDateAgo(
+                        selectYear,
+                        selectMonth,
+                        selectDay,
+                        binding.calendarView.curYear,
+                        binding.calendarView.curMonth,
+                        binding.calendarView.curDay
+                    )
                 }
                 R.id.add_schedule_selectTime, R.id.textTime -> gotoGetTime()
                 R.id.priority_button, R.id.text_priority -> gotoPriority()
@@ -313,11 +347,12 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
 
     override fun onCalendarOutOfRange(calendar: Calendar?) {}
 
+
     private fun exitEditor() {
         binding.fabBtn.visibility = View.VISIBLE
         LiveEventBus
-                .get("SomeF_MainA", String::class.java)
-                .post("visible_navigation")
+            .get("SomeF_MainA", String::class.java)
+            .post("visible_navigation")
         binding.editorLayout.visibility = View.GONE
         binding.editTool.visibility = View.GONE
         binding.rlTool.visibility = View.VISIBLE
@@ -341,7 +376,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         binding.tvMonthDay.text = calendar.month.toString() + "月" + calendar.day + "日"
         binding.tvYear.text = calendar.year.toString()
         binding.tvLunar.text = calendar.lunar
-        scheduleListHeadBinding.scheduleListHead.text = selectMonth.toString() + "月" + selectDay + "日"
+        scheduleListHeadBinding.scheduleListHead.text =
+            selectMonth.toString() + "月" + selectDay + "日"
         scheduleListHeadBinding.scheduleListHead.visibility = View.VISIBLE
         updateScheduleList()
         setCalendarTag()
@@ -353,14 +389,23 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private fun gotoAddSchedule() {
         addScheduleBinding.editText.text = null
         addScheduleBinding.priorityButton.setImageResource(R.drawable.priority_flag)
-        addScheduleBinding.textPriority.setTextColor(ContextCompat.getColor(requireContext(),R.color.priority_null))
+        addScheduleBinding.textPriority.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.priority_null
+            )
+        )
         vm.priority.postValue(getString(R.string.priority_null_text))
         vm.priorityid.postValue(0)
         vm.label.postValue(getString(R.string.title_not_classified))
-
+        addScheduleBinding.scheduleLabelId.text = "0"
+        vm.addScheduleTime.postValue("00:00")
+        vm.remindText.postValue("无提醒")
+        remindAdapter.addRemind = StringBuffer("无提醒")
 
         binding.fabBtn.visibility = View.GONE
-        addScheduleBinding.sendSchedule.isClickable = addScheduleBinding.editText.text.toString().trim().isNotEmpty()
+        addScheduleBinding.sendSchedule.isClickable =
+            addScheduleBinding.editText.text.toString().trim().isNotEmpty()
         if (addScheduleBinding.root.parent != null) {
             val vg = addScheduleBinding.root.parent as ViewGroup
             vg.removeView(addScheduleBinding.root)
@@ -379,7 +424,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         addSchedule.window!!.setBackgroundDrawableResource(R.drawable.add_schedule)
         addSchedule.setOnDismissListener { binding.fabBtn.visibility = View.VISIBLE }
         addScheduleBinding.editText.requestFocus()
-        val imm: InputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm: InputMethodManager =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 
@@ -394,20 +440,33 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
         builder = AlertDialog.Builder(context)
         builder.setView(timePickerBinding.root)
-                .setTitle(R.string.add_schedule_timePicker)
-                .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
-                .setPositiveButton(R.string.dialog_button_ok
-                ) { _, _ -> vm.addScheduleTime.setValue(processingTime(timePickerBinding.hourPicker.value) + ":" + processingTime(timePickerBinding.minePicker.value)) }
-                .setOnDismissListener {
-                    if (addScheduleBinding.textTime.text.toString() == "00:00") {
-                        timePickerBinding.hourPicker.value = 0
-                        timePickerBinding.minePicker.value = 0
-                    } else {
-                        timePickerBinding.hourPicker.value = Objects.requireNonNull(vm.addScheduleTime.value)!!.substring(0, 2).toInt()
-                        timePickerBinding.minePicker.value = vm.addScheduleTime.value!!.substring(3).toInt()
-                    }
-                    vm.addScheduleTime.setValue(processingTime(timePickerBinding.hourPicker.value) + ":" + processingTime(timePickerBinding.minePicker.value))
+            .setTitle(R.string.add_schedule_timePicker)
+            .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton(
+                R.string.dialog_button_ok
+            ) { _, _ ->
+                vm.addScheduleTime.setValue(
+                    processingTime(timePickerBinding.hourPicker.value) + ":" + processingTime(
+                        timePickerBinding.minePicker.value
+                    )
+                )
+            }
+            .setOnDismissListener {
+                if (addScheduleBinding.textTime.text.toString() == "00:00") {
+                    timePickerBinding.hourPicker.value = 0
+                    timePickerBinding.minePicker.value = 0
+                } else {
+                    timePickerBinding.hourPicker.value =
+                        Objects.requireNonNull(vm.addScheduleTime.value!!.substring(0, 2).toInt())
+                    timePickerBinding.minePicker.value =
+                        vm.addScheduleTime.value!!.substring(3).toInt()
                 }
+                vm.addScheduleTime.setValue(
+                    processingTime(timePickerBinding.hourPicker.value) + ":" + processingTime(
+                        timePickerBinding.minePicker.value
+                    )
+                )
+            }
         builder.create().show()
     }
 
@@ -436,7 +495,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
         builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.priority_dialog_title)
-                .setView(priorityDialogBinding.root)
+            .setView(priorityDialogBinding.root)
         priorityDialog = builder.create()
         priorityDialog.window!!.setBackgroundDrawableResource(R.drawable.dialog_background)
         priorityDialog.show()
@@ -450,7 +509,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
         builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.label_dialog_title)
-                .setView(labelBinding.root)
+            .setView(labelBinding.root)
         labelChoose = builder.create()
         labelChoose.window!!.setBackgroundDrawableResource(R.drawable.dialog_background)
         labelChoose.show()
@@ -476,16 +535,17 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
         builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.remind_dialog_title)
-                .setView(remindDialogBinding.root)
-                .setPositiveButton(R.string.dialog_button_finish) { _, _ ->
-                    if (remindAdapter.addRemind.toString() == "无提醒") {
-                        addScheduleBinding.remindText.text = remindAdapter.addRemind.toString()
-                    } else {
-                        addScheduleBinding.remindText.text = remindAdapter.addRemind.substring(4, remindAdapter.addRemind.length)
-                    }
-                    getNotification()
+            .setView(remindDialogBinding.root)
+            .setPositiveButton(R.string.dialog_button_finish) { _, _ ->
+                if (remindAdapter.addRemind.toString() == "无提醒") {
+                    addScheduleBinding.remindText.text = remindAdapter.addRemind.toString()
+                } else {
+                    addScheduleBinding.remindText.text =
+                        remindAdapter.addRemind.substring(4, remindAdapter.addRemind.length)
                 }
-                .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
+                getNotification()
+            }
+            .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
         remindDialog = builder.create()
         remindDialog.window!!.setBackgroundDrawableResource(R.drawable.dialog_background)
         remindDialog.show()
@@ -499,7 +559,10 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     //新增日程到数据库
     private fun addSchedule() {
         val schedule = Schedule()
-        val startTime = selectYear.toString() + "-" + processingTime(selectMonth) + "-" + processingTime(selectDay) + " " + vm.addScheduleTime.value + ":00"
+        val startTime =
+            selectYear.toString() + "-" + processingTime(selectMonth) + "-" + processingTime(
+                selectDay
+            ) + " " + vm.addScheduleTime.value + ":00"
         schedule.startTime = startTime
         schedule.endTime = null
         schedule.remind = remindChangeTime()
@@ -518,7 +581,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         if (schedule.remind!!.isNotEmpty()) {
             val remindCheck: Int = checkRemindTime(schedule.remind!!)
             if (remindCheck > 0) {
-                Toast.makeText(context, "抱歉，有" + remindCheck + "条提醒因为超出当前时间无效", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "抱歉，有" + remindCheck + "条提醒因为超出当前时间无效", Toast.LENGTH_LONG)
+                    .show()
             }
         }
     }
@@ -530,7 +594,12 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         if (remindTime == "无提醒") {
             remindTime = ""
         } else {
-            vm.getDateForRemindToTime(selectYear, selectMonth, selectDay, addScheduleBinding.textTime.text.toString())
+            vm.getDateForRemindToTime(
+                selectYear,
+                selectMonth,
+                selectDay,
+                addScheduleBinding.textTime.text.toString()
+            )
             remindTime = remindTime.replace("无提醒", "")
             remindTime = remindTime.replace(",准时", vm.remindToTime(1) + ",")
             remindTime = remindTime.replace(",提前1分钟", vm.remindToTime(2) + ",")
@@ -567,37 +636,37 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 remindCheck++
             }
         }
-        return remindCheck
+        return remindCheck - 1
     }
 
     //删除日程的对话框
     private fun gotoDeleteDialog() {
         builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.delete_schedule_title)
-                .setMessage(R.string.delete_schedule_message)
-                .setPositiveButton(R.string.dialog_button_ok) { dialog, _ ->
-                    for (i in mSchedules.indices) {
-                        if (mSchedules[i].isEditorChecked) {
-                            vm.deleteSchedule(mSchedules[i])
-                        }
+            .setMessage(R.string.delete_schedule_message)
+            .setPositiveButton(R.string.dialog_button_ok) { dialog, _ ->
+                for (i in mSchedules.indices) {
+                    if (mSchedules[i].isEditorChecked) {
+                        vm.deleteSchedule(mSchedules[i])
                     }
-                    for (i in mFinishSchedules.indices) {
-                        if (mFinishSchedules[i].isEditorChecked) {
-                            vm.deleteSchedule(mFinishSchedules[i])
-                        }
-                    }
-                    dialog.dismiss()
-                    updateScheduleList()
-                    binding.fabBtn.visibility = View.VISIBLE
-                    LiveEventBus
-                            .get("SomeF_MainA", String::class.java)
-                            .post("visible_navigation")
-                    binding.editorLayout.visibility = View.GONE
-                    binding.editTool.visibility = View.GONE
-                    binding.rlTool.visibility = View.VISIBLE
-                    setCalendarTag()
                 }
-                .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
+                for (i in mFinishSchedules.indices) {
+                    if (mFinishSchedules[i].isEditorChecked) {
+                        vm.deleteSchedule(mFinishSchedules[i])
+                    }
+                }
+                dialog.dismiss()
+                updateScheduleList()
+                binding.fabBtn.visibility = View.VISIBLE
+                LiveEventBus
+                    .get("SomeF_MainA", String::class.java)
+                    .post("visible_navigation")
+                binding.editorLayout.visibility = View.GONE
+                binding.editTool.visibility = View.GONE
+                binding.rlTool.visibility = View.VISIBLE
+                setCalendarTag()
+            }
+            .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
         builder.create().show()
     }
 
@@ -606,7 +675,15 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         val map: MutableMap<String, Calendar> = HashMap()
         vm.getScheduleDayOfTag().observe(viewLifecycleOwner, { strings: List<String> ->
             for (i in strings.indices) {
-                map[getSchemeCalendar(strings[i].substring(0, 4).toInt(), strings[i].substring(5, 7).toInt(), strings[i].substring(8, 10).toInt()).toString()] = getSchemeCalendar(strings[i].substring(0, 4).toInt(), strings[i].substring(5, 7).toInt(), strings[i].substring(8, 10).toInt())
+                map[getSchemeCalendar(
+                    strings[i].substring(0, 4).toInt(),
+                    strings[i].substring(5, 7).toInt(),
+                    strings[i].substring(8, 10).toInt()
+                ).toString()] = getSchemeCalendar(
+                    strings[i].substring(0, 4).toInt(),
+                    strings[i].substring(5, 7).toInt(),
+                    strings[i].substring(8, 10).toInt()
+                )
             }
             binding.calendarView.setSchemeDate(map)
         })
@@ -627,21 +704,23 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
 
     //添加日程列表
     private fun updateScheduleList() {
-        val day = "%" + selectYear + "-" + processingTime(selectMonth) + "-" + processingTime(selectDay) + "%"
-        vm.getUnfinishedScheduleOfDay(day).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
-            for (i in schedules.indices) {
-                schedules[i].isChecked = false
-            }
-            if (schedules.isEmpty()) {
-                scheduleListHeadBinding.root.visibility = View.GONE
-                scheduleFootBinding.root.visibility = View.GONE
-            } else {
-                scheduleListHeadBinding.root.visibility = View.VISIBLE
-                scheduleFootBinding.root.visibility = View.VISIBLE
-            }
-            scheduleAdapter.setList(schedules)
-            mSchedules = scheduleAdapter.data
-        })
+        val day =
+            "%" + selectYear + "-" + processingTime(selectMonth) + "-" + processingTime(selectDay) + "%"
+        vm.getUnfinishedScheduleOfDay(day)
+            .observe(viewLifecycleOwner, { schedules: List<Schedule> ->
+                for (i in schedules.indices) {
+                    schedules[i].isChecked = false
+                }
+                if (schedules.isEmpty()) {
+                    scheduleListHeadBinding.root.visibility = View.GONE
+                    scheduleFootBinding.root.visibility = View.GONE
+                } else {
+                    scheduleListHeadBinding.root.visibility = View.VISIBLE
+                    scheduleFootBinding.root.visibility = View.VISIBLE
+                }
+                scheduleAdapter.setList(schedules)
+                mSchedules = scheduleAdapter.data
+            })
         vm.getFinishedScheduleOfDay(day).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 schedules[i].isChecked = true
@@ -674,17 +753,17 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private fun getNotification() {
         if (!NotificationUtils.areNotificationsEnabled()) {
             val builder = AlertDialog.Builder(context)
-                    .setCancelable(true)
-                    .setTitle(R.string.notify_authority_dialog_title)
-                    .setMessage(R.string.notify_authority_dialog_message)
-                    .setNegativeButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.cancel() }
-                    .setPositiveButton(R.string.notify_authority_dialog_ok_button) { dialog, _ ->
-                        dialog.cancel()
-                        val intent = Intent()
-                        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                        intent.data = Uri.parse("package:" + requireActivity().packageName)
-                        startActivity(intent)
-                    }
+                .setCancelable(true)
+                .setTitle(R.string.notify_authority_dialog_title)
+                .setMessage(R.string.notify_authority_dialog_message)
+                .setNegativeButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.cancel() }
+                .setPositiveButton(R.string.notify_authority_dialog_ok_button) { dialog, _ ->
+                    dialog.cancel()
+                    val intent = Intent()
+                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                    intent.data = Uri.parse("package:" + requireActivity().packageName)
+                    startActivity(intent)
+                }
             builder.create().show()
         }
     }

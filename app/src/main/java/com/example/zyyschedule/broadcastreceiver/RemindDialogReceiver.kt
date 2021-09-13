@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
+import android.util.Log
 import android.view.*
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -21,6 +22,7 @@ class RemindDialogReceiver : BroadcastReceiver() {
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onReceive(context: Context?, intent: Intent?) {
+        Log.i("RemindDialogReceiver", "onReceive:run ")
         val gson = Gson()
         val strSchedule = intent!!.getStringExtra("remindSchedule")
         val schedule: Schedule = gson.fromJson(strSchedule, Schedule::class.java)
@@ -28,6 +30,7 @@ class RemindDialogReceiver : BroadcastReceiver() {
         val params = WindowManager.LayoutParams()
         binding = RemindGlobalDialogBinding.inflate(LayoutInflater.from(context))
         if (binding.root.parent != null) {
+            Log.i("RemindDialogReceiver", "onReceive:return ")
             return
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

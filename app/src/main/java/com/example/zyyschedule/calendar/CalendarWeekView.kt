@@ -70,10 +70,19 @@ class CalendarWeekView(context: Context) : WeekView(context) {
         mPointRadius = dipToPx(context, 2f).toFloat()
 
         val metrics = mSchemeBasicPaint.fontMetrics
-        mSchemeBaseLine = mCircleRadius - metrics.descent + (metrics.bottom - metrics.top) / 2 + dipToPx(context, 1f)
+        mSchemeBaseLine =
+            mCircleRadius - metrics.descent + (metrics.bottom - metrics.top) / 2 + dipToPx(
+                context,
+                1f
+            )
     }
 
-    override fun onDrawSelected(canvas: Canvas, calendar: Calendar, x: Int, hasScheme: Boolean): Boolean {
+    override fun onDrawSelected(
+        canvas: Canvas,
+        calendar: Calendar,
+        x: Int,
+        hasScheme: Boolean
+    ): Boolean {
         val cx = x + mItemWidth / 2
         val cy = mItemHeight / 2
         canvas.drawCircle(cx.toFloat(), cy.toFloat(), mRadius.toFloat(), mSelectedPaint)
@@ -88,10 +97,21 @@ class CalendarWeekView(context: Context) : WeekView(context) {
             backgroundPaint.color = Color.RED
         }
 
-        canvas.drawCircle((x + mItemWidth / 2).toFloat(), (mItemHeight - 3 * mPadding).toFloat(), mPointRadius, backgroundPaint)
+        canvas.drawCircle(
+            (x + mItemWidth / 2).toFloat(),
+            (mItemHeight - 3 * mPadding).toFloat(),
+            mPointRadius,
+            backgroundPaint
+        )
     }
 
-    override fun onDrawText(canvas: Canvas, calendar: Calendar, x: Int, hasScheme: Boolean, isSelected: Boolean) {
+    override fun onDrawText(
+        canvas: Canvas,
+        calendar: Calendar,
+        x: Int,
+        hasScheme: Boolean,
+        isSelected: Boolean
+    ) {
         val cx = x + mItemWidth / 2
         val cy = mItemHeight / 2
         val top = -mItemHeight / 6
@@ -101,10 +121,20 @@ class CalendarWeekView(context: Context) : WeekView(context) {
         }
 
         if (hasScheme) {
-            canvas.drawCircle(x + mItemWidth - mPadding - mCircleRadius / 2, mPadding + mCircleRadius, mCircleRadius, mSchemeBasicPaint)
+            canvas.drawCircle(
+                x + mItemWidth - mPadding - mCircleRadius / 2,
+                mPadding + mCircleRadius,
+                mCircleRadius,
+                mSchemeBasicPaint
+            )
             dateTextPaint.color = calendar.schemeColor
             dateTextPaint.textSize = 15f
-            canvas.drawText(calendar.scheme, x + mItemWidth - mPadding * 19 - mCircleRadius, mPadding + mSchemeBaseLine, dateTextPaint)
+            canvas.drawText(
+                calendar.scheme,
+                x + mItemWidth - mPadding * 19 - mCircleRadius,
+                mPadding + mSchemeBaseLine,
+                dateTextPaint
+            )
         }
 
         if (calendar.isWeekend && calendar.isCurrentMonth) {
@@ -125,21 +155,39 @@ class CalendarWeekView(context: Context) : WeekView(context) {
 
         when {
             isSelected -> {
-                canvas.drawText(calendar.day.toString(), cx.toFloat(), mTextBaseLine + top,
-                        mSelectTextPaint)
-                canvas.drawText(calendar.lunar, cx.toFloat(), mTextBaseLine + mItemHeight / 10, mSelectedLunarTextPaint)
+                canvas.drawText(
+                    calendar.day.toString(), cx.toFloat(), mTextBaseLine + top,
+                    mSelectTextPaint
+                )
+                canvas.drawText(
+                    calendar.lunar,
+                    cx.toFloat(),
+                    mTextBaseLine + mItemHeight / 10,
+                    mSelectedLunarTextPaint
+                )
             }
             hasScheme -> {
-                canvas.drawText(calendar.day.toString(), cx.toFloat(), mTextBaseLine + top,
-                        if (calendar.isCurrentMonth) mSchemeTextPaint else mOtherMonthTextPaint)
-                canvas.drawText(calendar.lunar, cx.toFloat(), mTextBaseLine + mItemHeight / 10,
-                        if (!TextUtils.isEmpty(calendar.solarTerm)) solarTextPaint else mSchemeLunarTextPaint)
+                canvas.drawText(
+                    calendar.day.toString(), cx.toFloat(), mTextBaseLine + top,
+                    if (calendar.isCurrentMonth) mSchemeTextPaint else mOtherMonthTextPaint
+                )
+                canvas.drawText(
+                    calendar.lunar, cx.toFloat(), mTextBaseLine + mItemHeight / 10,
+                    if (!TextUtils.isEmpty(calendar.solarTerm)) solarTextPaint else mSchemeLunarTextPaint
+                )
             }
             else -> {
-                canvas.drawText(calendar.day.toString(), cx.toFloat(), mTextBaseLine + top,
-                        if (calendar.isCurrentDay) mCurDayTextPaint else if (calendar.isCurrentMonth) mCurMonthTextPaint else mOtherMonthTextPaint)
-                canvas.drawText(calendar.lunar, cx.toFloat(), mTextBaseLine + mItemHeight / 10,
-                        if (calendar.isCurrentDay) mCurDayLunarTextPaint else if (!TextUtils.isEmpty(calendar.solarTerm)) solarTextPaint else if (calendar.isCurrentMonth) mCurMonthLunarTextPaint else mOtherMonthLunarTextPaint)
+                canvas.drawText(
+                    calendar.day.toString(), cx.toFloat(), mTextBaseLine + top,
+                    if (calendar.isCurrentDay) mCurDayTextPaint else if (calendar.isCurrentMonth) mCurMonthTextPaint else mOtherMonthTextPaint
+                )
+                canvas.drawText(
+                    calendar.lunar, cx.toFloat(), mTextBaseLine + mItemHeight / 10,
+                    if (calendar.isCurrentDay) mCurDayLunarTextPaint else if (!TextUtils.isEmpty(
+                            calendar.solarTerm
+                        )
+                    ) solarTextPaint else if (calendar.isCurrentMonth) mCurMonthLunarTextPaint else mOtherMonthLunarTextPaint
+                )
             }
         }
     }

@@ -53,7 +53,14 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     }
 
 
-    fun addScheduleDateAgo(selYear: Int, selMonth: Int, selDay: Int, toYear: Int, toMonth: Int, today: Int) {
+    fun addScheduleDateAgo(
+        selYear: Int,
+        selMonth: Int,
+        selDay: Int,
+        toYear: Int,
+        toMonth: Int,
+        today: Int
+    ) {
         dateAgo = if (selYear > toYear) {
             if (selYear - 1 == toYear) {
                 "明年" + selMonth + "月" + selDay + "号"

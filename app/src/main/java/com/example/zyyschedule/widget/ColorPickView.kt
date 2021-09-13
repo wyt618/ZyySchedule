@@ -162,7 +162,7 @@ class ColorPickView @JvmOverloads constructor(
         while (builder.length < 2) {
             builder.append("0")
         }
-        return builder.toString().toUpperCase(Locale.ROOT)
+        return builder.toString().uppercase(Locale.ROOT)
     }
 
 

@@ -25,32 +25,52 @@ class CalendarYearView(context: Context) : YearView(context) {
         mLeapYearTextPaint.isFakeBoldText = true
     }
 
-    override fun onDrawMonth(canvas: Canvas, year: Int, month: Int, x: Int, y: Int, width: Int, height: Int) {
+    override fun onDrawMonth(
+        canvas: Canvas,
+        year: Int,
+        month: Int,
+        x: Int,
+        y: Int,
+        width: Int,
+        height: Int
+    ) {
         val text = context
-                .resources
-                .getStringArray(R.array.month_string_array)[month - 1]
-        canvas.drawText(text, (
-                x + mItemWidth / 2 - mTextPadding).toFloat(),
-                y + mMonthTextBaseLine,
-                mMonthTextPaint)
+            .resources
+            .getStringArray(R.array.month_string_array)[month - 1]
+        canvas.drawText(
+            text, (
+                    x + mItemWidth / 2 - mTextPadding).toFloat(),
+            y + mMonthTextBaseLine,
+            mMonthTextPaint
+        )
         if (month == 2 && isLeapYear(year)) {
             val w = getTextWidth(mMonthTextPaint, text)
-            canvas.drawText("闰年",
-                    x + mItemWidth / 2 - mTextPadding + w + dipToPx(context, 6f),
-                    y + mMonthTextBaseLine,
-                    mLeapYearTextPaint)
+            canvas.drawText(
+                "闰年",
+                x + mItemWidth / 2 - mTextPadding + w + dipToPx(context, 6f),
+                y + mMonthTextBaseLine,
+                mLeapYearTextPaint
+            )
         }
     }
 
     override fun onDrawWeek(canvas: Canvas, week: Int, x: Int, y: Int, width: Int, height: Int) {
         val text = context.resources.getStringArray(R.array.year_view_week_string_array)[week]
-        canvas.drawText(text, (
-                x + width / 2).toFloat(),
-                y + mWeekTextBaseLine,
-                mWeekTextPaint)
+        canvas.drawText(
+            text, (
+                    x + width / 2).toFloat(),
+            y + mWeekTextBaseLine,
+            mWeekTextPaint
+        )
     }
 
-    override fun onDrawSelected(canvas: Canvas, calendar: Calendar, x: Int, y: Int, hasScheme: Boolean): Boolean {
+    override fun onDrawSelected(
+        canvas: Canvas,
+        calendar: Calendar,
+        x: Int,
+        y: Int,
+        hasScheme: Boolean
+    ): Boolean {
         val cx = x + mItemWidth / 2
         val cy = y + mItemHeight / 2
         val radius = min(mItemWidth, mItemHeight) / 8 * 5
@@ -62,26 +82,39 @@ class CalendarYearView(context: Context) : YearView(context) {
 
     }
 
-    override fun onDrawText(canvas: Canvas, calendar: Calendar, x: Int, y: Int, hasScheme: Boolean, isSelected: Boolean) {
+    override fun onDrawText(
+        canvas: Canvas,
+        calendar: Calendar,
+        x: Int,
+        y: Int,
+        hasScheme: Boolean,
+        isSelected: Boolean
+    ) {
         val baselineY = mTextBaseLine + y
         val cx = x + mItemWidth / 2
 
         when {
             isSelected -> {
-                canvas.drawText(calendar.day.toString(),
-                        cx.toFloat(),
-                        baselineY,
-                        if (hasScheme) mSchemeTextPaint else mSelectTextPaint)
+                canvas.drawText(
+                    calendar.day.toString(),
+                    cx.toFloat(),
+                    baselineY,
+                    if (hasScheme) mSchemeTextPaint else mSelectTextPaint
+                )
             }
             hasScheme -> {
-                canvas.drawText(calendar.day.toString(),
-                        cx.toFloat(),
-                        baselineY,
-                        if (calendar.isCurrentDay) mCurDayTextPaint else mSchemeTextPaint)
+                canvas.drawText(
+                    calendar.day.toString(),
+                    cx.toFloat(),
+                    baselineY,
+                    if (calendar.isCurrentDay) mCurDayTextPaint else mSchemeTextPaint
+                )
             }
             else -> {
-                canvas.drawText(calendar.day.toString(), cx.toFloat(), baselineY,
-                        if (calendar.isCurrentDay) mCurDayTextPaint else mCurMonthTextPaint)
+                canvas.drawText(
+                    calendar.day.toString(), cx.toFloat(), baselineY,
+                    if (calendar.isCurrentDay) mCurDayTextPaint else mCurMonthTextPaint
+                )
             }
         }
     }

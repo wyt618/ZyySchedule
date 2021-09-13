@@ -12,7 +12,8 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.example.zyyschedule.PriorityBean
 import com.example.zyyschedule.R
 
-class PriorityListAdapter(layoutResId: Int) : BaseQuickAdapter<PriorityBean, BaseViewHolder>(layoutResId) {
+class PriorityListAdapter(layoutResId: Int) :
+    BaseQuickAdapter<PriorityBean, BaseViewHolder>(layoutResId) {
     private lateinit var mContext: Context
     private var textColor: Int = 0
     fun getMContext(context: Context) {
