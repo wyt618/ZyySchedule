@@ -46,6 +46,7 @@ class TodayScheduleFragment : Fragment(), View.OnClickListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        binding.deleteButton.setOnClickListener(this)
         val toDayLayoutManager = LinearLayoutManager(context)
         toDayLayoutManager.orientation = LinearLayoutManager.VERTICAL
         val finishLayoutManager = LinearLayoutManager(context)
@@ -63,8 +64,6 @@ class TodayScheduleFragment : Fragment(), View.OnClickListener {
         binding.todayScheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
         scheduleHeadBinding.scheduleListHead.setText(R.string.title_today)
-        enabledFalse()
-        binding.deleteButton.setOnClickListener(this)
         LiveEventBus.get("ScheduleF_SomeF", String::class.java)
                 .observe(viewLifecycleOwner, {
                     when (it) {
@@ -81,7 +80,7 @@ class TodayScheduleFragment : Fragment(), View.OnClickListener {
                         }
                     }
                 })
-
+        //编辑模式下选中的监听
         scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
             LiveEventBus
                     .get("pitchOnNumber", Int::class.java)

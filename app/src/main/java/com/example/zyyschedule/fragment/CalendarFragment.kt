@@ -2,11 +2,12 @@ package com.example.zyyschedule.fragment
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.Notification
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
@@ -16,7 +17,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.app.NotificationManagerCompat
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.databinding.DataBindingUtil
@@ -138,7 +139,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         remindLayoutManager.orientation = LinearLayoutManager.VERTICAL
         remindDialogBinding.remindChooseList.layoutManager = remindLayoutManager
         remindDialogBinding.remindChooseList.adapter = remindAdapter
-        val remindList = vm.remindListData()
+        val remindList = vm.remindListData(requireContext())
         remindAdapter.setList(remindList)
         remindAdapter.setHeader(remindListHeadBinding)
         remindAdapter.setHeaderView(remindListHeadBinding.root)
@@ -167,6 +168,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             val intent = Intent(activity, AddLabelActivity::class.java)
             startActivity(intent)
         }
+        //编辑模式下选中的监听
         scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
             binding.goBackText.text = "选中${it}项"
             if (it > 0) {
@@ -224,7 +226,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 vg.removeView(dateJumpDialog.root)
             }
             builder.setView(dateJumpDialog.root)
-                    .setTitle(R.string.clendar_dialog_title)
+                    .setTitle(R.string.calendar_dialog_title)
                     .setPositiveButton(R.string.dialog_button_ok) { _, _ ->
                         binding.calendarView.scrollToCalendar(dateJumpDialog.datePicker.year, dateJumpDialog.datePicker.month + 1, dateJumpDialog.datePicker.dayOfMonth)
                         Toast.makeText(context, dateJumpDialog.datePicker.year.toString() + "年" + (dateJumpDialog.datePicker.month + 1) + "月" + dateJumpDialog.datePicker.dayOfMonth + "日", Toast.LENGTH_SHORT).show()
@@ -289,6 +291,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onClick(v: View?) {
         v?.let {
             when (it.id) {
@@ -346,7 +349,16 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     }
 
     //添加日程悬浮窗显示
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun gotoAddSchedule() {
+        addScheduleBinding.editText.text = null
+        addScheduleBinding.priorityButton.setImageResource(R.drawable.priority_flag)
+        addScheduleBinding.textPriority.setTextColor(ContextCompat.getColor(requireContext(),R.color.priority_null))
+        vm.priority.postValue(getString(R.string.priority_null_text))
+        vm.priorityid.postValue(0)
+        vm.label.postValue(getString(R.string.title_not_classified))
+
+
         binding.fabBtn.visibility = View.GONE
         addScheduleBinding.sendSchedule.isClickable = addScheduleBinding.editText.text.toString().trim().isNotEmpty()
         if (addScheduleBinding.root.parent != null) {
@@ -382,7 +394,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
         builder = AlertDialog.Builder(context)
         builder.setView(timePickerBinding.root)
-                .setTitle(R.string.add_schedule_timepicker)
+                .setTitle(R.string.add_schedule_timePicker)
                 .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
                 .setPositiveButton(R.string.dialog_button_ok
                 ) { _, _ -> vm.addScheduleTime.setValue(processingTime(timePickerBinding.hourPicker.value) + ":" + processingTime(timePickerBinding.minePicker.value)) }
@@ -404,7 +416,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         val layoutManager = LinearLayoutManager(context)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         priorityDialogBinding.priorityList.layoutManager = layoutManager
-        val priorityData = vm.priorityListData()
+        val priorityData = vm.priorityListData(requireContext())
         priorityListAdapter = PriorityListAdapter(R.layout.priority_item)
         priorityListAdapter.setList(priorityData)
         priorityListAdapter.getMContext(requireContext())

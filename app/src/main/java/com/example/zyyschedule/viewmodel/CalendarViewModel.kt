@@ -2,12 +2,15 @@ package com.example.zyyschedule.viewmodel
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Context
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.zyyschedule.PriorityBean
+import com.example.zyyschedule.R
 import com.example.zyyschedule.RemindBean
 import com.example.zyyschedule.database.DataRepository
 import com.example.zyyschedule.database.Label
@@ -93,106 +96,106 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         addScheduleDateAgo.value = dateAgo
     }
 
-    fun priorityListData(): ArrayList<PriorityBean> {
+    fun priorityListData(context: Context): ArrayList<PriorityBean> {
         val ary = ArrayList<PriorityBean>()
         priorityBean = PriorityBean()
-        priorityBean.priorityTitle = "无优先级"
+        priorityBean.priorityTitle = context.getString(R.string.priority_null_text)
         priorityBean.priorityType = 0
         ary.add(priorityBean)
         priorityBean = PriorityBean()
-        priorityBean.priorityTitle = "低优先级"
+        priorityBean.priorityTitle = context.getString(R.string.priority_low_text)
         priorityBean.priorityType = 1
         ary.add(priorityBean)
         priorityBean = PriorityBean()
-        priorityBean.priorityTitle = "中优先级"
+        priorityBean.priorityTitle = context.getString(R.string.priority_medium_text)
         priorityBean.priorityType = 2
         ary.add(priorityBean)
         priorityBean = PriorityBean()
-        priorityBean.priorityTitle = "高优先级"
+        priorityBean.priorityTitle = context.getString(R.string.priority_high_text)
         priorityBean.priorityType = 3
         ary.add(priorityBean)
         return ary
     }
 
-    fun remindListData(): ArrayList<RemindBean> {
+    fun remindListData(context: Context): ArrayList<RemindBean> {
         val ary = ArrayList<RemindBean>()
         remindBean = RemindBean()
-        remindBean.remindTitle = "准时"
+        remindBean.remindTitle = context.getString(R.string.remind_on_time_text)
         remindBean.remindType = 1
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前1分钟"
+        remindBean.remindTitle = context.getString(R.string.remind_1_minute_ahead_text)
         remindBean.remindType = 2
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前5分钟"
+        remindBean.remindTitle = context.getString(R.string.remind_5_minute_early_text)
         remindBean.remindType = 3
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前10分钟"
+        remindBean.remindTitle = context.getString(R.string.remind_10_minute_early_text)
         remindBean.remindType = 4
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前15分钟"
+        remindBean.remindTitle = context.getString(R.string.remind_15_minute_early_text)
         remindBean.remindType = 5
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前20分钟"
+        remindBean.remindTitle = context.getString(R.string.remind_20_minute_early_text)
         remindBean.remindType = 6
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前25分钟"
+        remindBean.remindTitle = context.getString(R.string.remind_25_minute_early_text)
         remindBean.remindType = 7
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前30分钟"
+        remindBean.remindTitle = context.getString(R.string.remind_30_minute_early_text)
         remindBean.remindType = 8
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前45分钟"
+        remindBean.remindTitle = context.getString(R.string.remind_45_minute_early_text)
         remindBean.remindType = 9
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前1个小时"
+        remindBean.remindTitle = context.getString(R.string.remind_one_hour_earlier_text)
         remindBean.remindType = 10
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前2个小时"
+        remindBean.remindTitle = context.getString(R.string.remind_two_hours_advance_text)
         remindBean.remindType = 11
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前3个小时"
+        remindBean.remindTitle = context.getString(R.string.remind_three_hours_advance_text)
         remindBean.remindType = 12
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前12个小时"
+        remindBean.remindTitle = context.getString(R.string.remind_12_hours_advance_text)
         remindBean.remindType = 13
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前1天"
+        remindBean.remindTitle = context.getString(R.string.remind_1_day_advance_text)
         remindBean.remindType = 14
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前2天"
+        remindBean.remindTitle = context.getString(R.string.remind_2_day_advance_text)
         remindBean.remindType = 15
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = "提前1周"
+        remindBean.remindTitle = context.getString(R.string.remind_1_weeks_advance_text)
         remindBean.remindType = 15
         remindBean.remindIsChecked = false
         ary.add(remindBean)

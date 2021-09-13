@@ -102,9 +102,6 @@ class LabelFragment(labelId: Int) : Fragment() {
                     }
                     dialog.dismiss()
                     updateScheduleList()
-                    scheduleListFinishHeadBinding.scheduleListFinish.visibility = View.VISIBLE
-                    scheduleHeadBinding.scheduleListHead.visibility = View.VISIBLE
-
                 }
                 .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
         builder.create().show()

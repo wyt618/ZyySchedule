@@ -7,10 +7,10 @@
     <string name="dialog_button_ok">确定</string>
     <string name="dialog_button_cancel">取消</string>
     <string name="dialog_button_finish">完成</string>
-    <string name="clendar_dialog_title">跳转到</string>
+    <string name="calendar_dialog_title">跳转到</string>
     <string name="schedule_hint">准备做什么？ </string>
     <string name="add_schedule_title">创建日程</string>
-    <string name="add_schedule_timepicker">选择时间</string>
+    <string name="add_schedule_timePicker">选择时间</string>
     <string name="title_today">今天</string>
     <string name="title_local_schedule">本地日程</string>
     <string name="title_not_classified">无标签</string>
@@ -23,10 +23,10 @@
     <string name="event_set_color">颜色</string>
     <string name="event_set_select_color">选择颜色</string>
     <string name="confirm">确定</string>
-    <string name="add_label_colorpicker">选择颜色</string>
-    <string name="add_label_dialog_messgae">标签名称不能为空</string>
-    <string name="add_label_dialog_neturl">我知道了</string>
-    <string name="check_labeltitle_messgae">标签名称重复</string>
+    <string name="add_label_colorPicker">选择颜色</string>
+    <string name="add_label_dialog_message">标签名称不能为空</string>
+    <string name="add_label_dialog_see">我知道了</string>
+    <string name="check_labelTitle_message">标签名称重复</string>
     <string name="priority_dialog_title">设置优先级</string>
     <string name="label_dialog_title">选择标签</string>
     <string name="remind_dialog_title">提醒</string>
@@ -42,4 +42,26 @@
     <string name="popup_window_permissions_message">如果不开启权限日程提醒无法弹窗哦~</string>
     <string name="notify_authority_dialog_ok_button">去开启</string>
     <string name="edit_toolbar_title">选中0项</string>
+
+    <string name="priority_null_text">无优先级</string>
+    <string name="priority_low_text">低优先级</string>
+    <string name="priority_medium_text">中优先级</string>
+    <string name="priority_high_text">高优先级</string>
+
+    <string name="remind_on_time_text">准时</string>
+    <string name="remind_1_minute_ahead_text">提前1分钟</string>
+    <string name="remind_5_minute_early_text">提前5分钟</string>
+    <string name="remind_10_minute_early_text">提前10分钟</string>
+    <string name="remind_15_minute_early_text">提前15分钟</string>
+    <string name="remind_20_minute_early_text">提前20分钟</string>
+    <string name="remind_25_minute_early_text">提前25分钟</string>
+    <string name="remind_30_minute_early_text">提前30分钟</string>
+    <string name="remind_45_minute_early_text">提前45分钟</string>
+    <string name="remind_one_hour_earlier_text">提前1个小时</string>
+    <string name="remind_two_hours_advance_text">提前2小时</string>
+    <string name="remind_three_hours_advance_text">提前3小时</string>
+    <string name="remind_12_hours_advance_text">提前12小时</string>
+    <string name="remind_1_day_advance_text">提前1天</string>
+    <string name="remind_2_day_advance_text">提前2天</string>
+    <string name="remind_1_weeks_advance_text">提前1周</string>
 </resources>

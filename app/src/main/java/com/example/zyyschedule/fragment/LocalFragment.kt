@@ -1,10 +1,13 @@
 package com.example.zyyschedule.fragment
 
 import android.app.AlertDialog
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,8 +18,9 @@ import com.example.zyyschedule.adapter.ScheduleAdapter
 import com.example.zyyschedule.database.Schedule
 import com.example.zyyschedule.databinding.*
 import com.example.zyyschedule.viewmodel.ScheduleViewModel
+import com.jeremyliao.liveeventbus.LiveEventBus
 
-class LocalFragment : Fragment() {
+class LocalFragment : Fragment(),View.OnClickListener {
     private lateinit var binding: FragmentLocalBinding
     private val vm: ScheduleViewModel by viewModels()
     private lateinit var scheduleAdapter: ScheduleAdapter
@@ -40,6 +44,7 @@ class LocalFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        binding.deleteButton.setOnClickListener(this)
         builder = AlertDialog.Builder(context)
         val localSchedule = LinearLayoutManager(context)
         localSchedule.orientation = LinearLayoutManager.VERTICAL
@@ -58,10 +63,52 @@ class LocalFragment : Fragment() {
         binding.localScheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
         scheduleHeadBinding.scheduleListHead.setText(R.string.local_schedule_head)
+        LiveEventBus.get("ScheduleF_SomeF", String::class.java)
+                .observe(viewLifecycleOwner, {
+                    when (it) {
+                        "adapterComeBack" -> {
+                            for (i in mSchedules.indices) {
+                                mSchedules[i].isEditor = false
+                            }
+                            for (i in mFinishSchedules.indices) {
+                                mFinishSchedules[i].isEditor = false
+                            }
+                            scheduleAdapter.notifyDataSetChanged()
+                            finishScheduleAdapter.notifyDataSetChanged()
+                            binding.editorLayout.visibility = View.GONE
+                        }
+                    }
+                })
+        //编辑模式下选中的监听
+        scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
+            LiveEventBus
+                    .get("pitchOnNumber", Int::class.java)
+                    .post(it)
+            if (it > 0) {
+                enabledTrue()
+            } else {
+                enabledFalse()
+            }
+        })
+        finishScheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
+            LiveEventBus
+                    .get("pitchOnNumber", Int::class.java)
+                    .post(it)
+            if (it > 0) {
+                enabledTrue()
+            } else {
+                enabledFalse()
+            }
+        })
         //完成和未完成日程item长按事件
         scheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
-
-
+            binding.editorLayout.visibility = View.VISIBLE
+            LiveEventBus
+                    .get("SomeF_ScheduleF", String::class.java)
+                    .post("gone_titleBar")
+            LiveEventBus
+                    .get("SomeF_MainA", String::class.java)
+                    .post("gone_navigation")
             for (i in mSchedules.indices) {
                 mSchedules[i].isEditor = true
             }
@@ -73,7 +120,13 @@ class LocalFragment : Fragment() {
             true
         }
         finishScheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
-
+            binding.editorLayout.visibility = View.VISIBLE
+            LiveEventBus
+                    .get("SomeF_ScheduleF", String::class.java)
+                    .post("gone_titleBar")
+            LiveEventBus
+                    .get("SomeF_MainA", String::class.java)
+                    .post("gone_navigation")
             for (i in mSchedules.indices) {
                 mSchedules[i].isEditor = true
             }
@@ -85,6 +138,13 @@ class LocalFragment : Fragment() {
             true
         }
         updateScheduleList()
+    }
+    override fun onClick(v: View?) {
+        v?.let {
+            when (it.id) {
+                R.id.delete_button -> gotoDeleteDialog()
+            }
+        }
     }
 
     private fun gotoDeleteDialog() {
@@ -103,8 +163,9 @@ class LocalFragment : Fragment() {
                     }
                     dialog.dismiss()
                     updateScheduleList()
-                    scheduleListFinishHeadBinding.scheduleListFinish.visibility = View.VISIBLE
-                    scheduleHeadBinding.scheduleListHead.visibility = View.VISIBLE
+                    binding.editorLayout.visibility = View.GONE
+                    LiveEventBus.get("SomeF_ScheduleF", String::class.java)
+                            .post("visibility_titleBar")
                 }
                 .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
         builder.create().show()
@@ -142,4 +203,53 @@ class LocalFragment : Fragment() {
             scheduleAdapter.otherDate = finishScheduleAdapter.data
         })
     }
+    //控制编辑栏按钮可以点击
+    private fun enabledTrue() {
+        binding.deleteButton.isClickable = true
+        binding.moreButton.isClickable = true
+        binding.labelButton.isClickable = true
+        binding.timeButton.isClickable = true
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_delete_outline_24)?.let {
+            DrawableCompat.setTint(it, Color.BLACK)
+            binding.deleteButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_more_24)?.let {
+            DrawableCompat.setTint(it, Color.BLACK)
+            binding.moreButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_schedule_24)?.let {
+            DrawableCompat.setTint(it, Color.BLACK)
+            binding.labelButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_calendar_toolbar)?.let {
+            DrawableCompat.setTint(it, Color.BLACK)
+            binding.timeButton.setImageDrawable(it)
+        }
+    }
+
+    //控制编辑栏按钮不可点击
+    private fun enabledFalse() {
+        binding.deleteButton.isClickable = false
+        binding.moreButton.isClickable = false
+        binding.labelButton.isClickable = false
+        binding.timeButton.isClickable = false
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_delete_outline_24)?.let {
+            DrawableCompat.setTint(it, Color.GRAY)
+            binding.deleteButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_more_24)?.let {
+            DrawableCompat.setTint(it, Color.GRAY)
+            binding.moreButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_schedule_24)?.let {
+            DrawableCompat.setTint(it, Color.GRAY)
+            binding.labelButton.setImageDrawable(it)
+        }
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_calendar_toolbar)?.let {
+            DrawableCompat.setTint(it, Color.GRAY)
+            binding.timeButton.setImageDrawable(it)
+        }
+    }
+
+
 }

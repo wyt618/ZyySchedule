@@ -3,13 +3,13 @@
     <string name="main_menu_schedule">Schedule</string>
     <string name="main_menu_calendar">Calendar</string>
     <string name="main_menu_setting">Setting</string>
-    <string name="dialog_button_ok">Ok</string>
+    <string name="dialog_button_ok">OK</string>
     <string name="dialog_button_cancel">Cancel</string>
     <string name="dialog_button_finish">Complete</string>
-    <string name="clendar_dialog_title" translatable="false">Jump To</string>
+    <string name="calendar_dialog_title" translatable="false">Jump To</string>
     <string name="schedule_hint">What are you going to do ? </string>
     <string name="add_schedule_title">Create Schedule</string>
-    <string name="add_schedule_timepicker">To choose time</string>
+    <string name="add_schedule_timePicker">To choose time</string>
     <string name="title_today">Today</string>
     <string name="title_local_schedule">Local schedule</string>
     <string name="title_not_classified">No Label</string>
@@ -22,10 +22,10 @@
     <string name="event_set_color">Color</string>
     <string name="event_set_select_color">Choose  color</string>
     <string name="confirm">Determine</string>
-    <string name="add_label_colorpicker">Choose a color</string>
-    <string name="add_label_dialog_messgae">The label name cannot be empty</string>
-    <string name="add_label_dialog_neturl">I see</string>
-    <string name="check_labeltitle_messgae">Duplicate label names</string>
+    <string name="add_label_colorPicker">Choose a color</string>
+    <string name="add_label_dialog_message">The label name cannot be empty</string>
+    <string name="add_label_dialog_see">I see</string>
+    <string name="check_labelTitle_message">Duplicate label names</string>
     <string name="priority_dialog_title">Setting priority</string>
     <string name="label_dialog_title">Select the label</string>
     <string name="remind_dialog_title">Remind</string>
@@ -37,8 +37,31 @@
     <string name="local_schedule_head">Unfinished</string>
     <string name="notify_authority_dialog_title">The notification permission is not enabled!</string>
     <string name="notify_authority_dialog_message">If you do not enable the permission, you will not receive the push notification ~</string>
-    <string name="notify_authority_dialog_ok_button">To open it</string>
-    <string name="edit_toolbar_title">Selected item 0</string>
     <string name="popup_window_permissions_title">Global popover not open detected!</string>
     <string name="popup_window_permissions_message">If you do not enable the permission schedule reminder window can not pop oh~</string>
+    <string name="notify_authority_dialog_ok_button">To open it</string>
+    <string name="edit_toolbar_title">Selected item 0</string>
+
+    <string name="priority_null_text">No Priority</string>
+    <string name="priority_low_text">Low Priority</string>
+    <string name="priority_medium_text">Medium Priority</string>
+    <string name="priority_high_text">High Priority</string>
+    
+    
+    <string name="remind_on_time_text">On time</string>
+    <string name="remind_1_minute_ahead_text">1 minute ahead</string>
+    <string name="remind_5_minute_early_text">5 minutes early</string>
+    <string name="remind_10_minute_early_text">10 minutes early</string>
+    <string name="remind_15_minute_early_text">15 minutes early</string>
+    <string name="remind_20_minute_early_text">20 minutes early</string>
+    <string name="remind_25_minute_early_text">25 minutes early</string>
+    <string name="remind_30_minute_early_text">30 minutes early</string>
+    <string name="remind_45_minute_early_text">45 minutes early</string>
+    <string name="remind_one_hour_earlier_text">One hour earlier</string>
+    <string name="remind_two_hours_advance_text">Two hours in advance</string>
+    <string name="remind_three_hours_advance_text">Three hours in advance</string>
+    <string name="remind_12_hours_advance_text">12 hours in advance</string>
+    <string name="remind_1_day_advance_text">1 day in advance</string>
+    <string name="remind_2_day_advance_text">2 day in advance</string>
+    <string name="remind_1_weeks_advance_text">1 weeks in advance</string>
 </resources>

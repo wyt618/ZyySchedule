@@ -61,7 +61,7 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.apply {
             setView(colorPickerDialogBinding.root)
-            setTitle(R.string.add_label_colorpicker)
+            setTitle(R.string.add_label_colorPicker)
             setPositiveButton(R.string.dialog_button_ok) { dialog: DialogInterface, _: Int ->
                 binding.vLabelSetColor.setBackgroundColor(labelColor)
                 dialog.dismiss()
@@ -80,8 +80,8 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
                 if (labels.isNotEmpty()) {
                     val titleDouble: AlertDialog.Builder = AlertDialog.Builder(this)
                     titleDouble.apply {
-                        setMessage(R.string.check_labeltitle_messgae)
-                        setPositiveButton(R.string.add_label_dialog_neturl) { dialog: DialogInterface, _: Int ->
+                        setMessage(R.string.check_labelTitle_message)
+                        setPositiveButton(R.string.add_label_dialog_see) { dialog: DialogInterface, _: Int ->
                             dialog.dismiss()
                         }
                     }
@@ -100,8 +100,8 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
         } else {
             val titleBlankDialog: AlertDialog.Builder = AlertDialog.Builder(this)
             titleBlankDialog.apply {
-                setMessage(R.string.add_label_dialog_messgae)
-                setPositiveButton(R.string.add_label_dialog_neturl) { dialog: DialogInterface, _: Int ->
+                setMessage(R.string.add_label_dialog_message)
+                setPositiveButton(R.string.add_label_dialog_see) { dialog: DialogInterface, _: Int ->
                     dialog.dismiss()
                 }
             }
