@@ -3,11 +3,9 @@ package com.example.zyyschedule.adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -25,7 +23,7 @@ class PriorityListAdapter(layoutResId: Int) : BaseQuickAdapter<PriorityBean, Bas
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun convert(holder: BaseViewHolder, item: PriorityBean) {
         holder.setText(R.id.priority_title, item.priorityTitle)
-        var priorityFlag =  holder.getView<ImageView>(R.id.priority_flag)
+        val priorityFlag = holder.getView<ImageView>(R.id.priority_flag)
         when (item.priorityType) {
             0 -> {
                 textColor = ContextCompat.getColor(context, R.color.priority_null)

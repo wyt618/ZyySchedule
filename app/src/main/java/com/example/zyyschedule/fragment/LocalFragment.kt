@@ -62,7 +62,6 @@ class LocalFragment : Fragment() {
         scheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
 
 
-
             for (i in mSchedules.indices) {
                 mSchedules[i].isEditor = true
             }

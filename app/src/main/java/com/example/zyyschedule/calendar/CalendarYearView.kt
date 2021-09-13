@@ -10,10 +10,12 @@ import kotlin.math.min
 
 class CalendarYearView(context: Context) : YearView(context) {
     private var mTextPadding = 0
+
     /**
      * 闰年字体
      */
     private val mLeapYearTextPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+
     init {
         mTextPadding = dipToPx(context, 3f)
 

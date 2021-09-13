@@ -21,8 +21,8 @@ class NotificationReceiver : BroadcastReceiver() {
             remindDialogReceiver.putExtra("remindSchedule", intent.getStringExtra("remindSchedule"))
             remindDialogReceiver.putExtra("LabelTitle", intent.getStringExtra("LabelTitle"))
             val toRemindDialog = PendingIntent.getBroadcast(context, intent.getIntExtra("PendingIntentCode", 0) + 10000, remindDialogReceiver, 0)
-            schedule.id?.let{ id->
-                NotificationUtils.notify(id){ param ->
+            schedule.id?.let { id ->
+                NotificationUtils.notify(id) { param ->
                     param.setAutoCancel(false)
                     param.setSmallIcon(R.drawable.notification_icon)
                     param.setContentTitle(schedule.title)

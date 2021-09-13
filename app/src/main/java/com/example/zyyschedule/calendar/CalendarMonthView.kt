@@ -22,6 +22,7 @@ class CalendarMonthView(context: Context) : MonthView(context) {
     private var mPointRadius: Float = 0f//点的位置
     private var mPadding = 0//填充
     private var mCircleRadius = 0f//圆的半径
+
     /**
      * 自定义日历显示的圆形背景
      */
@@ -151,7 +152,8 @@ class CalendarMonthView(context: Context) : MonthView(context) {
         val scale = context.resources.displayMetrics.density
         return (dpValue * scale + 0.5f).toInt()
     }
-    override fun onPreviewHook(){
+
+    override fun onPreviewHook() {
         solarTextPaint.textSize = mCurMonthLunarTextPaint.textSize
         mRadius = min(mItemWidth, mItemHeight) / 11 * 5
     }

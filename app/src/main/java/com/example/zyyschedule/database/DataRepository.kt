@@ -6,11 +6,11 @@ import androidx.lifecycle.LiveData
 
 
 class DataRepository(context: Context) {
-    private var labelDao:LabelDao
-    private var scheduleDao:ScheduleDao
+    private var labelDao: LabelDao
+    private var scheduleDao: ScheduleDao
 
     init {
-        val scheduleDataBase:ScheduleDataBase = ScheduleDataBase.getDataBase(context)
+        val scheduleDataBase: ScheduleDataBase = ScheduleDataBase.getDataBase(context)
         labelDao = scheduleDataBase.getLabelDao()!!
         scheduleDao = scheduleDataBase.getScheduleDao()!!
     }
@@ -18,6 +18,7 @@ class DataRepository(context: Context) {
     suspend fun changeStateSchedule(vararg schedules: Schedule) {
         scheduleDao.changeStateSchedule(*schedules)
     }
+
     suspend fun insertSchedule(vararg schedules: Schedule) {
         scheduleDao.insertSchedule(*schedules)
     }
@@ -32,7 +33,7 @@ class DataRepository(context: Context) {
 
     suspend fun deleteLabel(vararg labels: Label) {
         labelDao.deleteLabel(*labels)
-        for( i in labels.indices){
+        for (i in labels.indices) {
             labels[i].id?.let { scheduleDao.deleteScheduleLabel(it) }
         }
     }
@@ -58,11 +59,11 @@ class DataRepository(context: Context) {
         return labelDao.checkLabel(title)
     }
 
-    fun getAllLabel(): LiveData<List<Label>>{
+    fun getAllLabel(): LiveData<List<Label>> {
         return labelDao.getAllLabel()
     }
 
-    fun getLabelTitle(id:Int):LiveData<String>{
+    fun getLabelTitle(id: Int): LiveData<String> {
         return labelDao.getLabelTitle(id)
     }
 
@@ -71,15 +72,15 @@ class DataRepository(context: Context) {
     }
 
     fun allUFScheduleByTime(): LiveData<List<Schedule>> {
-        return  scheduleDao.allUFScheduleByTime()
+        return scheduleDao.allUFScheduleByTime()
     }
 
     fun allFScheduleByTime(): LiveData<List<Schedule>> {
-        return  scheduleDao.allFScheduleByTime()
+        return scheduleDao.allFScheduleByTime()
     }
 
     fun getFScheduleOfLabel(labelId: Int): LiveData<List<Schedule>> {
-        return  scheduleDao.getFScheduleOfLabel(labelId)
+        return scheduleDao.getFScheduleOfLabel(labelId)
     }
 
     fun getUFScheduleOfLabel(labelId: Int): LiveData<List<Schedule>> {

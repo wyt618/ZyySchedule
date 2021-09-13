@@ -13,20 +13,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ScheduleViewModel(application: Application) : AndroidViewModel(application) {
-    private val dataRepository:DataRepository = DataRepository(application)
+    private val dataRepository: DataRepository = DataRepository(application)
     var editItemSize: MutableLiveData<Int> = MutableLiveData()
     fun getAllLabel(): LiveData<List<Label>> {
         return dataRepository.getAllLabel()
     }
 
     fun deleteLabel(vararg labels: Label) {
-         viewModelScope.launch(Dispatchers.IO) {
-             try {
-                 dataRepository.deleteLabel(*labels)
-             }catch (e: Exception){
-                 Log.i("schedule", " 删除标签失败：$e")
-             }
-         }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                dataRepository.deleteLabel(*labels)
+            } catch (e: Exception) {
+                Log.i("schedule", " 删除标签失败：$e")
+            }
+        }
     }
 
     fun getUnfinishedScheduleOfDay(day: String): LiveData<List<Schedule>> {

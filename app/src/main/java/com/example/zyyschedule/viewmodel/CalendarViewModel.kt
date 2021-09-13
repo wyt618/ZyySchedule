@@ -33,7 +33,6 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     private lateinit var remindTime: String
 
 
-
     init {
         val calendar = Calendar.getInstance()
         day = calendar[Calendar.DAY_OF_MONTH]
@@ -246,9 +245,11 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
             }
         }
     }
-    fun getDateForRemindToTime(selectYear:Int,selectMonth:Int,selectDay:Int,time:String){
+
+    fun getDateForRemindToTime(selectYear: Int, selectMonth: Int, selectDay: Int, time: String) {
         remindTime = "$selectYear-$selectMonth-$selectDay $time:00"
     }
+
     //处理提醒与时间的方法
     fun remindToTime(remindType: Int): String {
         var date = Date()

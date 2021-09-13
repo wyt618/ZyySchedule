@@ -36,8 +36,8 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
         binding.addLabelExit.setOnClickListener(this)
         binding.addLabelButton.setOnClickListener(this)
         binding.LabelTitle.requestFocus()
-        val imm:InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(binding.LabelTitle,InputMethodManager.SHOW_FORCED)
+        val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(binding.LabelTitle, InputMethodManager.SHOW_FORCED)
     }
 
     override fun onClick(v: View?) {
@@ -46,7 +46,8 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
                 R.id.add_label_exit -> this.finish()
                 R.id.add_label_button -> addLabel()
                 R.id.LabelSetColor -> gotoColorPicker()
-                else -> { }
+                else -> {
+                }
             }
         }
 

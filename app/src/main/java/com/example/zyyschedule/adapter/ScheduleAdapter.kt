@@ -25,8 +25,8 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
     private lateinit var owner: ViewModelStoreOwner
     private lateinit var vm: CalendarViewModel
     private lateinit var date: Date
-    var otherDate:List<Schedule>? = null
-    var pitchOnNumber:MutableLiveData<Int> = MutableLiveData(0)
+    var otherDate: List<Schedule>? = null
+    var pitchOnNumber: MutableLiveData<Int> = MutableLiveData(0)
 
     fun setOwner(owner: ViewModelStoreOwner) {
         this.owner = owner
@@ -49,21 +49,21 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
                 + item.startTime?.substring(5, 7)?.toInt() + "月"
                 + item.startTime?.substring(8, 10)?.toInt() + "日")
         holder.setText(R.id.schedule_time, item.startTime?.substring(item.startTime!!.length - 8, item.startTime!!.length - 3))
-        val radioButton:AppCompatRadioButton = holder.getView(R.id.delete_radio_button)
+        val radioButton: AppCompatRadioButton = holder.getView(R.id.delete_radio_button)
         radioButton.setOnCheckedChangeListener(null)
         radioButton.isChecked = item.isEditorChecked
-        radioButton.setOnClickListener{
+        radioButton.setOnClickListener {
             var number = 0
             item.isEditorChecked = !item.isEditorChecked
             radioButton.isChecked = item.isEditorChecked
-            for(i in data){
-                if(i.isEditorChecked){
+            for (i in data) {
+                if (i.isEditorChecked) {
                     number += 1
                 }
             }
             otherDate?.let {
-                for(i in it){
-                    if(i.isEditorChecked){
+                for (i in it) {
+                    if (i.isEditorChecked) {
                         number += 1
                     }
                 }
@@ -71,7 +71,7 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
             pitchOnNumber.value = number
         }
 
-        val checkBox:AppCompatCheckBox = holder.getView(R.id.schedule_title)
+        val checkBox: AppCompatCheckBox = holder.getView(R.id.schedule_title)
         checkBox.setOnCheckedChangeListener(null)
         checkBox.isChecked = item.isChecked
         checkBox.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
@@ -85,28 +85,28 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
             vm.getScheduleDayOfTag()
         }
 
-        if(item.state.equals("1")){
+        if (item.state.equals("1")) {
             holder.setTextColor(R.id.schedule_title, ContextCompat.getColor(context, R.color.color_schedule_grey))
-        }else{
+        } else {
             holder.setTextColor(R.id.schedule_title, Color.BLACK)
-            if(date.time<= now.time){
+            if (date.time <= now.time) {
                 holder.setTextColor(R.id.schedule_time, Color.RED)
                 holder.setTextColor(R.id.schedule_date, Color.RED)
-            }else{
+            } else {
                 holder.setTextColor(R.id.schedule_time, Color.BLACK)
                 holder.setTextColor(R.id.schedule_date, Color.BLACK)
-        }
+            }
         }
 
-        if(item.isEditor){
+        if (item.isEditor) {
             checkBox.visibility = View.GONE
             radioButton.visibility = View.VISIBLE
-        }else{
+        } else {
             checkBox.visibility = View.VISIBLE
             radioButton.visibility = View.GONE
         }
 
-        when(item.priority){
+        when (item.priority) {
             0 -> checkBox.supportButtonTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.priority_null))
             1 -> checkBox.supportButtonTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.priority_low))
             2 -> checkBox.supportButtonTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.priority_middle))

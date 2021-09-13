@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         vm.getLabelTitle(labelId).observe(this) {
                             labelTitle = it
                             setNotificationRemind(schedules[i], labelTitle)
-                            schedules[i].id?.let {id-> vm.updateRemindTag(id) }
+                            schedules[i].id?.let { id -> vm.updateRemindTag(id) }
                         }
                     }
                 }
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         receiver = RemindDialogReceiver()
         val intentFilter = IntentFilter()
         intentFilter.addAction(actionRegistered)
-        registerReceiver(receiver,intentFilter)
+        registerReceiver(receiver, intentFilter)
     }
 
 
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun setNotificationRemind(schedule: Schedule,labelTitle:String?) {
+    private fun setNotificationRemind(schedule: Schedule, labelTitle: String?) {
         val remind = schedule.remind?.split(",")?.dropLastWhile { it.isEmpty() }?.toTypedArray()
         val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         var date = Date()

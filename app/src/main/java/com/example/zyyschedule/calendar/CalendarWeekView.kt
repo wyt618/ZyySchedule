@@ -28,6 +28,7 @@ class CalendarWeekView(context: Context) : WeekView(context) {
      */
     private val mSchemeBasicPaint = Paint()
     private var mSchemeBaseLine = 0f
+
     init {
         dateTextPaint.textSize = dipToPx(context, 8f).toFloat()
         dateTextPaint.color = -0x1
@@ -149,7 +150,7 @@ class CalendarWeekView(context: Context) : WeekView(context) {
         return (dpValue * scale + 0.5f).toInt()
     }
 
-    override fun onPreviewHook(){
+    override fun onPreviewHook() {
         solarTextPaint.textSize = mCurMonthLunarTextPaint.textSize
         mRadius = min(mItemWidth, mItemHeight) / 11 * 5
     }

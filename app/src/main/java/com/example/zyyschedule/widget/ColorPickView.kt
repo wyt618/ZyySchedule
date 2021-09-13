@@ -14,7 +14,7 @@ class ColorPickView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
     private var bigCircle: Int? = null //外圆半径
     private var rudeRadius: Int? = null //可移动小球的半径
-    private var centerColor:Int? = null
+    private var centerColor: Int? = null
     private var bitmapBack: Bitmap? = null //背景图片
     private var mPaint: Paint? = null //背景画笔
     private var mCenterPaint: Paint? = null //可移动小球背景
@@ -23,7 +23,7 @@ class ColorPickView @JvmOverloads constructor(
     private var listener: OnColorChangedListener? = null //小球移动监听
     var colorStr = ""
 
-    init{
+    init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.ColorPickView, 0, 0)
                 .apply {
                     try {
@@ -33,7 +33,7 @@ class ColorPickView @JvmOverloads constructor(
                         rudeRadius = getResourceId(R.styleable.ColorPickView_center_radius, 10)
                         //可移动小球的颜色
                         centerColor = getResourceId(R.styleable.ColorPickView_center_color, Color.WHITE)
-                    }finally {
+                    } finally {
                         recycle()
                     }
                 }
@@ -99,7 +99,7 @@ class ColorPickView @JvmOverloads constructor(
         return super.performClick()
     }
 
-    internal fun setOnColorChangedListener(listener:OnColorChangedListener ) {
+    internal fun setOnColorChangedListener(listener: OnColorChangedListener) {
         this.listener = listener
     }
 
@@ -164,7 +164,6 @@ class ColorPickView @JvmOverloads constructor(
         }
         return builder.toString().toUpperCase(Locale.ROOT)
     }
-
 
 
     //颜色发生变化的回调接口

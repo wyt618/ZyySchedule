@@ -19,9 +19,9 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     fun updateRemindTag(vararg id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            try{
+            try {
                 dataRepository.updateRemindTag(*id)
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 Log.i("main", "更改提醒状态失败：$e")
             }
         }
@@ -37,7 +37,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun getLabelTitle(id:Int):LiveData<String>{
+    fun getLabelTitle(id: Int): LiveData<String> {
         return dataRepository.getLabelTitle(id)
     }
 

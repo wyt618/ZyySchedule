@@ -162,28 +162,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         binding.scheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
         scheduleListHeadBinding.scheduleListHead.text = selectMonth.toString() + "月" + selectDay + "日"
-
-        binding.deleteButton.isClickable = false
-        binding.moreButton.isClickable = false
-        binding.labelButton.isClickable = false
-        binding.timeButton.isClickable = false
-        ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_delete_outline_24)?.let {
-            DrawableCompat.setTint(it, Color.GRAY)
-            binding.deleteButton.setImageDrawable(it)
-        }
-        ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_more_24)?.let {
-            DrawableCompat.setTint(it, Color.GRAY)
-            binding.moreButton.setImageDrawable(it)
-        }
-        ContextCompat.getDrawable(requireContext(), R.drawable.ic_schedule_24)?.let {
-            DrawableCompat.setTint(it, Color.GRAY)
-            binding.labelButton.setImageDrawable(it)
-        }
-        ContextCompat.getDrawable(requireContext(), R.drawable.ic_calendar_toolbar)?.let {
-            DrawableCompat.setTint(it, Color.GRAY)
-            binding.timeButton.setImageDrawable(it)
-        }
-
+        enabledFalse()
         labelDialogHeadBinding.root.setOnClickListener {
             val intent = Intent(activity, AddLabelActivity::class.java)
             startActivity(intent)

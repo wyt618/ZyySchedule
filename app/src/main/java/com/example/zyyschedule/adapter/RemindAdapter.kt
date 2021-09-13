@@ -8,27 +8,27 @@ import com.example.zyyschedule.R
 import com.example.zyyschedule.RemindBean
 import com.example.zyyschedule.databinding.RemindListHeadBinding
 
-open class RemindAdapter(layoutResId: Int) :BaseQuickAdapter<RemindBean, BaseViewHolder>(layoutResId) {
-    private lateinit var remindListHeadBinding:RemindListHeadBinding
+open class RemindAdapter(layoutResId: Int) : BaseQuickAdapter<RemindBean, BaseViewHolder>(layoutResId) {
+    private lateinit var remindListHeadBinding: RemindListHeadBinding
     var addRemind: StringBuffer = StringBuffer("无提醒")
     override fun convert(holder: BaseViewHolder, item: RemindBean) {
-       holder.setText(R.id.remind_check_box, item.remindTitle)
-       val checkBox:AppCompatCheckBox = holder.getView(R.id.remind_check_box)
+        holder.setText(R.id.remind_check_box, item.remindTitle)
+        val checkBox: AppCompatCheckBox = holder.getView(R.id.remind_check_box)
         checkBox.setOnClickListener(null)
         checkBox.isChecked = item.remindIsChecked
-        checkBox.setOnCheckedChangeListener{ _: CompoundButton, isChecked: Boolean ->
+        checkBox.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
             item.remindIsChecked = isChecked
-            if(isChecked){
+            if (isChecked) {
                 remindListHeadBinding.remindHeadBox.isChecked = false
                 addRemind.append(",").append(item.remindTitle)
-            }else{
+            } else {
                 var flag = 0
-                for(i in data.indices ){
-                    if(!data[i].remindIsChecked){
+                for (i in data.indices) {
+                    if (!data[i].remindIsChecked) {
                         flag += 1
                     }
                 }
-                if(flag == data.size){
+                if (flag == data.size) {
                     remindListHeadBinding.remindHeadBox.isChecked = true
                     addRemind = StringBuffer("无提醒")
                 }
@@ -38,8 +38,7 @@ open class RemindAdapter(layoutResId: Int) :BaseQuickAdapter<RemindBean, BaseVie
     }
 
 
-
-    fun setHeader(binding: RemindListHeadBinding){
+    fun setHeader(binding: RemindListHeadBinding) {
         remindListHeadBinding = binding
     }
 }

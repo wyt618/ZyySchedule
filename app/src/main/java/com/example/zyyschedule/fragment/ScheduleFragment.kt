@@ -60,6 +60,10 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
                             binding.scheduleTitleBar.visibility = View.GONE
                             binding.editTool.visibility = View.VISIBLE
                         }
+                        "visibility_titleBar" -> {
+                            exitEditor()
+                        }
+
                     }
                 })
         LiveEventBus
@@ -120,7 +124,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
             val params = deleteDialog.window!!.attributes
             val d = requireContext().resources!!.displayMetrics
             params.x = view.width - 50
-            params.y = -d.heightPixels / 2 + binding.labelRecyclerview.top  + view.height + view.top - 10
+            params.y = -d.heightPixels / 2 + binding.labelRecyclerview.top + view.height + view.top - 10
             deleteDialog.window!!.attributes = params
             deleteDialog.window!!.setGravity(Gravity.START)
             labelItemEditorButton.findViewById<View>(R.id.delete_button).setOnClickListener {
@@ -168,6 +172,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
                 .post("adapterComeBack")
         LiveEventBus.get("SomeF_MainA", String::class.java)
                 .post("visible_navigation")
+
     }
 
 

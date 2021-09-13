@@ -16,7 +16,7 @@ import com.example.zyyschedule.database.Schedule
 import com.example.zyyschedule.databinding.*
 import com.example.zyyschedule.viewmodel.ScheduleViewModel
 
-class LabelFragment(labelId: Int):Fragment() {
+class LabelFragment(labelId: Int) : Fragment() {
     private val mLabelId = labelId
     private lateinit var binding: FragmentLabelBinding
     private val vm: ScheduleViewModel by viewModels()

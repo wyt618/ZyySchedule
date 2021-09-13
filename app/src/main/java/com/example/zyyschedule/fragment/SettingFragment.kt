@@ -12,7 +12,7 @@ import com.example.zyyschedule.viewmodel.SettingViewModel
 
 open class SettingFragment : Fragment() {
     private val vm: SettingViewModel by viewModels()
-    private lateinit var binding:SettingFragmentBinding
+    private lateinit var binding: SettingFragmentBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = SettingFragmentBinding.inflate(LayoutInflater.from(context))
         return binding.root
