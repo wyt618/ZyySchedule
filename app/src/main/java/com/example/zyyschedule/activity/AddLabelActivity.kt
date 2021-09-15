@@ -18,7 +18,7 @@ import com.example.zyyschedule.databinding.ColorpickerDialogBinding
 import com.example.zyyschedule.viewmodel.AddLabelViewModel
 import com.example.zyyschedule.widget.ColorPickView
 
-class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickView.OnColorChangedListener {
+class AddLabelActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityAddLabelBinding
     private lateinit var colorPickerDialogBinding: ColorpickerDialogBinding
     private var labelColor: Int = -0x98641c
@@ -32,12 +32,24 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
         supportActionBar?.hide()
         colorPickerDialogBinding = ColorpickerDialogBinding.inflate(layoutInflater)
         binding.LabelSetColor.setOnClickListener(this)
-        colorPickerDialogBinding.colorPickView.setOnColorChangedListener(this)
+
         binding.addLabelExit.setOnClickListener(this)
         binding.addLabelButton.setOnClickListener(this)
         binding.LabelTitle.requestFocus()
         val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(binding.LabelTitle, InputMethodManager.SHOW_FORCED)
+
+        colorPickerDialogBinding.colorPickView.setOnColorChangedListener(object :
+            ColorPickView.OnColorChangedListener {
+            @SuppressLint("SetTextI18n")
+            override fun onColorChange(a: Int, r: Int, g: Int, b: Int) {
+                colorPickerDialogBinding.txtColor.apply {
+                    text = "R:$r\tG:$g\tB:$b\t" + colorPickerDialogBinding.colorPickView.colorStr
+                    setTextColor(Color.argb(a, r, g, b))
+                }
+                labelColor = Color.argb(a, r, g, b)
+            }
+        })
     }
 
     override fun onClick(v: View?) {
@@ -108,15 +120,6 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener, ColorPickVie
             titleBlankDialog.show()
         }
 
-    }
-
-    @SuppressLint("SetTextI18n")
-    override fun onColorChange(a: Int, r: Int, g: Int, b: Int) {
-        colorPickerDialogBinding.txtColor.apply {
-            text = "R:$r\tG:$g\tB:$b\t" + colorPickerDialogBinding.colorPickView.colorStr
-            setTextColor(Color.argb(a, r, g, b))
-        }
-        labelColor = Color.argb(a, r, g, b)
     }
 
 }

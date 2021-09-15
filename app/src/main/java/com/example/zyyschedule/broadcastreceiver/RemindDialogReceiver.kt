@@ -14,6 +14,7 @@ import com.example.zyyschedule.R
 import com.example.zyyschedule.database.Schedule
 import com.example.zyyschedule.databinding.RemindGlobalDialogBinding
 import com.google.gson.Gson
+import java.lang.Exception
 import java.util.*
 
 @Suppress("DEPRECATED_IDENTITY_EQUALS", "DEPRECATION")
@@ -26,13 +27,15 @@ class RemindDialogReceiver : BroadcastReceiver() {
         val gson = Gson()
         val strSchedule = intent!!.getStringExtra("remindSchedule")
         val schedule: Schedule = gson.fromJson(strSchedule, Schedule::class.java)
-        val windowManager: WindowManager = context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val windowManager: WindowManager =
+            context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val params = WindowManager.LayoutParams()
-        binding = RemindGlobalDialogBinding.inflate(LayoutInflater.from(context))
-        if (binding.root.parent != null) {
-            Log.i("RemindDialogReceiver", "onReceive:return ")
-            return
+        try {
+            windowManager.removeView(binding.root)
+        } catch (e: Exception) {
+            Log.i("RemindDialogReceiver",e.toString() )
         }
+        binding = RemindGlobalDialogBinding.inflate(LayoutInflater.from(context))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
@@ -95,10 +98,12 @@ class RemindDialogReceiver : BroadcastReceiver() {
             dateText.append(scheduleDate.substring(0, 4)).append("年")
         }
         if (calendar[Calendar.MONTH] + 1 == scheduleDate.substring(5, 7).toInt()
-                && calendar[Calendar.DAY_OF_MONTH] == scheduleDate.substring(8, 10).toInt()) {
+            && calendar[Calendar.DAY_OF_MONTH] == scheduleDate.substring(8, 10).toInt()
+        ) {
             dateText.append("今天，")
         } else {
-            dateText.append(scheduleDate.substring(5, 7)).append("月").append(scheduleDate.substring(8, 10)).append("日,")
+            dateText.append(scheduleDate.substring(5, 7)).append("月")
+                .append(scheduleDate.substring(8, 10)).append("日,")
         }
         dateText.append(scheduleDate.substring(scheduleDate.length - 8, scheduleDate.length - 3))
         return dateText.toString()

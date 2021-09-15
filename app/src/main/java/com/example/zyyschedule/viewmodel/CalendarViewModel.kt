@@ -44,7 +44,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         priority = MutableLiveData()
         priorityid = MutableLiveData()
         label = MutableLiveData()
-        remindText = MutableLiveData<String>()
+        remindText = MutableLiveData()
         addScheduleTime.value = "00:00"
         priority.value = "无优先级"
         label.value = "无标签"

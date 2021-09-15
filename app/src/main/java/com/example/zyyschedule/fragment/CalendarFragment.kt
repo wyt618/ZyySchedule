@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
@@ -23,7 +24,9 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,7 +51,7 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 import java.text.SimpleDateFormat
 import java.util.*
 
-@Suppress( "NotifyDataSetChanged")
+@Suppress("NotifyDataSetChanged")
 class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalendarSelectListener {
     private val vm: CalendarViewModel by viewModels()
     private lateinit var binding: CalendarFragmentBinding
@@ -283,7 +286,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             }
         }
         //完成和未完成日程item长按事件
-        scheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
+        scheduleAdapter.setOnItemLongClickListener { adapter, _, _ ->
             binding.rlTool.visibility = View.GONE
             binding.editTool.visibility = View.VISIBLE
             binding.editorLayout.visibility = View.VISIBLE
@@ -301,7 +304,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             finishScheduleAdapter.notifyDataSetChanged()
             true
         }
-        finishScheduleAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<*, *>, _: View?, _: Int ->
+        finishScheduleAdapter.setOnItemLongClickListener { adapter, _, _ ->
             binding.rlTool.visibility = View.GONE
             binding.editTool.visibility = View.VISIBLE
             binding.editorLayout.visibility = View.VISIBLE
@@ -319,6 +322,34 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             scheduleAdapter.notifyDataSetChanged()
             true
         }
+
+        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        binding.drawerLayout.setScrimColor(Color.TRANSPARENT)
+        //完成和未完成日程item点击事件
+        finishScheduleAdapter.setOnItemClickListener { adapter, _, _ ->
+            if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
+                Log.i("label", "抽屉已打开")
+            } else {
+                binding.drawerLayout.openDrawer(GravityCompat.END)
+            }
+        }
+        scheduleAdapter.setOnItemClickListener { adapter, _, _ ->
+            if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
+                Log.i("label", "抽屉已打开")
+            } else {
+                binding.drawerLayout.openDrawer(GravityCompat.END)
+            }
+        }
+        binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+            override fun onDrawerOpened(drawerView: View) {
+                binding.divider.visibility = View.VISIBLE
+            }
+            override fun onDrawerClosed(drawerView: View) {
+                binding.divider.visibility = View.GONE
+            }
+            override fun onDrawerStateChanged(newState: Int) {}
+        })
         updateScheduleList()
         setCalendarTag()
     }
@@ -636,7 +667,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         @SuppressLint("SimpleDateFormat") val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         for (s in str) {
             try {
-                std.parse(s)?.let{
+                std.parse(s)?.let {
                     date = it
                 }
             } catch (ignored: java.lang.Exception) {
@@ -658,8 +689,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     if (mSchedules[i].isEditorChecked) {
                         vm.deleteSchedule(mSchedules[i])
                         mSchedules[i].labelId?.let { labelId ->
-                            vm.getLabelTitle(labelId).observe(this){
-                                cancelNotification(mSchedules[i],it)
+                            vm.getLabelTitle(labelId).observe(this) {
+                                cancelNotification(mSchedules[i], it)
                             }
                         }
                     }
@@ -668,8 +699,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     if (mFinishSchedules[i].isEditorChecked) {
                         vm.deleteSchedule(mFinishSchedules[i])
                         mFinishSchedules[i].labelId?.let { labelId ->
-                            vm.getLabelTitle(labelId).observe(this){
-                                cancelNotification(mFinishSchedules[i],it)
+                            vm.getLabelTitle(labelId).observe(this) {
+                                cancelNotification(mFinishSchedules[i], it)
                             }
                         }
                     }
@@ -836,14 +867,14 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     }
 
     @SuppressLint("UnspecifiedImmutableFlag", "SimpleDateFormat")
-    private fun cancelNotification(schedule: Schedule, labelTitle: String?){
+    private fun cancelNotification(schedule: Schedule, labelTitle: String?) {
         val remind = schedule.remind?.split(",")?.dropLastWhile { it.isEmpty() }?.toTypedArray()
         val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         var date = Date()
         val now = Date()
         for (i in remind?.indices!!) {
             try {
-                std.parse(remind[i])?.let{
+                std.parse(remind[i])?.let {
                     date = it
                 }
             } catch (ignored: Exception) {
@@ -855,9 +886,12 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 intent.putExtra("remindSchedule", gson.toJson(schedule))
                 intent.putExtra("PendingIntentCode", schedule.id?.plus(i * 1000))
                 intent.putExtra("LabelTitle", labelTitle)
-                val sender = schedule.id?.plus(i * 1000)?.let { PendingIntent.getBroadcast(requireContext(), it, intent,
-                    FLAG_UPDATE_CURRENT
-                ) }
+                val sender = schedule.id?.plus(i * 1000)?.let {
+                    PendingIntent.getBroadcast(
+                        requireContext(), it, intent,
+                        FLAG_UPDATE_CURRENT
+                    )
+                }
                 val am = context?.getSystemService(ALARM_SERVICE) as AlarmManager
                 am.cancel(sender)
             }
