@@ -63,4 +63,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun getLabelTitle(id: Int): LiveData<String> {
+        return dataRepository.getLabelTitle(id)
+    }
 }

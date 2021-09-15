@@ -335,4 +335,8 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         }
         return remindTime
     }
+
+    fun getLabelTitle(id: Int): LiveData<String> {
+        return dataRepository.getLabelTitle(id)
+    }
 }

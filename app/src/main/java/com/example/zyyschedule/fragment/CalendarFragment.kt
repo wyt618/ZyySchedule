@@ -1,8 +1,12 @@
 package com.example.zyyschedule.fragment
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
+import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -31,10 +35,12 @@ import com.example.zyyschedule.adapter.LabelAdapter
 import com.example.zyyschedule.adapter.PriorityListAdapter
 import com.example.zyyschedule.adapter.RemindAdapter
 import com.example.zyyschedule.adapter.ScheduleAdapter
+import com.example.zyyschedule.broadcastreceiver.NotificationReceiver
 import com.example.zyyschedule.database.Label
 import com.example.zyyschedule.database.Schedule
 import com.example.zyyschedule.databinding.*
 import com.example.zyyschedule.viewmodel.CalendarViewModel
+import com.google.gson.Gson
 import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.Calendar.Scheme
 import com.haibin.calendarview.CalendarView
@@ -42,7 +48,7 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 import java.text.SimpleDateFormat
 import java.util.*
 
-@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "NotifyDataSetChanged")
+@Suppress( "NotifyDataSetChanged")
 class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalendarSelectListener {
     private val vm: CalendarViewModel by viewModels()
     private lateinit var binding: CalendarFragmentBinding
@@ -522,6 +528,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
 
     //选择提醒
     private fun gotoAddRemind() {
+        remindListHeadBinding.remindHeadBox.isChecked = true
         var flag = 0
         for (i in remindAdapter.data.indices) {
             if (!remindAdapter.data[i].remindIsChecked) {
@@ -629,7 +636,9 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         @SuppressLint("SimpleDateFormat") val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         for (s in str) {
             try {
-                date = std.parse(s)
+                std.parse(s)?.let{
+                    date = it
+                }
             } catch (ignored: java.lang.Exception) {
             }
             if (date.time < now.time) {
@@ -648,11 +657,21 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 for (i in mSchedules.indices) {
                     if (mSchedules[i].isEditorChecked) {
                         vm.deleteSchedule(mSchedules[i])
+                        mSchedules[i].labelId?.let { labelId ->
+                            vm.getLabelTitle(labelId).observe(this){
+                                cancelNotification(mSchedules[i],it)
+                            }
+                        }
                     }
                 }
                 for (i in mFinishSchedules.indices) {
                     if (mFinishSchedules[i].isEditorChecked) {
                         vm.deleteSchedule(mFinishSchedules[i])
+                        mFinishSchedules[i].labelId?.let { labelId ->
+                            vm.getLabelTitle(labelId).observe(this){
+                                cancelNotification(mFinishSchedules[i],it)
+                            }
+                        }
                     }
                 }
                 dialog.dismiss()
@@ -813,6 +832,35 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         ContextCompat.getDrawable(requireContext(), R.drawable.ic_calendar_toolbar)?.let {
             DrawableCompat.setTint(it, Color.GRAY)
             binding.timeButton.setImageDrawable(it)
+        }
+    }
+
+    @SuppressLint("UnspecifiedImmutableFlag", "SimpleDateFormat")
+    private fun cancelNotification(schedule: Schedule, labelTitle: String?){
+        val remind = schedule.remind?.split(",")?.dropLastWhile { it.isEmpty() }?.toTypedArray()
+        val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        var date = Date()
+        val now = Date()
+        for (i in remind?.indices!!) {
+            try {
+                std.parse(remind[i])?.let{
+                    date = it
+                }
+            } catch (ignored: Exception) {
+            }
+            if (date.time > now.time) {
+                val gson = Gson()
+                val intent = Intent(context, NotificationReceiver::class.java)
+                intent.action = "Notification_Receiver"
+                intent.putExtra("remindSchedule", gson.toJson(schedule))
+                intent.putExtra("PendingIntentCode", schedule.id?.plus(i * 1000))
+                intent.putExtra("LabelTitle", labelTitle)
+                val sender = schedule.id?.plus(i * 1000)?.let { PendingIntent.getBroadcast(requireContext(), it, intent,
+                    FLAG_UPDATE_CURRENT
+                ) }
+                val am = context?.getSystemService(ALARM_SERVICE) as AlarmManager
+                am.cancel(sender)
+            }
         }
     }
 

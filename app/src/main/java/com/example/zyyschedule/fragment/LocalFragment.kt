@@ -1,7 +1,11 @@
 package com.example.zyyschedule.fragment
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,10 +20,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.example.zyyschedule.R
 import com.example.zyyschedule.adapter.ScheduleAdapter
+import com.example.zyyschedule.broadcastreceiver.NotificationReceiver
 import com.example.zyyschedule.database.Schedule
 import com.example.zyyschedule.databinding.*
 import com.example.zyyschedule.viewmodel.ScheduleViewModel
+import com.google.gson.Gson
 import com.jeremyliao.liveeventbus.LiveEventBus
+import java.text.SimpleDateFormat
+import java.util.*
 
 @SuppressLint("NotifyDataSetChanged")
 class LocalFragment : Fragment(), View.OnClickListener {
@@ -165,11 +173,21 @@ class LocalFragment : Fragment(), View.OnClickListener {
                 for (i in mSchedules.indices) {
                     if (mSchedules[i].isEditorChecked) {
                         vm.deleteSchedule(mSchedules[i])
+                        mSchedules[i].labelId?.let { labelId ->
+                            vm.getLabelTitle(labelId).observe(this){
+                                cancelNotification(mSchedules[i],it)
+                            }
+                        }
                     }
                 }
                 for (i in mFinishSchedules.indices) {
                     if (mFinishSchedules[i].isEditorChecked) {
                         vm.deleteSchedule(mFinishSchedules[i])
+                        mFinishSchedules[i].labelId?.let { labelId ->
+                            vm.getLabelTitle(labelId).observe(this){
+                                cancelNotification(mFinishSchedules[i],it)
+                            }
+                        }
                     }
                 }
                 dialog.dismiss()
@@ -263,5 +281,32 @@ class LocalFragment : Fragment(), View.OnClickListener {
         }
     }
 
-
+    @SuppressLint("UnspecifiedImmutableFlag", "SimpleDateFormat")
+    private fun cancelNotification(schedule: Schedule, labelTitle: String?){
+        val remind = schedule.remind?.split(",")?.dropLastWhile { it.isEmpty() }?.toTypedArray()
+        val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        var date = Date()
+        val now = Date()
+        for (i in remind?.indices!!) {
+            try {
+                std.parse(remind[i])?.let{
+                    date = it
+                }
+            } catch (ignored: Exception) {
+            }
+            if (date.time > now.time) {
+                val gson = Gson()
+                val intent = Intent(context, NotificationReceiver::class.java)
+                intent.action = "Notification_Receiver"
+                intent.putExtra("remindSchedule", gson.toJson(schedule))
+                intent.putExtra("PendingIntentCode", schedule.id?.plus(i * 1000))
+                intent.putExtra("LabelTitle", labelTitle)
+                val sender = schedule.id?.plus(i * 1000)?.let { PendingIntent.getBroadcast(requireContext(), it, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                ) }
+                val am = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                am.cancel(sender)
+            }
+        }
+    }
 }
