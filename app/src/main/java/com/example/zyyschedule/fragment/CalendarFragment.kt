@@ -29,15 +29,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.NotificationUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.example.zyyschedule.R
 import com.example.zyyschedule.activity.AddLabelActivity
-import com.example.zyyschedule.adapter.LabelAdapter
-import com.example.zyyschedule.adapter.PriorityListAdapter
-import com.example.zyyschedule.adapter.RemindAdapter
-import com.example.zyyschedule.adapter.ScheduleAdapter
+import com.example.zyyschedule.adapter.*
 import com.example.zyyschedule.broadcastreceiver.NotificationReceiver
 import com.example.zyyschedule.database.Label
 import com.example.zyyschedule.database.Schedule
@@ -185,6 +183,13 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         scheduleAdapter.addFooterView(scheduleFootBinding.root)
         scheduleAdapter.setEmptyView(R.layout.schedule_empty)
         scheduleAdapter.setOwner(this)
+        //设置日程列表侧滑和拖拽
+        val scheduleCallback = ItemTouchCallback(scheduleAdapter,scheduleAdapter.data,this)
+        val finishCallback = ItemTouchCallback(finishScheduleAdapter,finishScheduleAdapter.data,this)
+        val ufItemTouchHelper = ItemTouchHelper(scheduleCallback)
+        val fItemTouchHelper = ItemTouchHelper(finishCallback)
+        ufItemTouchHelper.attachToRecyclerView(binding.scheduleList)
+        fItemTouchHelper.attachToRecyclerView(binding.finishScheduleList)
         binding.scheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
         scheduleListHeadBinding.scheduleListHead.text =
@@ -322,34 +327,33 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             scheduleAdapter.notifyDataSetChanged()
             true
         }
-
-        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         binding.drawerLayout.setScrimColor(Color.TRANSPARENT)
         //完成和未完成日程item点击事件
-        finishScheduleAdapter.setOnItemClickListener { adapter, _, _ ->
-            if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
-                Log.i("label", "抽屉已打开")
-            } else {
+        finishScheduleAdapter.setOnItemClickListener { _, _, position ->
+            if (!binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
                 binding.drawerLayout.openDrawer(GravityCompat.END)
             }
+            binding.editCheckBox.text = mFinishSchedules[position].startTime
         }
-        scheduleAdapter.setOnItemClickListener { adapter, _, _ ->
-            if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
-                Log.i("label", "抽屉已打开")
-            } else {
+        scheduleAdapter.setOnItemClickListener { _, _, position ->
+            if (!binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
                 binding.drawerLayout.openDrawer(GravityCompat.END)
             }
+            binding.editCheckBox.text = mSchedules[position].startTime
         }
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
             override fun onDrawerOpened(drawerView: View) {
                 binding.divider.visibility = View.VISIBLE
+                binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED)
             }
             override fun onDrawerClosed(drawerView: View) {
                 binding.divider.visibility = View.GONE
+                binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             }
             override fun onDrawerStateChanged(newState: Int) {}
         })
+
         updateScheduleList()
         setCalendarTag()
     }
@@ -403,6 +407,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         finishScheduleAdapter.notifyDataSetChanged()
     }
 
+    //日历点击时事件
     @SuppressLint("SetTextI18n")
     override fun onCalendarSelect(calendar: Calendar?, isClick: Boolean) {
         selectYear = calendar!!.year
@@ -866,6 +871,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
     }
 
+
+    //删除时取消提醒的方法
     @SuppressLint("UnspecifiedImmutableFlag", "SimpleDateFormat")
     private fun cancelNotification(schedule: Schedule, labelTitle: String?) {
         val remind = schedule.remind?.split(",")?.dropLastWhile { it.isEmpty() }?.toTypedArray()

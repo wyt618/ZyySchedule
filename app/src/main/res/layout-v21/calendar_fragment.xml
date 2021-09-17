@@ -11,26 +11,11 @@
 
     </data>
 
-    <androidx.drawerlayout.widget.DrawerLayout
+    <com.example.zyyschedule.widget.CustomDrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:openDrawer="end">
-
-        <LinearLayout
-            android:id="@+id/schedule_edit_layout"
-            android:layout_width="@dimen/space_400dp"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/space_53dp">
-
-            <androidx.appcompat.widget.AppCompatCheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -314,7 +299,46 @@
             </RelativeLayout>
 
         </LinearLayout>
-    </androidx.drawerlayout.widget.DrawerLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/schedule_edit_layout"
+            android:layout_width="@dimen/space_400dp"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/space_53dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/edit_checkBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/edit_flag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:src="@drawable/priority_flag"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </com.example.zyyschedule.widget.CustomDrawerLayout>
+
 
 </layout>
 
