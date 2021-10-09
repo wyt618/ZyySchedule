@@ -25,6 +25,9 @@ class ItemTouchCallback(adapter: ScheduleAdapter, data: List<Schedule>,owner: Vi
         return makeMovementFlags(dragFlags, swipeFlags)
     }
 
+    override fun isLongPressDragEnabled(): Boolean {
+        return true
+    }
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -39,19 +42,32 @@ class ItemTouchCallback(adapter: ScheduleAdapter, data: List<Schedule>,owner: Vi
         }else{
             mData.size-1
         }
-        Collections.swap(mData, fromPosition, toPosition)
-        mAdapter.notifyDataSetChanged()//没有动画效果，但适用于item有点击事件的话
-        return true //true:可以滑动
+        return if(fromPosition != -1 && fromPosition != mAdapter.data.size) {
+            Collections.swap(mData, fromPosition, toPosition)
+            mAdapter.notifyItemMoved(fromPosition, toPosition)
+            mAdapter.notifyDataSetChanged()//没有动画效果，但适用于item有点击事件的话
+            true //true:可以滑动
+        }else{
+            false
+        }
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         val position: Int = viewHolder.adapterPosition-1
-        if(mData[position].state.equals("0")){
-            mData[position].state = "1"
+        if(position != -1 && position != mAdapter.data.size ) {
+            if (mData[position].state.equals("0")) {
+                mData[position].state = "1"
+            } else {
+                mData[position].state = "0"
+            }
+            vm.changeStateSchedule(mData[position])
+            mAdapter.notifyDataSetChanged()//没有动画效果，但适用于item有点击事件的话
         }else{
-            mData[position].state = "0"
+            mAdapter.notifyDataSetChanged()
         }
-        vm.changeStateSchedule(mData[position])
-        mAdapter.notifyDataSetChanged()//没有动画效果，但适用于item有点击事件的话
     }
+
+
+
+
 }

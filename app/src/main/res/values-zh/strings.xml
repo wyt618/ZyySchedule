@@ -48,20 +48,4 @@
     <string name="priority_medium_text">中优先级</string>
     <string name="priority_high_text">高优先级</string>
 
-    <string name="remind_on_time_text">准时</string>
-    <string name="remind_1_minute_ahead_text">提前1分钟</string>
-    <string name="remind_5_minute_early_text">提前5分钟</string>
-    <string name="remind_10_minute_early_text">提前10分钟</string>
-    <string name="remind_15_minute_early_text">提前15分钟</string>
-    <string name="remind_20_minute_early_text">提前20分钟</string>
-    <string name="remind_25_minute_early_text">提前25分钟</string>
-    <string name="remind_30_minute_early_text">提前30分钟</string>
-    <string name="remind_45_minute_early_text">提前45分钟</string>
-    <string name="remind_one_hour_earlier_text">提前1个小时</string>
-    <string name="remind_two_hours_advance_text">提前2小时</string>
-    <string name="remind_three_hours_advance_text">提前3小时</string>
-    <string name="remind_12_hours_advance_text">提前12小时</string>
-    <string name="remind_1_day_advance_text">提前1天</string>
-    <string name="remind_2_day_advance_text">提前2天</string>
-    <string name="remind_1_weeks_advance_text">提前1周</string>
 </resources>

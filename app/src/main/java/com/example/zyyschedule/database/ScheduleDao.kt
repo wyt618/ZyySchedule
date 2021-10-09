@@ -43,4 +43,7 @@ interface ScheduleDao {
 
     @Query("SELECT * FROM Schedule WHERE labelId = :labelId and state = 1 ORDER BY datetime(startTime)")
     fun getFScheduleOfLabel(labelId: Int): LiveData<List<Schedule>>
+
+    @Update
+    fun updateSchedule(vararg schedules: Schedule)
 }

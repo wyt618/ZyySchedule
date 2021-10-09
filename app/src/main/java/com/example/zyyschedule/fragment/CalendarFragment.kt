@@ -15,9 +15,9 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.CompoundButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -29,6 +29,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.NotificationUtils
@@ -84,6 +85,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private var selectMonth: Int = 0
     private var selectDay: Int = 0
     private lateinit var time: java.util.Calendar
+    private var editSchedule: MutableLiveData<Schedule> = MutableLiveData()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -161,7 +163,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         remindLayoutManager.orientation = LinearLayoutManager.VERTICAL
         remindDialogBinding.remindChooseList.layoutManager = remindLayoutManager
         remindDialogBinding.remindChooseList.adapter = remindAdapter
-        val remindList = vm.remindListData(requireContext())
+        val remindList = vm.remindListData()
         remindAdapter.setList(remindList)
         remindAdapter.setHeader(remindListHeadBinding)
         remindAdapter.setHeaderView(remindListHeadBinding.root)
@@ -184,14 +186,17 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         scheduleAdapter.setEmptyView(R.layout.schedule_empty)
         scheduleAdapter.setOwner(this)
         //设置日程列表侧滑和拖拽
-        val scheduleCallback = ItemTouchCallback(scheduleAdapter,scheduleAdapter.data,this)
-        val finishCallback = ItemTouchCallback(finishScheduleAdapter,finishScheduleAdapter.data,this)
+        val scheduleCallback = ItemTouchCallback(scheduleAdapter, scheduleAdapter.data, this)
+        val finishCallback =
+            ItemTouchCallback(finishScheduleAdapter, finishScheduleAdapter.data, this)
         val ufItemTouchHelper = ItemTouchHelper(scheduleCallback)
         val fItemTouchHelper = ItemTouchHelper(finishCallback)
         ufItemTouchHelper.attachToRecyclerView(binding.scheduleList)
         fItemTouchHelper.attachToRecyclerView(binding.finishScheduleList)
         binding.scheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
+
+
         scheduleListHeadBinding.scheduleListHead.text =
             selectMonth.toString() + "月" + selectDay + "日"
         enabledFalse()
@@ -328,29 +333,67 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             true
         }
         binding.drawerLayout.setScrimColor(Color.TRANSPARENT)
+
+
         //完成和未完成日程item点击事件
         finishScheduleAdapter.setOnItemClickListener { _, _, position ->
             if (!binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
                 binding.drawerLayout.openDrawer(GravityCompat.END)
             }
-            binding.editCheckBox.text = mFinishSchedules[position].startTime
+            editSchedule.value = mFinishSchedules[position]
+            editSchedule.value?.let {
+                val (color, text) = editTimeText(it.startTime)
+                binding.editCheckBox.text = text
+                binding.editCheckBox.setTextColor(color)
+                when (it.state) {
+                    "1" -> binding.editCheckBox.isChecked = true
+                    "0" -> binding.editCheckBox.isChecked = false
+                }
+            }
         }
         scheduleAdapter.setOnItemClickListener { _, _, position ->
             if (!binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
                 binding.drawerLayout.openDrawer(GravityCompat.END)
             }
-            binding.editCheckBox.text = mSchedules[position].startTime
+            editSchedule.value = mSchedules[position]
+            editSchedule.value?.let {
+                val (color, text) = editTimeText(it.startTime)
+                binding.editCheckBox.text = text
+                binding.editCheckBox.setTextColor(color)
+                when (it.state) {
+                    "1" -> binding.editCheckBox.isChecked = true
+                    "0" -> binding.editCheckBox.isChecked = false
+                }
+            }
         }
+        //编辑状态的日程数据更新
+        editSchedule.observe(viewLifecycleOwner) {
+            vm.updateSchedule(it)
+        }
+
+        binding.editCheckBox.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+            editSchedule.value?.let {
+                if (isChecked) {
+                    it.state = "1"
+                } else {
+                    it.state = "0"
+                }
+                editSchedule.value = editSchedule.value
+            }
+        }
+
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
             override fun onDrawerOpened(drawerView: View) {
                 binding.divider.visibility = View.VISIBLE
                 binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED)
             }
+
             override fun onDrawerClosed(drawerView: View) {
                 binding.divider.visibility = View.GONE
                 binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             }
+
             override fun onDrawerStateChanged(newState: Int) {}
         })
 
@@ -387,7 +430,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     }
 
     override fun onCalendarOutOfRange(calendar: Calendar?) {}
-
 
     private fun exitEditor() {
         binding.fabBtn.visibility = View.VISIBLE
@@ -444,7 +486,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         vm.addScheduleTime.postValue("00:00")
         vm.remindText.postValue("无提醒")
         remindAdapter.addRemind = StringBuffer("无提醒")
-
         binding.fabBtn.visibility = View.GONE
         addScheduleBinding.sendSchedule.isClickable =
             addScheduleBinding.editText.text.toString().trim().isNotEmpty()
@@ -457,13 +498,18 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         addSchedule = builder.create()
         addSchedule.show()
         val window = addSchedule.window
-        window!!.setGravity(Gravity.BOTTOM)
-        window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-        val d = requireContext().resources!!.displayMetrics
-        val p = addSchedule.window!!.attributes
-        p.width = d.widthPixels
-        addSchedule.window!!.attributes = p
-        addSchedule.window!!.setBackgroundDrawableResource(R.drawable.add_schedule)
+        window?.let {
+            it.setGravity(Gravity.BOTTOM)
+            it.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            val d = requireContext().resources?.displayMetrics
+            val p = it.attributes
+            if (d != null) {
+                p.width = d.widthPixels
+            }
+            it.attributes = p
+            it.setBackgroundDrawableResource(R.drawable.add_schedule)
+
+        }
         addSchedule.setOnDismissListener { binding.fabBtn.visibility = View.VISIBLE }
         addScheduleBinding.editText.requestFocus()
         val imm: InputMethodManager =
@@ -592,7 +638,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         remindDialog = builder.create()
         remindDialog.window!!.setBackgroundDrawableResource(R.drawable.dialog_background)
         remindDialog.show()
-        val d = requireContext().resources!!.displayMetrics
+        val d = requireContext().resources.displayMetrics
         val p = remindDialog.window!!.attributes
         p.width = d.widthPixels / 3
         p.height = d.heightPixels / 2
@@ -608,7 +654,13 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             ) + " " + vm.addScheduleTime.value + ":00"
         schedule.startTime = startTime
         schedule.endTime = null
-        schedule.remind = remindChangeTime()
+        schedule.remind = vm.remindChangeTime(
+            remindAdapter.addRemind.toString(),
+            selectYear,
+            selectMonth,
+            selectDay,
+            addScheduleBinding.textTime.text.toString()
+        )
         schedule.title = addScheduleBinding.editText.text.toString()
         schedule.detailed = null
         schedule.state = "0"
@@ -630,38 +682,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
     }
 
-    //将提醒字符转化为时间字符
-    private fun remindChangeTime(): String {
-        var remindTime: String
-        remindTime = remindAdapter.addRemind.toString()
-        if (remindTime == "无提醒") {
-            remindTime = ""
-        } else {
-            vm.getDateForRemindToTime(
-                selectYear,
-                selectMonth,
-                selectDay,
-                addScheduleBinding.textTime.text.toString()
-            )
-            remindTime = remindTime.replace("无提醒", "")
-            remindTime = remindTime.replace(",准时", vm.remindToTime(1) + ",")
-            remindTime = remindTime.replace(",提前1分钟", vm.remindToTime(2) + ",")
-            remindTime = remindTime.replace(",提前5分钟", vm.remindToTime(3) + ",")
-            remindTime = remindTime.replace(",提前10分钟", vm.remindToTime(4) + ",")
-            remindTime = remindTime.replace(",提前15分钟", vm.remindToTime(5) + ",")
-            remindTime = remindTime.replace(",提前20分钟", vm.remindToTime(6) + ",")
-            remindTime = remindTime.replace(",提前25分钟", vm.remindToTime(7) + ",")
-            remindTime = remindTime.replace(",提前30分钟", vm.remindToTime(8) + ",")
-            remindTime = remindTime.replace(",提前45分钟", vm.remindToTime(9) + ",")
-            remindTime = remindTime.replace(",提前1个小时", vm.remindToTime(10) + ",")
-            remindTime = remindTime.replace(",提前2个小时", vm.remindToTime(11) + ",")
-            remindTime = remindTime.replace(",提前3个小时", vm.remindToTime(12) + ",")
-            remindTime = remindTime.replace(",提前12个小时", vm.remindToTime(13) + ",")
-            remindTime = remindTime.replace(",提前1天", vm.remindToTime(14) + ",")
-            remindTime = remindTime.replace(",提前2天", vm.remindToTime(15) + ",")
-        }
-        return remindTime
-    }
 
     //检测提醒是否过期
     private fun checkRemindTime(reminds: String): Int {
@@ -903,6 +923,62 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 am.cancel(sender)
             }
         }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun editTimeText(date: String?): Pair<Int, String> {
+        val weekDays = arrayOf("日", "一", "二", "三", "四", "五", "六")
+        val now = java.util.Calendar.getInstance()
+        val startDate = java.util.Calendar.getInstance()
+        val timeText = StringBuffer("")
+        val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        var textColor = Color.BLACK
+        date?.let { d ->
+            std.parse(d)?.let {
+                startDate.time = it
+            }
+        }
+        if (startDate[java.util.Calendar.YEAR] != now[java.util.Calendar.YEAR]) {
+            timeText.append(startDate[java.util.Calendar.YEAR]).append("年")
+        }
+        if (startDate[java.util.Calendar.MONTH] == now[java.util.Calendar.MONTH]) {
+            when (startDate[java.util.Calendar.WEEK_OF_MONTH]) {
+                now[java.util.Calendar.WEEK_OF_MONTH] -> timeText.append("周${weekDays[startDate[java.util.Calendar.DAY_OF_WEEK] - 1]}")
+                    .append(",")
+                now[java.util.Calendar.WEEK_OF_MONTH] - 1 -> timeText.append("上周${weekDays[startDate[java.util.Calendar.DAY_OF_WEEK] - 1]}")
+                    .append(",")
+            }
+            when (startDate[java.util.Calendar.DAY_OF_MONTH]) {
+                now[java.util.Calendar.DAY_OF_MONTH] -> {
+                    timeText.delete(0, timeText.length)
+                    timeText.append("今天").append(",")
+                }
+                now[java.util.Calendar.DAY_OF_MONTH] - 1 -> {
+                    timeText.delete(0, timeText.length)
+                    timeText.append("昨天").append(",")
+                }
+                now[java.util.Calendar.DAY_OF_MONTH] + 1 -> {
+                    timeText.delete(0, timeText.length)
+                    timeText.append("明天").append(",")
+                }
+            }
+        }
+        timeText.append(startDate[java.util.Calendar.MONTH] + 1).append("月")
+            .append(startDate[java.util.Calendar.DAY_OF_MONTH]).append("日")
+        if (startDate[java.util.Calendar.HOUR] < 10) {
+            timeText.append(",").append("0${startDate[java.util.Calendar.HOUR]}")
+        } else {
+            timeText.append(",").append("${startDate[java.util.Calendar.HOUR]}")
+        }
+        if (startDate[java.util.Calendar.MINUTE] < 10) {
+            timeText.append(":").append("0${startDate[java.util.Calendar.MINUTE]}")
+        } else {
+            timeText.append(":").append("${startDate[java.util.Calendar.HOUR]}")
+        }
+        if (now.time > startDate.time) {
+            textColor = Color.RED
+        }
+        return Pair(textColor, timeText.toString())
     }
 
 }

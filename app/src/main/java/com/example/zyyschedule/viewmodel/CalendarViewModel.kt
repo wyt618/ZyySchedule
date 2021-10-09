@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -124,85 +123,85 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         return ary
     }
 
-    fun remindListData(context: Context): ArrayList<RemindBean> {
+    fun remindListData(): ArrayList<RemindBean> {
         val ary = ArrayList<RemindBean>()
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_on_time_text)
+        remindBean.remindTitle = "准时"
         remindBean.remindType = 1
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_1_minute_ahead_text)
+        remindBean.remindTitle = "提前1分钟"
         remindBean.remindType = 2
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_5_minute_early_text)
+        remindBean.remindTitle = "提前5分钟"
         remindBean.remindType = 3
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_10_minute_early_text)
+        remindBean.remindTitle = "提前10分钟"
         remindBean.remindType = 4
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_15_minute_early_text)
+        remindBean.remindTitle = "提前15分钟"
         remindBean.remindType = 5
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_20_minute_early_text)
+        remindBean.remindTitle = "提前20分钟"
         remindBean.remindType = 6
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_25_minute_early_text)
+        remindBean.remindTitle = "提前25分钟"
         remindBean.remindType = 7
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_30_minute_early_text)
+        remindBean.remindTitle = "提前30分钟"
         remindBean.remindType = 8
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_45_minute_early_text)
+        remindBean.remindTitle = "提前45分钟"
         remindBean.remindType = 9
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_one_hour_earlier_text)
+        remindBean.remindTitle = "提前1个小时"
         remindBean.remindType = 10
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_two_hours_advance_text)
+        remindBean.remindTitle = "提前2小时"
         remindBean.remindType = 11
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_three_hours_advance_text)
+        remindBean.remindTitle = "提前3小时"
         remindBean.remindType = 12
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_12_hours_advance_text)
+        remindBean.remindTitle = "提前12小时"
         remindBean.remindType = 13
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_1_day_advance_text)
+        remindBean.remindTitle = "提前1天"
         remindBean.remindType = 14
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_2_day_advance_text)
+        remindBean.remindTitle = "提前2天"
         remindBean.remindType = 15
         remindBean.remindIsChecked = false
         ary.add(remindBean)
         remindBean = RemindBean()
-        remindBean.remindTitle = context.getString(R.string.remind_1_weeks_advance_text)
+        remindBean.remindTitle = "提前1周"
         remindBean.remindType = 15
         remindBean.remindIsChecked = false
         ary.add(remindBean)
@@ -256,12 +255,22 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getDateForRemindToTime(selectYear: Int, selectMonth: Int, selectDay: Int, time: String) {
+    fun updateSchedule(vararg schedule:Schedule){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                dataRepository.updateSchedule(*schedule)
+            } catch (e: Exception) {
+                Log.i("calendar", "修改日程失败：$e")
+            }
+        }
+    }
+
+    private fun getDateForRemindToTime(selectYear: Int, selectMonth: Int, selectDay: Int, time: String) {
         remindTime = "$selectYear-$selectMonth-$selectDay $time:00"
     }
 
     //处理提醒与时间的方法
-    fun remindToTime(remindType: Int): String {
+    private fun remindToTime(remindType: Int): String {
         var date = Date()
         @SuppressLint("SimpleDateFormat") val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         try {
@@ -338,5 +347,38 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
 
     fun getLabelTitle(id: Int): LiveData<String> {
         return dataRepository.getLabelTitle(id)
+    }
+
+
+    //将提醒字符转化为时间字符
+    fun remindChangeTime(remindTime:String,selectYear:Int,selectMonth:Int,selectDay:Int,textTime:String): String {
+        var internalRemindTime = remindTime
+        if (internalRemindTime == "无提醒") {
+            internalRemindTime = ""
+        } else {
+            getDateForRemindToTime(
+                selectYear,
+                selectMonth,
+                selectDay,
+                textTime
+            )
+            internalRemindTime = internalRemindTime.replace("无提醒", "")
+            internalRemindTime = internalRemindTime.replace(",准时", remindToTime(1) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前1分钟", remindToTime(2) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前5分钟", remindToTime(3) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前10分钟", remindToTime(4) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前15分钟", remindToTime(5) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前20分钟", remindToTime(6) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前25分钟", remindToTime(7) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前30分钟", remindToTime(8) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前45分钟", remindToTime(9) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前1个小时", remindToTime(10) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前2个小时", remindToTime(11) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前3个小时", remindToTime(12) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前12个小时", remindToTime(13) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前1天", remindToTime(14) + ",")
+            internalRemindTime = internalRemindTime.replace(",提前2天", remindToTime(15) + ",")
+        }
+        return internalRemindTime
     }
 }

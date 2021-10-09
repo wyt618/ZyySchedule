@@ -42,6 +42,10 @@ class DataRepository(context: Context) {
         labelDao.insertLabel(*labels)
     }
 
+    suspend fun updateSchedule(vararg schedule:Schedule){
+        scheduleDao.updateSchedule(*schedule)
+    }
+
 
     fun getScheduleDayOfTag(): LiveData<List<String>> {
         return scheduleDao.getScheduleDayOfTag()
