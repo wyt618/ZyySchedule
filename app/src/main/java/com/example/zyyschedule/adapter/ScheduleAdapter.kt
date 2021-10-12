@@ -44,7 +44,6 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
 
         vm = ViewModelProvider(owner).get(CalendarViewModel::class.java)
         holder.setText(R.id.schedule_title, item.title)
-        holder.setText(R.id.delete_radio_button, item.title)
         holder.setText(
             R.id.schedule_date, item.startTime?.substring(0, 4) + "年"
                     + item.startTime?.substring(5, 7)?.toInt() + "月"
@@ -76,7 +75,7 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
             pitchOnNumber.value = number
         }
 
-        val checkBox: AppCompatCheckBox = holder.getView(R.id.schedule_title)
+        val checkBox: AppCompatCheckBox = holder.getView(R.id.schedule_state)
         checkBox.setOnCheckedChangeListener(null)
         checkBox.isChecked = item.isChecked
         checkBox.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->

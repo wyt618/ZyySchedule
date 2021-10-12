@@ -48,4 +48,5 @@
     <string name="priority_medium_text">中优先级</string>
     <string name="priority_high_text">高优先级</string>
 
+    <string name="edit_detailed_hint">描述</string>
 </resources>

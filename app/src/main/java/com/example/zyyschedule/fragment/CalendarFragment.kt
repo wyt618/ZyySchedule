@@ -25,6 +25,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.GravityCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -195,8 +196,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         fItemTouchHelper.attachToRecyclerView(binding.finishScheduleList)
         binding.scheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
-
-
         scheduleListHeadBinding.scheduleListHead.text =
             selectMonth.toString() + "月" + selectDay + "日"
         enabledFalse()
@@ -349,6 +348,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     "1" -> binding.editCheckBox.isChecked = true
                     "0" -> binding.editCheckBox.isChecked = false
                 }
+                binding.editTitle.setText(it.title)
+                binding.editDetailed.setText(it.detailed)
             }
         }
         scheduleAdapter.setOnItemClickListener { _, _, position ->
@@ -364,6 +365,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     "1" -> binding.editCheckBox.isChecked = true
                     "0" -> binding.editCheckBox.isChecked = false
                 }
+                binding.editTitle.setText(it.title)
+                binding.editDetailed.setText(it.detailed)
             }
         }
         //编辑状态的日程数据更新
@@ -382,6 +385,20 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             }
         }
 
+        binding.editTitle.addTextChangedListener { text ->
+            editSchedule.value?.let {
+                it.title = text.toString()
+            }
+            editSchedule.value = editSchedule.value
+        }
+
+        binding.editDetailed.addTextChangedListener{ text ->
+            editSchedule.value?.let {
+                it.detailed = text.toString()
+            }
+            editSchedule.value = editSchedule.value
+        }
+
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
             override fun onDrawerOpened(drawerView: View) {
@@ -396,7 +413,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
 
             override fun onDrawerStateChanged(newState: Int) {}
         })
-
         updateScheduleList()
         setCalendarTag()
     }

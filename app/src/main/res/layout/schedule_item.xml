@@ -26,13 +26,14 @@
             android:id="@+id/delete_radio_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxEms="30"
-            android:singleLine="true"
-            android:textSize="@dimen/text_size_18sp"
             android:visibility="gone" />
 
         <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/schedule_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/schedule_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

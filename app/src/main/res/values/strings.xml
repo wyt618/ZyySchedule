@@ -46,22 +46,6 @@
     <string name="priority_low_text">Low Priority</string>
     <string name="priority_medium_text">Medium Priority</string>
     <string name="priority_high_text">High Priority</string>
-    
-    
-    <string name="remind_on_time_text">On time</string>
-    <string name="remind_1_minute_ahead_text">1 minute ahead</string>
-    <string name="remind_5_minute_early_text">5 minutes early</string>
-    <string name="remind_10_minute_early_text">10 minutes early</string>
-    <string name="remind_15_minute_early_text">15 minutes early</string>
-    <string name="remind_20_minute_early_text">20 minutes early</string>
-    <string name="remind_25_minute_early_text">25 minutes early</string>
-    <string name="remind_30_minute_early_text">30 minutes early</string>
-    <string name="remind_45_minute_early_text">45 minutes early</string>
-    <string name="remind_one_hour_earlier_text">One hour earlier</string>
-    <string name="remind_two_hours_advance_text">Two hours in advance</string>
-    <string name="remind_three_hours_advance_text">Three hours in advance</string>
-    <string name="remind_12_hours_advance_text">12 hours in advance</string>
-    <string name="remind_1_day_advance_text">1 day in advance</string>
-    <string name="remind_2_day_advance_text">2 day in advance</string>
-    <string name="remind_1_weeks_advance_text">1 weeks in advance</string>
+
+    <string name="edit_detailed_hint">describe</string>
 </resources>
