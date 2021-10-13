@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.zyyschedule.database.DataRepository
+import com.example.zyyschedule.database.Label
 import com.example.zyyschedule.database.Schedule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,7 +38,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun getLabelTitle(id: Int): LiveData<String> {
+    fun getLabelTitle(id: Int): LiveData<Label> {
         return dataRepository.getLabelTitle(id)
     }
 

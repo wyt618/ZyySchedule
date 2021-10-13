@@ -67,7 +67,7 @@ class DataRepository(context: Context) {
         return labelDao.getAllLabel()
     }
 
-    fun getLabelTitle(id: Int): LiveData<String> {
+    fun getLabelTitle(id: Int): LiveData<Label> {
         return labelDao.getLabelTitle(id)
     }
 

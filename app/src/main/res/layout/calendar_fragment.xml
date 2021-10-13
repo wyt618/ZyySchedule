@@ -298,15 +298,22 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
+                android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.AppCompatCheckBox
-                    android:id="@+id/edit_checkBox"
+                    android:id="@+id/edit_state"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/edit_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/edit_state"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -320,7 +327,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/space_190dp"
+                android:layout_height="@dimen/space_180dp"
                 android:orientation="horizontal"
                 android:layout_marginTop="@dimen/space_10dp">
                 <androidx.appcompat.widget.AppCompatEditText
@@ -337,7 +344,7 @@
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/space_190dp"
+                android:layout_height="@dimen/space_180dp"
                 android:orientation="horizontal">
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/edit_detailed"
@@ -350,6 +357,14 @@
                     android:hint="@string/edit_detailed_hint"
                     />
             </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/edit_label"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/space_180dp"
+                android:layout_marginTop="@dimen/space_10dp"
+                />
+
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

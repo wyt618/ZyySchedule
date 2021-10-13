@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     var labelTitle: String?
                     schedules[i].labelId?.let { labelId ->
                         vm.getLabelTitle(labelId).observe(this) {
-                            labelTitle = it
+                            labelTitle = it.title
                             setNotificationRemind(schedules[i], labelTitle)
                             schedules[i].id?.let { id -> vm.updateRemindTag(id) }
                         }

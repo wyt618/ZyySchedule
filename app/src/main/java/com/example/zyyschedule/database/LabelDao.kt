@@ -20,6 +20,6 @@ interface LabelDao {
     @Delete
     fun deleteLabel(vararg labels: Label)
 
-    @Query("SELECT title FROM Label WHERE id =:id")
-    fun getLabelTitle(id: Int): LiveData<String>
+    @Query("SELECT * FROM Label WHERE id =:id")
+    fun getLabelTitle(id: Int): LiveData<Label>
 }

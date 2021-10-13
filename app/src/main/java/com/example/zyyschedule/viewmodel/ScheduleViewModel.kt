@@ -4,7 +4,6 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.zyyschedule.database.DataRepository
 import com.example.zyyschedule.database.Label
@@ -14,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class ScheduleViewModel(application: Application) : AndroidViewModel(application) {
     private val dataRepository: DataRepository = DataRepository(application)
-    var editItemSize: MutableLiveData<Int> = MutableLiveData()
+
     fun getAllLabel(): LiveData<List<Label>> {
         return dataRepository.getAllLabel()
     }
@@ -63,7 +62,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getLabelTitle(id: Int): LiveData<String> {
+    fun getLabelTitle(id: Int): LiveData<Label> {
         return dataRepository.getLabelTitle(id)
     }
 }

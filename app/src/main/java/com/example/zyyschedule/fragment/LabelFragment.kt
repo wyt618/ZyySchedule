@@ -177,7 +177,7 @@ class LabelFragment(labelId: Int) : Fragment(), View.OnClickListener {
                         vm.deleteSchedule(mSchedules[i])
                         mSchedules[i].labelId?.let { labelId ->
                             vm.getLabelTitle(labelId).observe(this){
-                                cancelNotification(mSchedules[i],it)
+                                cancelNotification(mSchedules[i],it.title)
                             }
                         }
                     }
@@ -187,7 +187,7 @@ class LabelFragment(labelId: Int) : Fragment(), View.OnClickListener {
                         vm.deleteSchedule(mFinishSchedules[i])
                         mFinishSchedules[i].labelId?.let { labelId ->
                             vm.getLabelTitle(labelId).observe(this){
-                                cancelNotification(mFinishSchedules[i],it)
+                                cancelNotification(mFinishSchedules[i],it.title)
                             }
                         }
                     }

@@ -33,6 +33,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.ConvertUtils.dp2px
 import com.blankj.utilcode.util.NotificationUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.example.zyyschedule.R
@@ -48,6 +49,8 @@ import com.haibin.calendarview.Calendar
 import com.haibin.calendarview.Calendar.Scheme
 import com.haibin.calendarview.CalendarView
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.library.flowlayout.FlowLayoutManager
+import com.library.flowlayout.SpaceItemDecoration
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -73,6 +76,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private lateinit var priorityListAdapter: PriorityListAdapter
     private var labelAdapter = LabelAdapter(R.layout.label_item)
     private var remindAdapter = RemindAdapter(R.layout.remind_item)
+    private var editScheduleLabelAdapter = EditScheduleLabelAdapter(R.layout.edit_schedule_view_label_item)
 
     private lateinit var priorityDialog: AlertDialog
     private lateinit var labelChoose: AlertDialog
@@ -340,17 +344,25 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 binding.drawerLayout.openDrawer(GravityCompat.END)
             }
             editSchedule.value = mFinishSchedules[position]
-            editSchedule.value?.let {
+            editSchedule.value?.let { it ->
                 val (color, text) = editTimeText(it.startTime)
-                binding.editCheckBox.text = text
-                binding.editCheckBox.setTextColor(color)
+                binding.editDate.text = text
+                binding.editDate.setTextColor(color)
                 when (it.state) {
-                    "1" -> binding.editCheckBox.isChecked = true
-                    "0" -> binding.editCheckBox.isChecked = false
+                    "1" -> binding.editState.isChecked = true
+                    "0" -> binding.editState.isChecked = false
                 }
                 binding.editTitle.setText(it.title)
                 binding.editDetailed.setText(it.detailed)
+                if(it.labelId != 0){
+                    vm.getLabelTitle(it.labelId!!).observe(viewLifecycleOwner){ label ->
+                        editScheduleLabelAdapter.setList(listOf(label))
+                    }
+                }else{
+                    editScheduleLabelAdapter.setList(null)
+                }
             }
+
         }
         scheduleAdapter.setOnItemClickListener { _, _, position ->
             if (!binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
@@ -359,14 +371,21 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             editSchedule.value = mSchedules[position]
             editSchedule.value?.let {
                 val (color, text) = editTimeText(it.startTime)
-                binding.editCheckBox.text = text
-                binding.editCheckBox.setTextColor(color)
+                binding.editDate.text = text
+                binding.editDate.setTextColor(color)
                 when (it.state) {
-                    "1" -> binding.editCheckBox.isChecked = true
-                    "0" -> binding.editCheckBox.isChecked = false
+                    "1" -> binding.editState.isChecked = true
+                    "0" -> binding.editState.isChecked = false
                 }
                 binding.editTitle.setText(it.title)
                 binding.editDetailed.setText(it.detailed)
+                if(it.labelId != 0){
+                    vm.getLabelTitle(it.labelId!!).observe(viewLifecycleOwner){label ->
+                        editScheduleLabelAdapter.setList(listOf(label))
+                    }
+                }else{
+                    editScheduleLabelAdapter.setList(null)
+                }
             }
         }
         //编辑状态的日程数据更新
@@ -374,7 +393,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             vm.updateSchedule(it)
         }
 
-        binding.editCheckBox.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+        binding.editState.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
             editSchedule.value?.let {
                 if (isChecked) {
                     it.state = "1"
@@ -399,6 +418,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             editSchedule.value = editSchedule.value
         }
 
+
+
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
             override fun onDrawerOpened(drawerView: View) {
@@ -410,9 +431,12 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 binding.divider.visibility = View.GONE
                 binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             }
-
             override fun onDrawerStateChanged(newState: Int) {}
         })
+        val editViewLabelManager = FlowLayoutManager()
+        binding.editLabel.addItemDecoration(SpaceItemDecoration(dp2px(10F)))
+        binding.editLabel.layoutManager = editViewLabelManager
+        binding.editLabel.adapter = editScheduleLabelAdapter
         updateScheduleList()
         setCalendarTag()
     }
@@ -731,7 +755,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                         vm.deleteSchedule(mSchedules[i])
                         mSchedules[i].labelId?.let { labelId ->
                             vm.getLabelTitle(labelId).observe(this) {
-                                cancelNotification(mSchedules[i], it)
+                                cancelNotification(mSchedules[i], it.title)
                             }
                         }
                     }
@@ -741,7 +765,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                         vm.deleteSchedule(mFinishSchedules[i])
                         mFinishSchedules[i].labelId?.let { labelId ->
                             vm.getLabelTitle(labelId).observe(this) {
-                                cancelNotification(mFinishSchedules[i], it)
+                                cancelNotification(mFinishSchedules[i], it.title)
                             }
                         }
                     }
