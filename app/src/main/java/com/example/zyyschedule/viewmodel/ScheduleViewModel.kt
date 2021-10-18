@@ -44,11 +44,11 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         return dataRepository.allFScheduleByTime()
     }
 
-    fun getFScheduleOfLabel(labelId: Int): LiveData<List<Schedule>> {
+    fun getFScheduleOfLabel(labelId: String): LiveData<List<Schedule>> {
         return dataRepository.getFScheduleOfLabel(labelId)
     }
 
-    fun getUFScheduleOfLabel(labelId: Int): LiveData<List<Schedule>> {
+    fun getUFScheduleOfLabel(labelId: String): LiveData<List<Schedule>> {
         return dataRepository.getUFScheduleOfLabel(labelId)
     }
 
@@ -62,7 +62,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getLabelTitle(id: Int): LiveData<Label> {
+    fun getLabelTitle(id: String): LiveData<Label> {
         return dataRepository.getLabelTitle(id)
     }
 }

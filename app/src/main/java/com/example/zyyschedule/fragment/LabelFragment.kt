@@ -30,7 +30,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @SuppressLint("NotifyDataSetChanged")
-class LabelFragment(labelId: Int) : Fragment(), View.OnClickListener {
+class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
     private val mLabelId = labelId
     private lateinit var binding: FragmentLabelBinding
     private val vm: ScheduleViewModel by viewModels()

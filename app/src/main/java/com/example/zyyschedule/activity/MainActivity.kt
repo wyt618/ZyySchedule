@@ -46,7 +46,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
         supportActionBar?.hide()
         val navController: NavController = Navigation.findNavController(this, R.id.fragment)
-        val configuration: AppBarConfiguration = AppBarConfiguration.Builder(binding.bottomNavigationView.menu).build()
+        val configuration: AppBarConfiguration =
+            AppBarConfiguration.Builder(binding.bottomNavigationView.menu).build()
         NavigationUI.setupActionBarWithNavController(this, navController, configuration)
         NavigationUI.setupWithNavController(binding.bottomNavigationView, navController)
         vm.getALLUnFinishOfRemind().observe(this, { schedules: List<Schedule> ->
@@ -54,41 +55,45 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 if (schedules[i].remind?.isNotEmpty() == true && !schedules[i].tagRemind) {
                     var labelTitle: String?
                     schedules[i].labelId?.let { labelId ->
-                        vm.getLabelTitle(labelId).observe(this) {
-                            labelTitle = it.title
-                            setNotificationRemind(schedules[i], labelTitle)
-                            schedules[i].id?.let { id -> vm.updateRemindTag(id) }
+                            vm.getLabelTitle(labelId).observe(this) {
+                                labelTitle = if(it == null) {
+                                    ""
+                                }else{
+                                    it.title
+                                }
+                                setNotificationRemind(schedules[i], labelTitle)
+                                schedules[i].id?.let { id -> vm.updateRemindTag(id) }
                         }
                     }
                 }
             }
         })
         LiveEventBus
-                .get("SomeF_MainA", String::class.java)
-                .observe(this, { s: String ->
-                    when (s) {
-                        "gone_navigation" -> {
-                            binding.bottomNavigationView.visibility = View.GONE
-                        }
-                        "visible_navigation" -> {
-                            binding.bottomNavigationView.visibility = View.VISIBLE
-                        }
+            .get("SomeF_MainA", String::class.java)
+            .observe(this, { s: String ->
+                when (s) {
+                    "gone_navigation" -> {
+                        binding.bottomNavigationView.visibility = View.GONE
                     }
-                })
+                    "visible_navigation" -> {
+                        binding.bottomNavigationView.visibility = View.VISIBLE
+                    }
+                }
+            })
         //是否有全局弹窗权限判断
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
                 val builder = AlertDialog.Builder(this)
-                        .setCancelable(true)
-                        .setTitle(R.string.popup_window_permissions_title)
-                        .setMessage(R.string.popup_window_permissions_message)
-                        .setNegativeButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.cancel() }
-                        .setPositiveButton(R.string.notify_authority_dialog_ok_button) { dialog, _ ->
-                            dialog.cancel()
-                            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-                            intent.data = Uri.parse("package:$packageName")
-                            startActivity(intent)
-                        }
+                    .setCancelable(true)
+                    .setTitle(R.string.popup_window_permissions_title)
+                    .setMessage(R.string.popup_window_permissions_message)
+                    .setNegativeButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.cancel() }
+                    .setPositiveButton(R.string.notify_authority_dialog_ok_button) { dialog, _ ->
+                        dialog.cancel()
+                        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                        intent.data = Uri.parse("package:$packageName")
+                        startActivity(intent)
+                    }
                 builder.create().show()
             }
         }
@@ -132,7 +137,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 intent.putExtra("remindSchedule", gson.toJson(schedule))
                 intent.putExtra("PendingIntentCode", schedule.id?.plus(i * 1000))
                 intent.putExtra("LabelTitle", labelTitle)
-                val sender = schedule.id?.plus(i * 1000)?.let { PendingIntent.getBroadcast(this, it, intent, FLAG_UPDATE_CURRENT) }
+                val sender = schedule.id?.plus(i * 1000)
+                    ?.let { PendingIntent.getBroadcast(this, it, intent, FLAG_UPDATE_CURRENT) }
                 val am = getSystemService(ALARM_SERVICE) as AlarmManager
                 am[AlarmManager.RTC_WAKEUP, date.time] = sender
             }

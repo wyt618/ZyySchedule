@@ -34,7 +34,7 @@ class DataRepository(context: Context) {
     suspend fun deleteLabel(vararg labels: Label) {
         labelDao.deleteLabel(*labels)
         for (i in labels.indices) {
-            labels[i].id?.let { scheduleDao.deleteScheduleLabel(it) }
+            labels[i].id?.let { scheduleDao.deleteScheduleLabel(it.toString()) }
         }
     }
 
@@ -67,8 +67,8 @@ class DataRepository(context: Context) {
         return labelDao.getAllLabel()
     }
 
-    fun getLabelTitle(id: Int): LiveData<Label> {
-        return labelDao.getLabelTitle(id)
+    fun getLabelTitle(id: String): LiveData<Label> {
+        return labelDao.getLabelTitle(id.toInt())
     }
 
     fun getALLUnFinishOfRemind(): LiveData<List<Schedule>> {
@@ -83,11 +83,11 @@ class DataRepository(context: Context) {
         return scheduleDao.allFScheduleByTime()
     }
 
-    fun getFScheduleOfLabel(labelId: Int): LiveData<List<Schedule>> {
+    fun getFScheduleOfLabel(labelId: String): LiveData<List<Schedule>> {
         return scheduleDao.getFScheduleOfLabel(labelId)
     }
 
-    fun getUFScheduleOfLabel(labelId: Int): LiveData<List<Schedule>> {
+    fun getUFScheduleOfLabel(labelId: String): LiveData<List<Schedule>> {
         return scheduleDao.getUFScheduleOfLabel(labelId)
     }
 }

@@ -8,6 +8,7 @@ import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -17,10 +18,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.CompoundButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -36,6 +34,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.ConvertUtils.dp2px
 import com.blankj.utilcode.util.NotificationUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.example.zyyschedule.R
 import com.example.zyyschedule.activity.AddLabelActivity
 import com.example.zyyschedule.adapter.*
@@ -53,6 +52,8 @@ import com.library.flowlayout.FlowLayoutManager
 import com.library.flowlayout.SpaceItemDecoration
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.properties.Delegates
+
 
 @Suppress("NotifyDataSetChanged")
 class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalendarSelectListener {
@@ -70,13 +71,15 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private lateinit var labelBinding: AllLabelDialogBinding
     private lateinit var remindDialogBinding: RemindDialogBinding
     private lateinit var labelDialogHeadBinding: LabelDialogHeadBinding
+    private lateinit var labelLongClickBinding: LabelLongClickPopupWindowBinding
 
     private lateinit var finishScheduleAdapter: ScheduleAdapter
     private lateinit var scheduleAdapter: ScheduleAdapter
     private lateinit var priorityListAdapter: PriorityListAdapter
     private var labelAdapter = LabelAdapter(R.layout.label_item)
     private var remindAdapter = RemindAdapter(R.layout.remind_item)
-    private var editScheduleLabelAdapter = EditScheduleLabelAdapter(R.layout.edit_schedule_view_label_item)
+    private var editScheduleLabelAdapter =
+        EditScheduleLabelAdapter(R.layout.edit_schedule_view_label_item)
 
     private lateinit var priorityDialog: AlertDialog
     private lateinit var labelChoose: AlertDialog
@@ -92,6 +95,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private lateinit var time: java.util.Calendar
     private var editSchedule: MutableLiveData<Schedule> = MutableLiveData()
 
+    private var itemPosition  = -1
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -122,6 +126,13 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             DataBindingUtil.inflate(inflater, R.layout.schedule_list_finish_head, container, false)
         finishScheduleFootBinding =
             DataBindingUtil.inflate(inflater, R.layout.finish_schedule_foot, container, false)
+        labelLongClickBinding =
+            DataBindingUtil.inflate(
+                inflater,
+                R.layout.label_long_click_popup_window,
+                container,
+                false
+            )
         return binding.root
     }
 
@@ -339,7 +350,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
 
 
         //完成和未完成日程item点击事件
-        finishScheduleAdapter.setOnItemClickListener { _, _, position ->
+        finishScheduleAdapter.setOnItemClickListener { adapter, _, position ->
             if (!binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
                 binding.drawerLayout.openDrawer(GravityCompat.END)
             }
@@ -354,17 +365,25 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 }
                 binding.editTitle.setText(it.title)
                 binding.editDetailed.setText(it.detailed)
-                if(it.labelId != 0){
-                    vm.getLabelTitle(it.labelId!!).observe(viewLifecycleOwner){ label ->
+                if (!it.labelId.equals("0")) {
+                    vm.getLabelTitle(it.labelId!!).observe(viewLifecycleOwner) { label ->
                         editScheduleLabelAdapter.setList(listOf(label))
                     }
-                }else{
+                } else {
                     editScheduleLabelAdapter.setList(null)
                 }
             }
-
+            if(itemPosition != -1 && binding.editState.isChecked){
+                adapter.getViewByPosition(itemPosition+1,R.id.schedule_item_background)
+                    ?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
+            }
+            itemPosition = position
+            if(itemPosition != -1 && binding.editState.isChecked){
+                adapter.getViewByPosition(itemPosition+1,R.id.schedule_item_background)
+                    ?.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.color_schedule_click))
+            }
         }
-        scheduleAdapter.setOnItemClickListener { _, _, position ->
+        scheduleAdapter.setOnItemClickListener { adapter, _, position ->
             if (!binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
                 binding.drawerLayout.openDrawer(GravityCompat.END)
             }
@@ -379,13 +398,22 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 }
                 binding.editTitle.setText(it.title)
                 binding.editDetailed.setText(it.detailed)
-                if(it.labelId != 0){
-                    vm.getLabelTitle(it.labelId!!).observe(viewLifecycleOwner){label ->
+                if (!it.labelId.equals("0")) {
+                    vm.getLabelTitle(it.labelId!!).observe(viewLifecycleOwner) { label ->
                         editScheduleLabelAdapter.setList(listOf(label))
                     }
-                }else{
+                } else {
                     editScheduleLabelAdapter.setList(null)
                 }
+            }
+            if(itemPosition != -1 && !binding.editState.isChecked){
+                adapter.getViewByPosition(itemPosition+1,R.id.schedule_item_background)
+                    ?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
+            }
+            itemPosition = position
+            if(itemPosition != -1 && !binding.editState.isChecked){
+                adapter.getViewByPosition(itemPosition+1,R.id.schedule_item_background)
+                    ?.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.color_schedule_click))
             }
         }
         //编辑状态的日程数据更新
@@ -411,26 +439,64 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             editSchedule.value = editSchedule.value
         }
 
-        binding.editDetailed.addTextChangedListener{ text ->
+        binding.editDetailed.addTextChangedListener { text ->
             editSchedule.value?.let {
                 it.detailed = text.toString()
             }
             editSchedule.value = editSchedule.value
         }
 
+        editScheduleLabelAdapter.setOnItemLongClickListener { _: BaseQuickAdapter<Any?, BaseViewHolder>, item: View, _: Int ->
+            val labelWindow =
+                PopupWindow(
+                    labelLongClickBinding.root, WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    true
+                )
+            labelWindow.isTouchable = true
+            labelWindow.setBackgroundDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.button_bg_press
+                )
+            )
 
+            val location = IntArray(2)
+            item.getLocationOnScreen(location)
+            labelWindow.showAtLocation(
+                binding.editLabel, Gravity.START and Gravity.TOP,
+                location[0], location[1] - item.height - 5
+            )
+            true
+        }
 
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
             override fun onDrawerOpened(drawerView: View) {
                 binding.divider.visibility = View.VISIBLE
                 binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED)
+                LiveEventBus
+                    .get("SomeF_MainA", String::class.java)
+                    .post("gone_navigation")
             }
 
             override fun onDrawerClosed(drawerView: View) {
                 binding.divider.visibility = View.GONE
                 binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                LiveEventBus
+                    .get("SomeF_MainA", String::class.java)
+                    .post("visible_navigation")
+                if(itemPosition != -1){
+                    if(binding.editState.isChecked){
+                        finishScheduleAdapter.getViewByPosition(itemPosition+1,R.id.schedule_item_background)
+                            ?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
+                    }else{
+                        scheduleAdapter.getViewByPosition(itemPosition+1,R.id.schedule_item_background)
+                            ?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
+                    }
+                }
             }
+
             override fun onDrawerStateChanged(newState: Int) {}
         })
         val editViewLabelManager = FlowLayoutManager()
@@ -706,9 +772,9 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         schedule.state = "0"
         schedule.priority = addScheduleBinding.priorityId.text.toString().toInt()
         if (addScheduleBinding.scheduleLabelId.text.toString().trim().isEmpty()) {
-            schedule.labelId = 0
+            schedule.labelId = "0"
         } else {
-            schedule.labelId = addScheduleBinding.scheduleLabelId.text.toString().trim().toInt()
+            schedule.labelId = addScheduleBinding.scheduleLabelId.text.toString().trim()
         }
         vm.insertSchedule(schedule)
         updateScheduleList()
@@ -755,7 +821,12 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                         vm.deleteSchedule(mSchedules[i])
                         mSchedules[i].labelId?.let { labelId ->
                             vm.getLabelTitle(labelId).observe(this) {
-                                cancelNotification(mSchedules[i], it.title)
+                                val labelTitle = if(it == null) {
+                                    ""
+                                }else{
+                                    it.title
+                                }
+                                cancelNotification(mSchedules[i], labelTitle)
                             }
                         }
                     }

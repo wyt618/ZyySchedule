@@ -38,7 +38,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun getLabelTitle(id: Int): LiveData<Label> {
+    fun getLabelTitle(id: String): LiveData<Label> {
         return dataRepository.getLabelTitle(id)
     }
 

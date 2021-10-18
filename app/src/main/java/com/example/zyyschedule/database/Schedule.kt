@@ -24,7 +24,7 @@ data class Schedule(
         @ColumnInfo(name = "priority")
         var priority: Int? = 0,//优先级索引 0无,1低,2中,3高
         @ColumnInfo(name = "labelId")
-        var labelId: Int? = 0,//标签id
+        var labelId: String? = "0",//标签id
         @ColumnInfo(name = "tagRemind")
         var tagRemind: Boolean = false, //提醒是否设置
         @Ignore

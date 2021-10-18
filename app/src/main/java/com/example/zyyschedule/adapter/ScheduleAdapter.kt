@@ -44,6 +44,7 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
 
         vm = ViewModelProvider(owner).get(CalendarViewModel::class.java)
         holder.setText(R.id.schedule_title, item.title)
+        holder.setText(R.id.delete_radio_button, item.title)
         holder.setText(
             R.id.schedule_date, item.startTime?.substring(0, 4) + "年"
                     + item.startTime?.substring(5, 7)?.toInt() + "月"
@@ -108,9 +109,11 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
         if (item.isEditor) {
             checkBox.visibility = View.GONE
             radioButton.visibility = View.VISIBLE
+            holder.setVisible(R.id.schedule_title,false)
         } else {
             checkBox.visibility = View.VISIBLE
             radioButton.visibility = View.GONE
+            holder.setVisible(R.id.schedule_title,true)
         }
 
         when (item.priority) {

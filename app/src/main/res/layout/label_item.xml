@@ -15,16 +15,16 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/space_3dp"
+            android:layout_height="@dimen/space_20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.041"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_schedule_24" />
+            app:srcCompat="@drawable/button_bg_press" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/label_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

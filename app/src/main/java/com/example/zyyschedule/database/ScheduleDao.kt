@@ -20,8 +20,8 @@ interface ScheduleDao {
     @Query("SELECT DISTINCT substr(startTime,0,length(startTime)-7) FROM Schedule WHERE state = 0")
     fun getScheduleDayOfTag(): LiveData<List<String>>
 
-    @Query("DELETE FROM Schedule  WHERE labelId =:id ")
-    fun deleteScheduleLabel(id: Int)
+    @Query("UPDATE Schedule SET labelId = 0  WHERE labelId =:id ")
+    fun deleteScheduleLabel(id: String)
 
     @Delete
     fun deleteSchedule(vararg schedules: Schedule)
@@ -39,10 +39,10 @@ interface ScheduleDao {
     fun allFScheduleByTime(): LiveData<List<Schedule>>
 
     @Query("SELECT * FROM Schedule WHERE labelId = :labelId and state = 0 ORDER BY datetime(startTime)")
-    fun getUFScheduleOfLabel(labelId: Int): LiveData<List<Schedule>>
+    fun getUFScheduleOfLabel(labelId: String): LiveData<List<Schedule>>
 
     @Query("SELECT * FROM Schedule WHERE labelId = :labelId and state = 1 ORDER BY datetime(startTime)")
-    fun getFScheduleOfLabel(labelId: Int): LiveData<List<Schedule>>
+    fun getFScheduleOfLabel(labelId: String): LiveData<List<Schedule>>
 
     @Update
     fun updateSchedule(vararg schedules: Schedule)

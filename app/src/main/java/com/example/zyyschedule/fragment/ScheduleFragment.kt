@@ -107,7 +107,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
             val labelId = itemView.findViewById<TextView>(R.id.label_id)
             val ft = requireActivity().supportFragmentManager.beginTransaction()
             ft.setTransition(FragmentTransaction.TRANSIT_NONE)
-            ft.replace(R.id.scheduleFragment, LabelFragment(labelId.text.toString().toInt()), null)
+            ft.replace(R.id.scheduleFragment, LabelFragment(labelId.text.toString()), null)
                 .commit()
             binding.scheduleTitleBarTitle.text = labelName.text
             binding.drawerLayout.closeDrawer(Gravity.START)
@@ -207,7 +207,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
     private fun gotoLabelFragment() {
         val ft = requireActivity().supportFragmentManager.beginTransaction()
         ft.setTransition(FragmentTransaction.TRANSIT_NONE)
-        ft.replace(R.id.scheduleFragment, LabelFragment(0), null)
+        ft.replace(R.id.scheduleFragment, LabelFragment("0"), null)
             .commit()
         binding.scheduleTitleBarTitle.setText(R.string.title_not_classified)
         binding.drawerLayout.closeDrawer(Gravity.START)

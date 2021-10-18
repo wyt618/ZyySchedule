@@ -33,6 +33,7 @@
     <color name="color_schedule_title_text">#272E3E</color>
     <color name="color_schedule_finish_title_text">#7F838F</color>
     <color name="color_schedule_line">#E3E1EE</color>
+    <color name="color_schedule_click">#D9E9F4</color>
 
     <color name="E">#EEEEEE</color>
 
@@ -40,6 +41,7 @@
     <color name="color_schedule_focus">#9082BD</color>
 
     <color name="color_text_grey">#ADADB9</color>
+    <color name="color_grey">#ADADB9</color>
 
     <color name="color_menu_title_background">#353655</color>
     <color name="color_menu_background">#454567</color>
