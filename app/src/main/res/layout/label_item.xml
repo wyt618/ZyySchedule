@@ -25,7 +25,7 @@
             app:srcCompat="@drawable/button_bg_press" />
 
         <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/label_name"
+            android:id="@+id/label_click"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -40,13 +40,28 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/label_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxEms="9"
+            android:singleLine="true"
+            android:text="@string/app_name"
+            android:textSize="@dimen/text_size_18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.033"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"/>
+        <TextView
             android:id="@+id/label_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.062"
-            app:layout_constraintStart_toEndOf="@+id/label_name"
+            app:layout_constraintStart_toEndOf="@+id/label_click"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.625"
             android:visibility="gone" />

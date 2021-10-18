@@ -54,6 +54,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
         val layoutManager = LinearLayoutManager(context)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         binding.labelRecyclerview.layoutManager = layoutManager
+        labelAdapter.setLoadFragment("ScheduleFragment")
         binding.labelRecyclerview.adapter = labelAdapter
         binding.ivMainMenu.setOnClickListener(this)
         binding.drawerLayout.setOnClickListener(this)

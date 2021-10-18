@@ -52,7 +52,6 @@ import com.library.flowlayout.FlowLayoutManager
 import com.library.flowlayout.SpaceItemDecoration
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.properties.Delegates
 
 
 @Suppress("NotifyDataSetChanged")
@@ -174,6 +173,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         timePickerBinding.minePicker.maxValue = 59
         timePickerBinding.minePicker.value = 0
         labelBinding.labelList.layoutManager = layoutManager
+        labelAdapter.setLoadFragment("CalendarFragment")
         labelBinding.labelList.adapter = labelAdapter
         val remindLayoutManager = LinearLayoutManager(context)
         remindLayoutManager.orientation = LinearLayoutManager.VERTICAL

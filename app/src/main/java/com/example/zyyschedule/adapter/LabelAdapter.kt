@@ -14,15 +14,21 @@ import com.example.zyyschedule.database.Label
 class LabelAdapter(layoutResId: Int) : BaseQuickAdapter<Label, BaseViewHolder>(layoutResId) {
     var labelTitles: String = "无提醒"
     var labelIds: String = "~0~"
+    private lateinit var loadFragment:String
+
+    fun setLoadFragment(loadFragment:String){
+        this.loadFragment = loadFragment
+    }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun convert(holder: BaseViewHolder, item: Label) {
-        holder.setText(R.id.label_name, item.title)
+        holder.setText(R.id.label_click, item.title)
         holder.setText(R.id.label_id, item.id.toString())
+        holder.setText(R.id.label_name,item.title)
         val imageView: ImageView = holder.itemView.findViewById(R.id.imageView)
         imageView.setImageResource(R.drawable.button_bg_press)
         imageView.imageTintList = ColorStateList.valueOf(item.color as Int)
-        val labelChoose: AppCompatCheckBox = holder.itemView.findViewById(R.id.label_name)
+        val labelChoose: AppCompatCheckBox = holder.itemView.findViewById(R.id.label_click)
         labelChoose.setOnCheckedChangeListener(null)
         labelChoose.setOnCheckedChangeListener { _: CompoundButton, isCheck: Boolean ->
             if (isCheck) {
@@ -33,5 +39,15 @@ class LabelAdapter(layoutResId: Int) : BaseQuickAdapter<Label, BaseViewHolder>(l
                 labelIds.replace("${item.id}~","")
             }
         }
+        if(loadFragment == "CalendarFragment"){
+            holder.setVisible(R.id.label_click,true)
+            holder.setVisible(R.id.label_name,false)
+        }
+
+        if(loadFragment == "ScheduleFragment"){
+            holder.setVisible(R.id.label_click,false)
+            holder.setVisible(R.id.label_name,true)
+        }
     }
+
 }
