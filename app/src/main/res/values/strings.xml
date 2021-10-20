@@ -17,6 +17,7 @@
     <string name="cancel">Clear</string>
     <string name="check_all">Check All</string>
     <string name="schedule_setting">Add labels</string>
+    <string name="dialog_edit_text">Enter the label</string>
     <string name="finish">Complete</string>
     <string name="event_set_list_name">Label name</string>
     <string name="event_set_color">Color</string>

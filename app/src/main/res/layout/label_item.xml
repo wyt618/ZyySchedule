@@ -9,8 +9,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/space_10dp"
-        android:paddingTop="@dimen/space_10dp"
         android:background="?attr/selectableItemBackground">
 
         <ImageView
@@ -26,7 +24,7 @@
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/label_click"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxEms="9"
@@ -35,7 +33,7 @@
             android:textSize="@dimen/text_size_18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.033"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/imageView"
             app:layout_constraintTop_toTopOf="parent" />
 

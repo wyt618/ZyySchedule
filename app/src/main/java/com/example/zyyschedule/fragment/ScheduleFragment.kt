@@ -208,7 +208,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
     private fun gotoLabelFragment() {
         val ft = requireActivity().supportFragmentManager.beginTransaction()
         ft.setTransition(FragmentTransaction.TRANSIT_NONE)
-        ft.replace(R.id.scheduleFragment, LabelFragment("0"), null)
+        ft.replace(R.id.scheduleFragment, LabelFragment("~0~"), null)
             .commit()
         binding.scheduleTitleBarTitle.setText(R.string.title_not_classified)
         binding.drawerLayout.closeDrawer(Gravity.START)

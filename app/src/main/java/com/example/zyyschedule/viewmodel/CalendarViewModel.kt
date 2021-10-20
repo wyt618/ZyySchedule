@@ -363,7 +363,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
                 textTime
             )
             internalRemindTime = internalRemindTime.replace("无提醒", "")
-            internalRemindTime = internalRemindTime.replace(",准时", remindToTime(1) + ",")
+            internalRemindTime = internalRemindTime.replace("准时,", remindToTime(1) + ",")
             internalRemindTime = internalRemindTime.replace(",提前1分钟", remindToTime(2) + ",")
             internalRemindTime = internalRemindTime.replace(",提前5分钟", remindToTime(3) + ",")
             internalRemindTime = internalRemindTime.replace(",提前10分钟", remindToTime(4) + ",")

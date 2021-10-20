@@ -48,8 +48,8 @@
     <dimen name="space_67dp">67dp</dimen>
     <dimen name="space_70dp">70dp</dimen>
     <dimen name="space_143dp">143dp</dimen>
-    <dimen name="space_250dp">250dp</dimen>
     <dimen name="space_180dp">180dp</dimen>
+    <dimen name="space_250dp">250dp</dimen>
     <dimen name="space_400dp">400dp</dimen>
 
 

@@ -53,18 +53,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         vm.getALLUnFinishOfRemind().observe(this, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 if (schedules[i].remind?.isNotEmpty() == true && !schedules[i].tagRemind) {
-                    var labelTitle: String?
-                    schedules[i].labelId?.let { labelId ->
-                            vm.getLabelTitle(labelId).observe(this) {
-                                labelTitle = if(it == null) {
-                                    ""
-                                }else{
-                                    it.title
-                                }
-                                setNotificationRemind(schedules[i], labelTitle)
-                                schedules[i].id?.let { id -> vm.updateRemindTag(id) }
-                        }
-                    }
+                    setNotificationRemind(schedules[i])
+                    schedules[i].id?.let { id -> vm.updateRemindTag(id) }
+
                 }
             }
         })
@@ -120,7 +111,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     @SuppressLint("SimpleDateFormat", "UnspecifiedImmutableFlag")
-    private fun setNotificationRemind(schedule: Schedule, labelTitle: String?) {
+    private fun setNotificationRemind(schedule: Schedule) {
         val remind = schedule.remind?.split(",")?.dropLastWhile { it.isEmpty() }?.toTypedArray()
         val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         var date = Date()
@@ -136,7 +127,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 intent.action = "Notification_Receiver"
                 intent.putExtra("remindSchedule", gson.toJson(schedule))
                 intent.putExtra("PendingIntentCode", schedule.id?.plus(i * 1000))
-                intent.putExtra("LabelTitle", labelTitle)
                 val sender = schedule.id?.plus(i * 1000)
                     ?.let { PendingIntent.getBroadcast(this, it, intent, FLAG_UPDATE_CURRENT) }
                 val am = getSystemService(ALARM_SERVICE) as AlarmManager

@@ -69,6 +69,7 @@ class DataRepository(context: Context) {
 
     fun getLabelTitle(id: String): LiveData<Label> {
         return labelDao.getLabelTitle(id.toInt())
+
     }
 
     fun getALLUnFinishOfRemind(): LiveData<List<Schedule>> {

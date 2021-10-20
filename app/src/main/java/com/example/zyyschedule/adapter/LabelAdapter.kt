@@ -2,6 +2,7 @@ package com.example.zyyschedule.adapter
 
 import android.content.res.ColorStateList
 import android.os.Build
+import android.util.Log
 import android.widget.CompoundButton
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
@@ -12,11 +13,11 @@ import com.example.zyyschedule.R
 import com.example.zyyschedule.database.Label
 
 class LabelAdapter(layoutResId: Int) : BaseQuickAdapter<Label, BaseViewHolder>(layoutResId) {
-    var labelTitles: String = "无提醒"
+    var labelTitles: String = "无标签"
     var labelIds: String = "~0~"
-    private lateinit var loadFragment:String
+    private lateinit var loadFragment: String
 
-    fun setLoadFragment(loadFragment:String){
+    fun setLoadFragment(loadFragment: String) {
         this.loadFragment = loadFragment
     }
 
@@ -24,7 +25,7 @@ class LabelAdapter(layoutResId: Int) : BaseQuickAdapter<Label, BaseViewHolder>(l
     override fun convert(holder: BaseViewHolder, item: Label) {
         holder.setText(R.id.label_click, item.title)
         holder.setText(R.id.label_id, item.id.toString())
-        holder.setText(R.id.label_name,item.title)
+        holder.setText(R.id.label_name, item.title)
         val imageView: ImageView = holder.itemView.findViewById(R.id.imageView)
         imageView.setImageResource(R.drawable.button_bg_press)
         imageView.imageTintList = ColorStateList.valueOf(item.color as Int)
@@ -35,18 +36,18 @@ class LabelAdapter(layoutResId: Int) : BaseQuickAdapter<Label, BaseViewHolder>(l
                 labelTitles += ",${item.title}"
                 labelIds += "${item.id}~"
             } else {
-                labelTitles.replace(",${item.title}", "")
-                labelIds.replace("${item.id}~","")
+                labelTitles = labelTitles.replace(",${item.title}", "")
+                labelIds = labelIds.replace("${item.id}~", "")
             }
         }
-        if(loadFragment == "CalendarFragment"){
-            holder.setVisible(R.id.label_click,true)
-            holder.setVisible(R.id.label_name,false)
+        if (loadFragment == "CalendarFragment") {
+            holder.setVisible(R.id.label_click, true)
+            holder.setVisible(R.id.label_name, false)
         }
 
-        if(loadFragment == "ScheduleFragment"){
-            holder.setVisible(R.id.label_click,false)
-            holder.setVisible(R.id.label_name,true)
+        if (loadFragment == "ScheduleFragment") {
+            holder.setVisible(R.id.label_click, false)
+            holder.setVisible(R.id.label_name, true)
         }
     }
 

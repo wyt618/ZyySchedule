@@ -15,6 +15,7 @@
     <string name="title_local_schedule">本地日程</string>
     <string name="title_not_classified">无标签</string>
     <string name="title_plus_list">添加标签</string>
+    <string name="dialog_edit_text">输入标签</string>
     <string name="cancel">返回</string>
     <string name="check_all">全选</string>
     <string name="schedule_setting">添加标签</string>

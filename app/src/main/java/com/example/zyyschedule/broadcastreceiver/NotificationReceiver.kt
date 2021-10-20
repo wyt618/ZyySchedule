@@ -7,6 +7,7 @@ import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import androidx.core.app.NotificationCompat.PRIORITY_MAX
 import com.blankj.utilcode.util.NotificationUtils
 import com.example.zyyschedule.R
 import com.example.zyyschedule.database.Schedule
@@ -22,7 +23,6 @@ class NotificationReceiver : BroadcastReceiver() {
         if (intent?.action?.equals("Notification_Receiver") == true) {
             val remindDialogReceiver = Intent("RemindDialogReceiver")
             remindDialogReceiver.putExtra("remindSchedule", intent.getStringExtra("remindSchedule"))
-            remindDialogReceiver.putExtra("LabelTitle", intent.getStringExtra("LabelTitle"))
             val toRemindDialog = PendingIntent.getBroadcast(context, intent.getIntExtra("PendingIntentCode", 0) + 10000, remindDialogReceiver, FLAG_UPDATE_CURRENT)
             schedule.id?.let { id ->
                 NotificationUtils.notify(id) { param ->
@@ -32,6 +32,7 @@ class NotificationReceiver : BroadcastReceiver() {
                     param.setContentText(schedule.detailed)
                     param.setDefaults(Notification.DEFAULT_SOUND or Notification.DEFAULT_VIBRATE)
                     param.setContentIntent(toRemindDialog)
+                    param.priority = PRIORITY_MAX
                 }
             }
             NotificationUtils.setNotificationBarVisibility(true)

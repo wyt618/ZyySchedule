@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Context.ALARM_SERVICE
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -16,6 +17,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -36,7 +38,6 @@ import com.blankj.utilcode.util.NotificationUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.example.zyyschedule.R
-import com.example.zyyschedule.activity.AddLabelActivity
 import com.example.zyyschedule.adapter.*
 import com.example.zyyschedule.broadcastreceiver.NotificationReceiver
 import com.example.zyyschedule.database.Label
@@ -69,9 +70,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private lateinit var finishScheduleFootBinding: FinishScheduleFootBinding
     private lateinit var labelBinding: AllLabelDialogBinding
     private lateinit var remindDialogBinding: RemindDialogBinding
-    private lateinit var labelDialogHeadBinding: LabelDialogHeadBinding
     private lateinit var labelLongClickBinding: LabelLongClickPopupWindowBinding
-
     private lateinit var finishScheduleAdapter: ScheduleAdapter
     private lateinit var scheduleAdapter: ScheduleAdapter
     private lateinit var priorityListAdapter: PriorityListAdapter
@@ -94,7 +93,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private lateinit var time: java.util.Calendar
     private var editSchedule: MutableLiveData<Schedule> = MutableLiveData()
 
-    private var itemPosition  = -1
+    private var itemPosition = -1
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -103,8 +102,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         builder = AlertDialog.Builder(context)
         binding = DataBindingUtil.inflate(inflater, R.layout.calendar_fragment, container, false)
         dateJumpDialog = DataBindingUtil.inflate(inflater, R.layout.dialog_date, container, false)
-        labelDialogHeadBinding =
-            DataBindingUtil.inflate(inflater, R.layout.label_dialog_head, container, false)
         addScheduleBinding =
             DataBindingUtil.inflate(inflater, R.layout.add_schedule, container, false)
         timePickerBinding =
@@ -214,10 +211,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         scheduleListHeadBinding.scheduleListHead.text =
             selectMonth.toString() + "月" + selectDay + "日"
         enabledFalse()
-        labelDialogHeadBinding.root.setOnClickListener {
-            val intent = Intent(activity, AddLabelActivity::class.java)
-            startActivity(intent)
-        }
         //编辑模式下选中的监听
         scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
             binding.goBackText.text = "选中${it}项"
@@ -241,18 +234,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             if (labels != null) {
                 labelAdapter.notifyItemChanged(labels.size)
             }
-            labelAdapter.setOnItemClickListener { _: BaseQuickAdapter<*, *>?, view: View, _: Int ->
-                val labelName = view.findViewById<TextView>(R.id.label_name)
-                val labelId = view.findViewById<TextView>(R.id.label_id)
-                addScheduleBinding.scheduleLabelId.text = labelId.text
-                vm.label.value = labelName.text.toString()
-                labelChoose.dismiss()
-            }
-            if (labelDialogHeadBinding.root.parent != null) {
-                val vg = labelDialogHeadBinding.root.parent as ViewGroup
-                vg.removeView(labelDialogHeadBinding.root)
-            }
-            labelAdapter.addHeaderView(labelDialogHeadBinding.root)
+
         })
 
 
@@ -365,22 +347,39 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 }
                 binding.editTitle.setText(it.title)
                 binding.editDetailed.setText(it.detailed)
-                if (!it.labelId.equals("0")) {
-                    vm.getLabelTitle(it.labelId!!).observe(viewLifecycleOwner) { label ->
-                        editScheduleLabelAdapter.setList(listOf(label))
+                //处理多标签显示
+                if (!it.labelId.equals("~0~")) {
+                    val labelIds = it.labelId?.split("~")?.dropWhile { labelId ->
+                        labelId.isEmpty()
+                    }?.toTypedArray()
+                    labelIds?.let {
+                        val labelList: ArrayList<Label> = arrayListOf()
+                        for (i in labelIds.indices) {
+                            if (labelIds[i] != "" && labelIds[i] != "0") {
+                                vm.getLabelTitle(labelIds[i]).observe(viewLifecycleOwner) { label ->
+                                    labelList.add(label)
+                                    editScheduleLabelAdapter.setList(labelList)
+                                }
+                            }
+                        }
                     }
                 } else {
                     editScheduleLabelAdapter.setList(null)
                 }
             }
-            if(itemPosition != -1 && binding.editState.isChecked){
-                adapter.getViewByPosition(itemPosition+1,R.id.schedule_item_background)
+            if (itemPosition != -1 && binding.editState.isChecked) {
+                adapter.getViewByPosition(itemPosition + 1, R.id.schedule_item_background)
                     ?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
             }
             itemPosition = position
-            if(itemPosition != -1 && binding.editState.isChecked){
-                adapter.getViewByPosition(itemPosition+1,R.id.schedule_item_background)
-                    ?.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.color_schedule_click))
+            if (itemPosition != -1 && binding.editState.isChecked) {
+                adapter.getViewByPosition(itemPosition + 1, R.id.schedule_item_background)
+                    ?.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.color_schedule_click
+                    )
+                )
             }
         }
         scheduleAdapter.setOnItemClickListener { adapter, _, position ->
@@ -398,22 +397,38 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 }
                 binding.editTitle.setText(it.title)
                 binding.editDetailed.setText(it.detailed)
-                if (!it.labelId.equals("0")) {
-                    vm.getLabelTitle(it.labelId!!).observe(viewLifecycleOwner) { label ->
-                        editScheduleLabelAdapter.setList(listOf(label))
+                if (!it.labelId.equals("~0~")) {
+                    val labelIds = it.labelId?.split("~")?.dropWhile { labelId ->
+                        labelId.isEmpty()
+                    }?.toTypedArray()
+                    labelIds?.let {
+                        val labelList: ArrayList<Label> = arrayListOf()
+                        for (i in labelIds.indices) {
+                            if (labelIds[i] != "" && labelIds[i] != "0") {
+                                vm.getLabelTitle(labelIds[i]).observe(viewLifecycleOwner) { label ->
+                                    labelList.add(label)
+                                    editScheduleLabelAdapter.setList(labelList)
+                                }
+                            }
+                        }
                     }
                 } else {
                     editScheduleLabelAdapter.setList(null)
                 }
             }
-            if(itemPosition != -1 && !binding.editState.isChecked){
-                adapter.getViewByPosition(itemPosition+1,R.id.schedule_item_background)
+            if (itemPosition != -1 && !binding.editState.isChecked) {
+                adapter.getViewByPosition(itemPosition + 1, R.id.schedule_item_background)
                     ?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
             }
             itemPosition = position
-            if(itemPosition != -1 && !binding.editState.isChecked){
-                adapter.getViewByPosition(itemPosition+1,R.id.schedule_item_background)
-                    ?.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.color_schedule_click))
+            if (itemPosition != -1 && !binding.editState.isChecked) {
+                adapter.getViewByPosition(itemPosition + 1, R.id.schedule_item_background)
+                    ?.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.color_schedule_click
+                    )
+                )
             }
         }
         //编辑状态的日程数据更新
@@ -486,12 +501,18 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 LiveEventBus
                     .get("SomeF_MainA", String::class.java)
                     .post("visible_navigation")
-                if(itemPosition != -1){
-                    if(binding.editState.isChecked){
-                        finishScheduleAdapter.getViewByPosition(itemPosition+1,R.id.schedule_item_background)
+                if (itemPosition != -1) {
+                    if (binding.editState.isChecked) {
+                        finishScheduleAdapter.getViewByPosition(
+                            itemPosition + 1,
+                            R.id.schedule_item_background
+                        )
                             ?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
-                    }else{
-                        scheduleAdapter.getViewByPosition(itemPosition+1,R.id.schedule_item_background)
+                    } else {
+                        scheduleAdapter.getViewByPosition(
+                            itemPosition + 1,
+                            R.id.schedule_item_background
+                        )
                             ?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
                     }
                 }
@@ -588,7 +609,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         vm.priority.postValue(getString(R.string.priority_null_text))
         vm.priorityid.postValue(0)
         vm.label.postValue(getString(R.string.title_not_classified))
-        addScheduleBinding.scheduleLabelId.text = "0"
+        addScheduleBinding.scheduleLabelId.text = "~0~"
         vm.addScheduleTime.postValue("00:00")
         vm.remindText.postValue("无提醒")
         remindAdapter.addRemind = StringBuffer("无提醒")
@@ -704,6 +725,15 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.label_dialog_title)
             .setView(labelBinding.root)
+            .setPositiveButton(R.string.dialog_button_ok) { dialog: DialogInterface, _: Int ->
+                addScheduleBinding.scheduleLabelId.text = labelAdapter.labelIds
+                val labelText = labelAdapter.labelTitles.replace("无标签,", "")
+                addScheduleBinding.scheduleLabel.text = labelText
+                dialog.dismiss()
+            }
+            .setNeutralButton(R.string.dialog_button_cancel) { dialog: DialogInterface, _: Int ->
+                dialog.dismiss()
+            }
         labelChoose = builder.create()
         labelChoose.window!!.setBackgroundDrawableResource(R.drawable.dialog_background)
         labelChoose.show()
@@ -819,26 +849,13 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 for (i in mSchedules.indices) {
                     if (mSchedules[i].isEditorChecked) {
                         vm.deleteSchedule(mSchedules[i])
-                        mSchedules[i].labelId?.let { labelId ->
-                            vm.getLabelTitle(labelId).observe(this) {
-                                val labelTitle = if(it == null) {
-                                    ""
-                                }else{
-                                    it.title
-                                }
-                                cancelNotification(mSchedules[i], labelTitle)
-                            }
-                        }
+                        cancelNotification(mSchedules[i])
                     }
                 }
                 for (i in mFinishSchedules.indices) {
                     if (mFinishSchedules[i].isEditorChecked) {
                         vm.deleteSchedule(mFinishSchedules[i])
-                        mFinishSchedules[i].labelId?.let { labelId ->
-                            vm.getLabelTitle(labelId).observe(this) {
-                                cancelNotification(mFinishSchedules[i], it.title)
-                            }
-                        }
+                        cancelNotification(mFinishSchedules[i])
                     }
                 }
                 dialog.dismiss()
@@ -1005,7 +1022,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
 
     //删除时取消提醒的方法
     @SuppressLint("UnspecifiedImmutableFlag", "SimpleDateFormat")
-    private fun cancelNotification(schedule: Schedule, labelTitle: String?) {
+    private fun cancelNotification(schedule: Schedule) {
         val remind = schedule.remind?.split(",")?.dropLastWhile { it.isEmpty() }?.toTypedArray()
         val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         var date = Date()
@@ -1023,7 +1040,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 intent.action = "Notification_Receiver"
                 intent.putExtra("remindSchedule", gson.toJson(schedule))
                 intent.putExtra("PendingIntentCode", schedule.id?.plus(i * 1000))
-                intent.putExtra("LabelTitle", labelTitle)
                 val sender = schedule.id?.plus(i * 1000)?.let {
                     PendingIntent.getBroadcast(
                         requireContext(), it, intent,
