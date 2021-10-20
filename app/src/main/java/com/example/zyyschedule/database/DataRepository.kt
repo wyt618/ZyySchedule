@@ -34,7 +34,13 @@ class DataRepository(context: Context) {
     suspend fun deleteLabel(vararg labels: Label) {
         labelDao.deleteLabel(*labels)
         for (i in labels.indices) {
-            labels[i].id?.let { scheduleDao.deleteScheduleLabel(it.toString()) }
+            labels[i].id?.let { it ->
+                val scheduleList : List<Schedule> = scheduleDao.queryScheduleLabel("%~${it}~%")
+                for (j in scheduleList.indices) {
+                        scheduleList[j].labelId = scheduleList[j].labelId?.replace("~${it}~","~")
+                        updateSchedule(scheduleList[j])
+                    }
+            }
         }
     }
 

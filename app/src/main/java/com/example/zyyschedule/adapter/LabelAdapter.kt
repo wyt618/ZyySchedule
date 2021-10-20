@@ -2,7 +2,6 @@ package com.example.zyyschedule.adapter
 
 import android.content.res.ColorStateList
 import android.os.Build
-import android.util.Log
 import android.widget.CompoundButton
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
@@ -37,7 +36,7 @@ class LabelAdapter(layoutResId: Int) : BaseQuickAdapter<Label, BaseViewHolder>(l
                 labelIds += "${item.id}~"
             } else {
                 labelTitles = labelTitles.replace(",${item.title}", "")
-                labelIds = labelIds.replace("${item.id}~", "")
+                labelIds = labelIds.replace("~${item.id}~", "~")
             }
         }
         if (loadFragment == "CalendarFragment") {

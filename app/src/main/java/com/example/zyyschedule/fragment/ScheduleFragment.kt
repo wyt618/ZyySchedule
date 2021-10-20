@@ -3,7 +3,6 @@ package com.example.zyyschedule.fragment
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
@@ -108,7 +107,7 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
             val labelId = itemView.findViewById<TextView>(R.id.label_id)
             val ft = requireActivity().supportFragmentManager.beginTransaction()
             ft.setTransition(FragmentTransaction.TRANSIT_NONE)
-            ft.replace(R.id.scheduleFragment, LabelFragment(labelId.text.toString()), null)
+            ft.replace(R.id.scheduleFragment, LabelFragment("%~${labelId.text}~%"), null)
                 .commit()
             binding.scheduleTitleBarTitle.text = labelName.text
             binding.drawerLayout.closeDrawer(Gravity.START)

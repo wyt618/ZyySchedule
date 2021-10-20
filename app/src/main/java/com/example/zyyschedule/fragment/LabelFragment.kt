@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -203,6 +204,9 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
     }
 
     private fun updateScheduleList() {
+        if(mLabelId != "%~0~%")
+        {
+            Log.i("TAG", "updateScheduleList:${mLabelId}")
         vm.getUFScheduleOfLabel(mLabelId).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
                 schedules[i].isChecked = false
@@ -233,6 +237,9 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
             finishScheduleAdapter.otherDate = scheduleAdapter.data
             scheduleAdapter.otherDate = finishScheduleAdapter.data
         })
+        }else{
+
+        }
     }
 
     //控制编辑栏按钮可以点击
