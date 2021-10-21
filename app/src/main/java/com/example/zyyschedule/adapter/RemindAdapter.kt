@@ -1,5 +1,6 @@
 package com.example.zyyschedule.adapter
 
+import android.annotation.SuppressLint
 import android.widget.CompoundButton
 import androidx.appcompat.widget.AppCompatCheckBox
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -15,7 +16,7 @@ open class RemindAdapter(layoutResId: Int) :
     override fun convert(holder: BaseViewHolder, item: RemindBean) {
         holder.setText(R.id.remind_check_box, item.remindTitle)
         val checkBox: AppCompatCheckBox = holder.getView(R.id.remind_check_box)
-        checkBox.setOnClickListener(null)
+        checkBox.setOnCheckedChangeListener(null)
         checkBox.isChecked = item.remindIsChecked
         checkBox.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
             item.remindIsChecked = isChecked

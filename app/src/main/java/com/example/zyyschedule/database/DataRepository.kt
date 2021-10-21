@@ -97,4 +97,8 @@ class DataRepository(context: Context) {
     fun getUFScheduleOfLabel(labelId: String): LiveData<List<Schedule>> {
         return scheduleDao.getUFScheduleOfLabel(labelId)
     }
+
+    fun checkLabelTFI(labelText:String):LiveData<Int>{
+        return labelDao.checkLabelTitleForInsert(labelText)
+    }
 }

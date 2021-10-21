@@ -53,8 +53,7 @@ import com.library.flowlayout.SpaceItemDecoration
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-@Suppress("NotifyDataSetChanged")
+@SuppressLint("SetTextI18n", "NotifyDataSetChanged")
 class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalendarSelectListener {
     private val vm: CalendarViewModel by viewModels()
     private lateinit var binding: CalendarFragmentBinding
@@ -91,7 +90,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private var selectDay: Int = 0
     private lateinit var time: java.util.Calendar
     private var editSchedule: MutableLiveData<Schedule> = MutableLiveData()
-
     private var itemPosition = -1
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -131,7 +129,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         return binding.root
     }
 
-    @SuppressLint("SetTextI18n")
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         time = java.util.Calendar.getInstance()
@@ -233,7 +231,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             if (labels != null) {
                 labelAdapter.notifyItemChanged(labels.size)
             }
-
         })
 
 
@@ -284,8 +281,9 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 remindAdapter.addRemind = StringBuffer("无提醒")
                 for (i in remindAdapter.data.indices) {
                     remindAdapter.data[i].remindIsChecked = false
-                    remindAdapter.notifyDataSetChanged()
+                    remindAdapter.notifyItemChanged(i+1)
                 }
+
             } else {
                 remindListHeadBinding.remindHeadBox.isClickable = true
             }
@@ -511,14 +509,44 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                         scheduleAdapter.getViewByPosition(
                             itemPosition + 1,
                             R.id.schedule_item_background
-                        )
-                            ?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
+                        )?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
                     }
                 }
             }
 
             override fun onDrawerStateChanged(newState: Int) {}
         })
+        //对弹出选择标签的对话框editText进行监听
+        labelBinding.labelAddEdit.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun afterTextChanged(text: Editable?) {
+                val labelText: MutableLiveData<String> = MutableLiveData(text.toString())
+                labelText.observe(viewLifecycleOwner) {
+                    if (it.trim().isEmpty()) {
+                        vm.getAllLabel().observe(viewLifecycleOwner) { labelList ->
+                            labelAdapter.setList(labelList)
+                        }
+                        labelBinding.insertLabelText.visibility = View.GONE
+                    }else{
+                        vm.checkLabelTFI(it).observe(viewLifecycleOwner) { count ->
+                        if (count > 0) {
+                            labelBinding.insertLabelText.visibility = View.GONE
+                        } else {
+                            labelBinding.insertLabelText.visibility = View.VISIBLE
+                            labelBinding.insertLabelText.text = "创建\"${it}\""
+                        }
+                    }
+                    }
+                }
+
+            }
+
+        })
+
+
         val editViewLabelManager = FlowLayoutManager()
         binding.editLabel.addItemDecoration(SpaceItemDecoration(dp2px(10F)))
         binding.editLabel.layoutManager = editViewLabelManager
@@ -1108,3 +1136,4 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     }
 
 }
+

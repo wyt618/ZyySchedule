@@ -22,4 +22,7 @@ interface LabelDao {
 
     @Query("SELECT * FROM Label WHERE id =:id")
     fun getLabelTitle(id: Int): LiveData<Label>
+
+    @Query("SELECT COUNT(*) FROM Label WHERE title = :labelText")
+    fun checkLabelTitleForInsert(labelText:String):LiveData<Int>
 }

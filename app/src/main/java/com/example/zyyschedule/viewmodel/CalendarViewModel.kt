@@ -349,6 +349,10 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         return dataRepository.getLabelTitle(id)
     }
 
+    fun checkLabelTFI(labelText:String):LiveData<Int>{
+        return dataRepository.checkLabelTFI(labelText)
+    }
+
 
     //将提醒字符转化为时间字符
     fun remindChangeTime(remindTime:String,selectYear:Int,selectMonth:Int,selectDay:Int,textTime:String): String {
