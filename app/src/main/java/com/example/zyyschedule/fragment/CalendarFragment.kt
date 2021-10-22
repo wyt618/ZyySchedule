@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -30,9 +31,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.ConvertUtils.dp2px
 import com.blankj.utilcode.util.NotificationUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.listener.OnItemSwipeListener
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.example.zyyschedule.R
 import com.example.zyyschedule.adapter.*
@@ -87,6 +90,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private var selectYear: Int = 0
     private var selectMonth: Int = 0
     private var selectDay: Int = 0
+    val day:MutableLiveData<String> =MutableLiveData(
+        "%" + selectYear + "-" + processingTime(selectMonth) + "-" + processingTime(selectDay) + "%")
     private lateinit var time: java.util.Calendar
     private var editSchedule: MutableLiveData<Schedule> = MutableLiveData()
     override fun onCreateView(
@@ -197,8 +202,51 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         scheduleAdapter.setEmptyView(R.layout.schedule_empty)
         scheduleAdapter.setOwner(this)
         //设置日程列表侧滑和拖拽
+        scheduleAdapter.draggableModule.isSwipeEnabled = true
+        scheduleAdapter.draggableModule.isDragEnabled = true
+        scheduleAdapter.draggableModule.setOnItemSwipeListener(object : OnItemSwipeListener {
+            override fun onItemSwipeStart(viewHolder: RecyclerView.ViewHolder?, pos: Int) {
+                Thread.sleep(200)
+                scheduleAdapter.data[pos].state = "1"
+                vm.changeStateSchedule(scheduleAdapter.data[pos])
+            }
 
+            override fun clearView(viewHolder: RecyclerView.ViewHolder?, pos: Int) {}
 
+            override fun onItemSwiped(viewHolder: RecyclerView.ViewHolder?, pos: Int) {}
+
+            override fun onItemSwipeMoving(
+                canvas: Canvas?,
+                viewHolder: RecyclerView.ViewHolder?,
+                dX: Float,
+                dY: Float,
+                isCurrentlyActive: Boolean
+            ) {
+            }
+        })
+        finishScheduleAdapter.draggableModule.isSwipeEnabled = true
+        finishScheduleAdapter.draggableModule.isDragEnabled = true
+        finishScheduleAdapter.draggableModule.setOnItemSwipeListener(object : OnItemSwipeListener {
+            override fun onItemSwipeStart(viewHolder: RecyclerView.ViewHolder?, pos: Int) {
+                Thread.sleep(200)
+                finishScheduleAdapter.data[pos].state = "0"
+                vm.changeStateSchedule(finishScheduleAdapter.data[pos])
+            }
+
+            override fun clearView(viewHolder: RecyclerView.ViewHolder?, pos: Int) {}
+
+            override fun onItemSwiped(viewHolder: RecyclerView.ViewHolder?, pos: Int) {}
+
+            override fun onItemSwipeMoving(
+                canvas: Canvas?,
+                viewHolder: RecyclerView.ViewHolder?,
+                dX: Float,
+                dY: Float,
+                isCurrentlyActive: Boolean
+            ) {}
+        })
+
+        //绑定adapter
         binding.scheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
         scheduleListHeadBinding.scheduleListHead.text =
@@ -279,7 +327,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     remindAdapter.data[i].remindIsChecked = false
                     remindAdapter.notifyItemChanged(i + 1)
                 }
-
             } else {
                 remindListHeadBinding.remindHeadBox.isClickable = true
             }
@@ -453,12 +500,15 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
             override fun onDrawerOpened(drawerView: View) {
+                scheduleAdapter.draggableModule.isSwipeEnabled = false
+                scheduleAdapter.draggableModule.isDragEnabled = false
+                finishScheduleAdapter.draggableModule.isSwipeEnabled = false
+                finishScheduleAdapter.draggableModule.isDragEnabled = false
                 binding.divider.visibility = View.VISIBLE
                 binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED)
                 LiveEventBus
                     .get("SomeF_MainA", String::class.java)
                     .post("gone_navigation")
-
             }
 
             override fun onDrawerClosed(drawerView: View) {
@@ -467,6 +517,10 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 LiveEventBus
                     .get("SomeF_MainA", String::class.java)
                     .post("visible_navigation")
+                scheduleAdapter.draggableModule.isSwipeEnabled = true
+                scheduleAdapter.draggableModule.isDragEnabled = true
+                finishScheduleAdapter.draggableModule.isSwipeEnabled = true
+                finishScheduleAdapter.draggableModule.isDragEnabled = true
             }
 
             override fun onDrawerStateChanged(newState: Int) {}
@@ -486,25 +540,25 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                             labelAdapter.notifyDataSetChanged()
                             labelItemFootBinding.insertLabelText.isClickable = false
                         }
-                        labelItemFootBinding.insertLabelText.visibility = View.GONE
+                        labelItemFootBinding.root.visibility = View.GONE
                     } else {
                         labelItemFootBinding.insertLabelText.isClickable = true
                         vm.checkLabelTFI(it).observe(viewLifecycleOwner) { count ->
                             if (count > 0) {
-                                labelItemFootBinding.insertLabelText.visibility = View.GONE
+                                labelItemFootBinding.root.visibility = View.GONE
                             } else {
-                                labelItemFootBinding.insertLabelText.visibility = View.VISIBLE
+                                labelItemFootBinding.root.visibility = View.VISIBLE
                                 labelItemFootBinding.insertLabelText.text = "创建\"${it}\""
                             }
                         }
-
+                        vm.fuzzyLabelTitle("%$it%").observe(viewLifecycleOwner){ labels ->
+                            labelAdapter.setList(labels)
+                            labelAdapter.notifyDataSetChanged()
+                        }
                     }
                 }
             }
-
         })
-
-
         val editViewLabelManager = FlowLayoutManager()
         binding.editLabel.addItemDecoration(SpaceItemDecoration(dp2px(10F)))
         binding.editLabel.layoutManager = editViewLabelManager
@@ -627,12 +681,15 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         addSchedule.setOnDismissListener {
             binding.fabBtn.visibility = View.VISIBLE
             addScheduleBinding.editText.post {
-                imm.hideSoftInputFromWindow(addScheduleBinding.editText.windowToken, InputMethodManager.HIDE_IMPLICIT_ONLY)
+                imm.hideSoftInputFromWindow(
+                    addScheduleBinding.editText.windowToken,
+                    InputMethodManager.HIDE_IMPLICIT_ONLY
+                )
             }
         }
         addScheduleBinding.editText.requestFocus()
         addScheduleBinding.editText.post {
-            imm.showSoftInput(addScheduleBinding.editText,InputMethodManager.SHOW_IMPLICIT)
+            imm.showSoftInput(addScheduleBinding.editText, InputMethodManager.SHOW_IMPLICIT)
         }
     }
 

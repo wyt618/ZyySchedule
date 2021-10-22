@@ -101,4 +101,7 @@ class DataRepository(context: Context) {
     fun checkLabelTFI(labelText:String):LiveData<Int>{
         return labelDao.checkLabelTitleForInsert(labelText)
     }
+    fun fuzzyLabelTitle(labelText: String):LiveData<List<Label>>{
+        return labelDao.fuzzyLabelTitle(labelText)
+    }
 }

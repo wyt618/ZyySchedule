@@ -352,6 +352,9 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     fun checkLabelTFI(labelText:String):LiveData<Int>{
         return dataRepository.checkLabelTFI(labelText)
     }
+    fun fuzzyLabelTitle(labelText: String):LiveData<List<Label>>{
+        return dataRepository.fuzzyLabelTitle(labelText)
+    }
 
 
     //将提醒字符转化为时间字符

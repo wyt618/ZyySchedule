@@ -57,9 +57,14 @@
         <entry key="..\:/ZyySchedule/app/src/main/res/layout/label_item.xml" value="0.33" />
         <entry key="..\:/ZyySchedule/app/src/main/res/layout/label_long_click_popup_window.xml" value="0.209375" />
         <entry key="..\:/ZyySchedule/app/src/main/res/layout/schedule_item.xml" value="0.1703125" />
+        <entry key="app/src/main/res/drawable-v21/item_click.xml" value="0.4203125" />
         <entry key="app/src/main/res/drawable-v21/layout_ripple.xml" value="0.25885416666666666" />
         <entry key="app/src/main/res/drawable/bg_ripple.xml" value="0.25885416666666666" />
         <entry key="app/src/main/res/drawable/bg_ripple_schedule.xml" value="0.28020833333333334" />
+        <entry key="app/src/main/res/drawable/button_bg_press.xml" value="0.2703125" />
+        <entry key="app/src/main/res/drawable/ic_baseline_add_alert_24.xml" value="0.2703125" />
+        <entry key="app/src/main/res/drawable/ic_baseline_return_24.xml" value="0.2703125" />
+        <entry key="app/src/main/res/drawable/layout_ripple.xml" value="0.278125" />
         <entry key="app/src/main/res/layout-v21/calendar_fragment.xml" value="0.22604166666666667" />
         <entry key="app/src/main/res/layout/activity_add_label.xml" value="0.23125" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.24270833333333333" />
@@ -73,6 +78,7 @@
         <entry key="app/src/main/res/layout/remind_item.xml" value="0.22916666666666666" />
         <entry key="app/src/main/res/layout/schedule_fragment.xml" value="0.2375" />
         <entry key="app/src/main/res/layout/schedule_item.xml" value="0.22604166666666667" />
+        <entry key="app/src/main/res/layout/schedule_item_local.xml" value="0.26197916666666665" />
         <entry key="app/src/main/res/menu/left_menu.xml" value="0.23125" />
       </map>
     </option>

@@ -25,4 +25,7 @@ interface LabelDao {
 
     @Query("SELECT COUNT(*) FROM Label WHERE title = :labelText")
     fun checkLabelTitleForInsert(labelText:String):LiveData<Int>
+
+    @Query("SELECT * FROM Label WHERE title like :labelText ")
+    fun fuzzyLabelTitle(labelText: String):LiveData<List<Label>>
 }
