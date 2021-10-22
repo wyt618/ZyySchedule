@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -30,7 +29,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.ConvertUtils.dp2px
 import com.blankj.utilcode.util.NotificationUtils
@@ -69,6 +67,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private lateinit var labelBinding: AllLabelDialogBinding
     private lateinit var remindDialogBinding: RemindDialogBinding
     private lateinit var labelLongClickBinding: LabelLongClickPopupWindowBinding
+    private lateinit var labelItemFootBinding: LabbelItemFootBinding
     private lateinit var finishScheduleAdapter: ScheduleAdapter
     private lateinit var scheduleAdapter: ScheduleAdapter
     private lateinit var priorityListAdapter: PriorityListAdapter
@@ -90,7 +89,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private var selectDay: Int = 0
     private lateinit var time: java.util.Calendar
     private var editSchedule: MutableLiveData<Schedule> = MutableLiveData()
-    private var itemPosition = -1
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -126,6 +124,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 container,
                 false
             )
+        labelItemFootBinding =
+            DataBindingUtil.inflate(inflater, R.layout.labbel_item_foot, container, false)
         return binding.root
     }
 
@@ -168,6 +168,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         timePickerBinding.minePicker.value = 0
         labelBinding.labelList.layoutManager = layoutManager
         labelAdapter.setLoadFragment("CalendarFragment")
+        labelAdapter.addFooterView(labelItemFootBinding.root)
         labelBinding.labelList.adapter = labelAdapter
         val remindLayoutManager = LinearLayoutManager(context)
         remindLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -196,13 +197,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         scheduleAdapter.setEmptyView(R.layout.schedule_empty)
         scheduleAdapter.setOwner(this)
         //设置日程列表侧滑和拖拽
-        val scheduleCallback = ItemTouchCallback(scheduleAdapter, scheduleAdapter.data, this)
-        val finishCallback =
-            ItemTouchCallback(finishScheduleAdapter, finishScheduleAdapter.data, this)
-        val ufItemTouchHelper = ItemTouchHelper(scheduleCallback)
-        val fItemTouchHelper = ItemTouchHelper(finishCallback)
-        ufItemTouchHelper.attachToRecyclerView(binding.scheduleList)
-        fItemTouchHelper.attachToRecyclerView(binding.finishScheduleList)
+
+
         binding.scheduleList.adapter = scheduleAdapter
         binding.finishScheduleList.adapter = finishScheduleAdapter
         scheduleListHeadBinding.scheduleListHead.text =
@@ -281,7 +277,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 remindAdapter.addRemind = StringBuffer("无提醒")
                 for (i in remindAdapter.data.indices) {
                     remindAdapter.data[i].remindIsChecked = false
-                    remindAdapter.notifyItemChanged(i+1)
+                    remindAdapter.notifyItemChanged(i + 1)
                 }
 
             } else {
@@ -329,7 +325,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
 
 
         //完成和未完成日程item点击事件
-        finishScheduleAdapter.setOnItemClickListener { adapter, _, position ->
+        finishScheduleAdapter.setOnItemClickListener { _, _, position ->
             if (!binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
                 binding.drawerLayout.openDrawer(GravityCompat.END)
             }
@@ -364,22 +360,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     editScheduleLabelAdapter.setList(null)
                 }
             }
-            if (itemPosition != -1 && binding.editState.isChecked) {
-                adapter.getViewByPosition(itemPosition + 1, R.id.schedule_item_background)
-                    ?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
-            }
-            itemPosition = position
-            if (itemPosition != -1 && binding.editState.isChecked) {
-                adapter.getViewByPosition(itemPosition + 1, R.id.schedule_item_background)
-                    ?.backgroundTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.color_schedule_click
-                    )
-                )
-            }
         }
-        scheduleAdapter.setOnItemClickListener { adapter, _, position ->
+        scheduleAdapter.setOnItemClickListener { _, _, position ->
             if (!binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
                 binding.drawerLayout.openDrawer(GravityCompat.END)
             }
@@ -412,20 +394,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 } else {
                     editScheduleLabelAdapter.setList(null)
                 }
-            }
-            if (itemPosition != -1 && !binding.editState.isChecked) {
-                adapter.getViewByPosition(itemPosition + 1, R.id.schedule_item_background)
-                    ?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
-            }
-            itemPosition = position
-            if (itemPosition != -1 && !binding.editState.isChecked) {
-                adapter.getViewByPosition(itemPosition + 1, R.id.schedule_item_background)
-                    ?.backgroundTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.color_schedule_click
-                    )
-                )
             }
         }
         //编辑状态的日程数据更新
@@ -490,6 +458,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 LiveEventBus
                     .get("SomeF_MainA", String::class.java)
                     .post("gone_navigation")
+
             }
 
             override fun onDrawerClosed(drawerView: View) {
@@ -498,20 +467,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 LiveEventBus
                     .get("SomeF_MainA", String::class.java)
                     .post("visible_navigation")
-                if (itemPosition != -1) {
-                    if (binding.editState.isChecked) {
-                        finishScheduleAdapter.getViewByPosition(
-                            itemPosition + 1,
-                            R.id.schedule_item_background
-                        )
-                            ?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
-                    } else {
-                        scheduleAdapter.getViewByPosition(
-                            itemPosition + 1,
-                            R.id.schedule_item_background
-                        )?.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
-                    }
-                }
             }
 
             override fun onDrawerStateChanged(newState: Int) {}
@@ -528,20 +483,23 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     if (it.trim().isEmpty()) {
                         vm.getAllLabel().observe(viewLifecycleOwner) { labelList ->
                             labelAdapter.setList(labelList)
+                            labelAdapter.notifyDataSetChanged()
+                            labelItemFootBinding.insertLabelText.isClickable = false
                         }
-                        labelBinding.insertLabelText.visibility = View.GONE
-                    }else{
+                        labelItemFootBinding.insertLabelText.visibility = View.GONE
+                    } else {
+                        labelItemFootBinding.insertLabelText.isClickable = true
                         vm.checkLabelTFI(it).observe(viewLifecycleOwner) { count ->
-                        if (count > 0) {
-                            labelBinding.insertLabelText.visibility = View.GONE
-                        } else {
-                            labelBinding.insertLabelText.visibility = View.VISIBLE
-                            labelBinding.insertLabelText.text = "创建\"${it}\""
+                            if (count > 0) {
+                                labelItemFootBinding.insertLabelText.visibility = View.GONE
+                            } else {
+                                labelItemFootBinding.insertLabelText.visibility = View.VISIBLE
+                                labelItemFootBinding.insertLabelText.text = "创建\"${it}\""
+                            }
                         }
-                    }
+
                     }
                 }
-
             }
 
         })
@@ -664,11 +622,18 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             it.setBackgroundDrawableResource(R.drawable.add_schedule)
 
         }
-        addSchedule.setOnDismissListener { binding.fabBtn.visibility = View.VISIBLE }
-        addScheduleBinding.editText.requestFocus()
         val imm: InputMethodManager =
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS)
+        addSchedule.setOnDismissListener {
+            binding.fabBtn.visibility = View.VISIBLE
+            addScheduleBinding.editText.post {
+                imm.hideSoftInputFromWindow(addScheduleBinding.editText.windowToken, InputMethodManager.HIDE_IMPLICIT_ONLY)
+            }
+        }
+        addScheduleBinding.editText.requestFocus()
+        addScheduleBinding.editText.post {
+            imm.showSoftInput(addScheduleBinding.editText,InputMethodManager.SHOW_IMPLICIT)
+        }
     }
 
     //选择时间对话框

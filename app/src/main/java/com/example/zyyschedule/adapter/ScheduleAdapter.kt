@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.module.DraggableModule
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.example.zyyschedule.R
 import com.example.zyyschedule.database.Schedule
@@ -21,7 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "CAST_NEVER_SUCCEEDS")
-class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHolder>(layoutResId) {
+class ScheduleAdapter(layoutResId: Int) :BaseQuickAdapter<Schedule, BaseViewHolder>(layoutResId),DraggableModule {
     private lateinit var owner: ViewModelStoreOwner
     private lateinit var vm: CalendarViewModel
     private lateinit var date: Date
@@ -128,4 +129,5 @@ class ScheduleAdapter(layoutResId: Int) : BaseQuickAdapter<Schedule, BaseViewHol
         }
 
     }
+
 }

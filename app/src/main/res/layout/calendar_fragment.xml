@@ -119,7 +119,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="12dp"
-                        android:background="@drawable/bg_ripple">
+                        android:background="@drawable/bg_ripple_schedule">
 
                         <ImageView
                             android:id="@+id/ib_calendar"
@@ -168,7 +168,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="#D9E9F4"
-                        app:max_year="2050"
+                        app:max_year="2100"
                         app:min_year="2010"
                         app:month_view="com.example.zyyschedule.calendar.CalendarMonthView"
                         app:month_view_show_mode="mode_fix"

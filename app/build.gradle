@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
     android.defaultConfig.vectorDrawables.useSupportLibrary = true
     kotlinOptions{
@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId "com.example.zyyschedule"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
