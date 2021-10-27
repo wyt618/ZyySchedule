@@ -538,11 +538,9 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                         vm.getAllLabel().observe(viewLifecycleOwner) { labelList ->
                             labelAdapter.setList(labelList)
                             labelAdapter.notifyDataSetChanged()
-                            labelItemFootBinding.insertLabelText.isClickable = false
                         }
                         labelItemFootBinding.root.visibility = View.GONE
                     } else {
-                        labelItemFootBinding.insertLabelText.isClickable = true
                         vm.checkLabelTFI(it).observe(viewLifecycleOwner) { count ->
                             if (count > 0) {
                                 labelItemFootBinding.root.visibility = View.GONE
@@ -646,7 +644,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             )
         )
         vm.priority.postValue(getString(R.string.priority_null_text))
-        vm.priorityid.postValue(0)
+        vm.priorityId.postValue(0)
         vm.label.postValue(getString(R.string.title_not_classified))
         addScheduleBinding.scheduleLabelId.text = "~0~"
         vm.addScheduleTime.postValue("00:00")
@@ -748,7 +746,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             val flag = view.findViewById<ImageView>(R.id.priority_flag)
             addScheduleBinding.textPriority.setTextColor(text.textColors)
             vm.priority.value = text.text.toString()
-            vm.priorityid.value = position
+            vm.priorityId.value = position
             addScheduleBinding.priorityButton.setImageDrawable(flag.drawable)
             priorityDialog.dismiss()
         }

@@ -4,6 +4,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
      >
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -22,7 +23,8 @@
             android:layout_marginBottom="@dimen/space_50dp"
             android:layout_marginStart="@dimen/space_10dp"
             android:background="@drawable/bg_ripple_schedule"
-            android:clickable="false"/>
+            android:clickable="false"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

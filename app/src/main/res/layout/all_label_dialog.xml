@@ -5,7 +5,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/space_6dp">
+        android:paddingBottom="@dimen/space_6dp"
+        >
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/label_add_edit"
@@ -22,6 +23,7 @@
                 android:id="@+id/label_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/space_52dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/label_add_edit"

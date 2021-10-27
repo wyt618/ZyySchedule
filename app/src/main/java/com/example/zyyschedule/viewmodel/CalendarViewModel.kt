@@ -25,7 +25,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     var addScheduleDateAgo: MutableLiveData<String> = MutableLiveData()
     var addScheduleTime: MutableLiveData<String> = MutableLiveData()
     private lateinit var dateAgo: String
-    var priorityid: MutableLiveData<Int> = MutableLiveData()
+    var priorityId: MutableLiveData<Int> = MutableLiveData()
     var priority: MutableLiveData<String> = MutableLiveData()
     var label: MutableLiveData<String> = MutableLiveData()
     var remindText: MutableLiveData<String> = MutableLiveData()
@@ -41,7 +41,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         addScheduleTime.value = "00:00"
         priority.value = application.getString(R.string.priority_null_text)
         label.value = "无标签"
-        priorityid.value = 0
+        priorityId.value = 0
         remindText.value = "无提醒"
     }
 
