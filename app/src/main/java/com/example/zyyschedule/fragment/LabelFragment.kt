@@ -102,23 +102,29 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
             })
         //编辑模式下选中的监听
         scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
-            LiveEventBus
-                .get("pitchOnNumber", Int::class.java)
-                .post(it)
-            if (it > 0) {
-                enabledTrue()
-            } else {
-                enabledFalse()
+            finishScheduleAdapter.pitchOnNumber.value?.let { fNumber ->
+                val number = it + fNumber
+                LiveEventBus
+                    .get("pitchOnNumber", Int::class.java)
+                    .post(number)
+                if (number > 0) {
+                    enabledTrue()
+                } else {
+                    enabledFalse()
+                }
             }
         })
         finishScheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
-            LiveEventBus
-                .get("pitchOnNumber", Int::class.java)
-                .post(it)
-            if (it > 0) {
-                enabledTrue()
-            } else {
-                enabledFalse()
+            scheduleAdapter.pitchOnNumber.value?.let { ufNumber ->
+                val number = it + ufNumber
+                LiveEventBus
+                    .get("pitchOnNumber", Int::class.java)
+                    .post(number)
+                if (number > 0) {
+                    enabledTrue()
+                } else {
+                    enabledFalse()
+                }
             }
         })
         //完成和未完成日程item长按事件
@@ -177,8 +183,8 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
                     if (mSchedules[i].isEditorChecked) {
                         vm.deleteSchedule(mSchedules[i])
                         mSchedules[i].labelId?.let { labelId ->
-                            vm.getLabelTitle(labelId).observe(this){
-                                cancelNotification(mSchedules[i],it.title)
+                            vm.getLabelTitle(labelId).observe(this) {
+                                cancelNotification(mSchedules[i], it.title)
                             }
                         }
                     }
@@ -187,8 +193,8 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
                     if (mFinishSchedules[i].isEditorChecked) {
                         vm.deleteSchedule(mFinishSchedules[i])
                         mFinishSchedules[i].labelId?.let { labelId ->
-                            vm.getLabelTitle(labelId).observe(this){
-                                cancelNotification(mFinishSchedules[i],it.title)
+                            vm.getLabelTitle(labelId).observe(this) {
+                                cancelNotification(mFinishSchedules[i], it.title)
                             }
                         }
                     }
@@ -204,40 +210,39 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
     }
 
     private fun updateScheduleList() {
-        if(mLabelId != "%~0~%")
-        {
+        if (mLabelId != "%~0~%") {
             Log.i("TAG", "updateScheduleList:${mLabelId}")
-        vm.getUFScheduleOfLabel(mLabelId).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
-            for (i in schedules.indices) {
-                schedules[i].isChecked = false
-            }
-            if (schedules.isEmpty()) {
-                scheduleHeadBinding.root.visibility = View.GONE
-                scheduleFootBinding.root.visibility = View.GONE
-            } else {
-                scheduleHeadBinding.root.visibility = View.VISIBLE
-                scheduleFootBinding.root.visibility = View.VISIBLE
-            }
-            scheduleAdapter.setList(schedules)
-            mSchedules = scheduleAdapter.data
-        })
-        vm.getFScheduleOfLabel(mLabelId).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
-            for (i in schedules.indices) {
-                schedules[i].isChecked = true
-            }
-            if (schedules.isEmpty()) {
-                scheduleListFinishHeadBinding.root.visibility = View.GONE
-                finishScheduleFootBinding.root.visibility = View.GONE
-            } else {
-                scheduleListFinishHeadBinding.root.visibility = View.VISIBLE
-                finishScheduleFootBinding.root.visibility = View.VISIBLE
-            }
-            finishScheduleAdapter.setList(schedules)
-            mFinishSchedules = finishScheduleAdapter.data
-            finishScheduleAdapter.otherDate = scheduleAdapter.data
-            scheduleAdapter.otherDate = finishScheduleAdapter.data
-        })
-        }else{
+            vm.getUFScheduleOfLabel(mLabelId)
+                .observe(viewLifecycleOwner, { schedules: List<Schedule> ->
+                    for (i in schedules.indices) {
+                        schedules[i].isChecked = false
+                    }
+                    if (schedules.isEmpty()) {
+                        scheduleHeadBinding.root.visibility = View.GONE
+                        scheduleFootBinding.root.visibility = View.GONE
+                    } else {
+                        scheduleHeadBinding.root.visibility = View.VISIBLE
+                        scheduleFootBinding.root.visibility = View.VISIBLE
+                    }
+                    scheduleAdapter.setList(schedules)
+                    mSchedules = scheduleAdapter.data
+                })
+            vm.getFScheduleOfLabel(mLabelId)
+                .observe(viewLifecycleOwner, { schedules: List<Schedule> ->
+                    for (i in schedules.indices) {
+                        schedules[i].isChecked = true
+                    }
+                    if (schedules.isEmpty()) {
+                        scheduleListFinishHeadBinding.root.visibility = View.GONE
+                        finishScheduleFootBinding.root.visibility = View.GONE
+                    } else {
+                        scheduleListFinishHeadBinding.root.visibility = View.VISIBLE
+                        finishScheduleFootBinding.root.visibility = View.VISIBLE
+                    }
+                    finishScheduleAdapter.setList(schedules)
+                    mFinishSchedules = finishScheduleAdapter.data
+                })
+        } else {
 
         }
     }
@@ -291,14 +296,14 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
     }
 
     @SuppressLint("UnspecifiedImmutableFlag", "SimpleDateFormat")
-    private fun cancelNotification(schedule: Schedule, labelTitle: String?){
+    private fun cancelNotification(schedule: Schedule, labelTitle: String?) {
         val remind = schedule.remind?.split(",")?.dropLastWhile { it.isEmpty() }?.toTypedArray()
         val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         var date = Date()
         val now = Date()
         for (i in remind?.indices!!) {
             try {
-                std.parse(remind[i])?.let{
+                std.parse(remind[i])?.let {
                     date = it
                 }
             } catch (ignored: Exception) {
@@ -310,9 +315,12 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
                 intent.putExtra("remindSchedule", gson.toJson(schedule))
                 intent.putExtra("PendingIntentCode", schedule.id?.plus(i * 1000))
                 intent.putExtra("LabelTitle", labelTitle)
-                val sender = schedule.id?.plus(i * 1000)?.let { PendingIntent.getBroadcast(requireContext(), it, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-                ) }
+                val sender = schedule.id?.plus(i * 1000)?.let {
+                    PendingIntent.getBroadcast(
+                        requireContext(), it, intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                }
                 val am = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 am.cancel(sender)
             }

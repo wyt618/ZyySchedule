@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.1" />
         <entry key="..\:/ZyySchedule/app/src/main/res/drawable/add_schedule.xml" value="0.22552083333333334" />
         <entry key="..\:/ZyySchedule/app/src/main/res/drawable/bg_add_event_set_item.xml" value="0.22552083333333334" />
         <entry key="..\:/ZyySchedule/app/src/main/res/drawable/bg_ripple.xml" value="0.22552083333333334" />
@@ -72,6 +73,7 @@
         <entry key="app/src/main/res/layout/all_label_dialog.xml" value="0.23072916666666668" />
         <entry key="app/src/main/res/layout/calendar_fragment.xml" value="0.24270833333333333" />
         <entry key="app/src/main/res/layout/dialog_date.xml" value="0.22604166666666667" />
+        <entry key="app/src/main/res/layout/fragment_label.xml" value="0.15625" />
         <entry key="app/src/main/res/layout/labbel_item_foot.xml" value="0.2375" />
         <entry key="app/src/main/res/layout/label_dialog_head.xml" value="0.3482789855072464" />
         <entry key="app/src/main/res/layout/label_item.xml" value="0.25" />

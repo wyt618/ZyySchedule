@@ -90,8 +90,9 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private var selectYear: Int = 0
     private var selectMonth: Int = 0
     private var selectDay: Int = 0
-    val day:MutableLiveData<String> =MutableLiveData(
-        "%" + selectYear + "-" + processingTime(selectMonth) + "-" + processingTime(selectDay) + "%")
+    val day: MutableLiveData<String> = MutableLiveData(
+        "%" + selectYear + "-" + processingTime(selectMonth) + "-" + processingTime(selectDay) + "%"
+    )
     private lateinit var time: java.util.Calendar
     private var editSchedule: MutableLiveData<Schedule> = MutableLiveData()
     override fun onCreateView(
@@ -207,7 +208,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         scheduleAdapter.draggableModule.isDragEnabled = true
         scheduleAdapter.draggableModule.setOnItemSwipeListener(object : OnItemSwipeListener {
             override fun onItemSwipeStart(viewHolder: RecyclerView.ViewHolder?, pos: Int) {
-                Thread.sleep(200)
+                Thread.sleep(400)
                 scheduleAdapter.data[pos].state = "1"
                 vm.changeStateSchedule(scheduleAdapter.data[pos])
             }
@@ -229,7 +230,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         finishScheduleAdapter.draggableModule.isDragEnabled = true
         finishScheduleAdapter.draggableModule.setOnItemSwipeListener(object : OnItemSwipeListener {
             override fun onItemSwipeStart(viewHolder: RecyclerView.ViewHolder?, pos: Int) {
-                Thread.sleep(200)
+                Thread.sleep(400)
                 finishScheduleAdapter.data[pos].state = "0"
                 vm.changeStateSchedule(finishScheduleAdapter.data[pos])
             }
@@ -244,7 +245,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 dX: Float,
                 dY: Float,
                 isCurrentlyActive: Boolean
-            ) {}
+            ) {
+            }
         })
 
         //绑定adapter
@@ -255,19 +257,25 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         enabledFalse()
         //编辑模式下选中的监听
         scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
-            binding.goBackText.text = "选中${it}项"
-            if (it > 0) {
+            finishScheduleAdapter.pitchOnNumber.value?.let { fNumber ->
+                val number = it + fNumber
+                if (number > 0) {
+                    enabledTrue()
+                } else {
+                    enabledFalse()
+                }
+                binding.goBackText.text = "选中${number}项"
+            }
+        })
+        finishScheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
+            scheduleAdapter.pitchOnNumber.value?.let{ ufNumber ->
+            val number = it + ufNumber
+            if (number > 0) {
                 enabledTrue()
             } else {
                 enabledFalse()
             }
-        })
-        finishScheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
-            binding.goBackText.text = "选中${it}项"
-            if (it > 0) {
-                enabledTrue()
-            } else {
-                enabledFalse()
+            binding.goBackText.text = "选中${number}项"
             }
         })
         //对标签数据进行监听，刷新标签选择对话框，对话框点击事件
@@ -390,11 +398,14 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 binding.editDetailed.setText(it.detailed)
                 binding.editFlag.setImageResource(R.drawable.priority_flag)
                 var imageColor = 0
-                when (it.priority){
-                    0 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_null)
+                when (it.priority) {
+                    0 -> imageColor =
+                        ContextCompat.getColor(requireContext(), R.color.priority_null)
                     1 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_low)
-                    2 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_middle)
-                    3 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_high)
+                    2 -> imageColor =
+                        ContextCompat.getColor(requireContext(), R.color.priority_middle)
+                    3 -> imageColor =
+                        ContextCompat.getColor(requireContext(), R.color.priority_high)
                 }
                 binding.editFlag.imageTintList = ColorStateList.valueOf(imageColor)
                 //处理多标签显示
@@ -435,11 +446,14 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 binding.editDetailed.setText(it.detailed)
                 binding.editFlag.setImageResource(R.drawable.priority_flag)
                 var imageColor = 0
-                when (it.priority){
-                    0 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_null)
+                when (it.priority) {
+                    0 -> imageColor =
+                        ContextCompat.getColor(requireContext(), R.color.priority_null)
                     1 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_low)
-                    2 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_middle)
-                    3 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_high)
+                    2 -> imageColor =
+                        ContextCompat.getColor(requireContext(), R.color.priority_middle)
+                    3 -> imageColor =
+                        ContextCompat.getColor(requireContext(), R.color.priority_high)
                 }
                 binding.editFlag.imageTintList = ColorStateList.valueOf(imageColor)
                 //处理多标签显示
@@ -465,7 +479,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
         //编辑状态的日程数据更新
         editSchedule.observe(viewLifecycleOwner) {
-            if(it.state == "0") {
+            if (it.state == "0") {
                 it.tagRemind = false
                 LiveEventBus
                     .get("SomeF_MainA", String::class.java)
@@ -540,7 +554,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             override fun onDrawerClosed(drawerView: View) {
                 binding.divider.visibility = View.GONE
                 binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                if(binding.editorLayout.visibility == View.GONE) {
+                if (binding.editorLayout.visibility == View.GONE) {
                     LiveEventBus
                         .get("SomeF_MainA", String::class.java)
                         .post("visible_navigation")
@@ -577,7 +591,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                                 labelItemFootBinding.insertLabelText.text = "创建\"${it}\""
                             }
                         }
-                        vm.fuzzyLabelTitle("%$it%").observe(viewLifecycleOwner){ labels ->
+                        vm.fuzzyLabelTitle("%$it%").observe(viewLifecycleOwner) { labels ->
                             labelAdapter.setList(labels)
                             labelAdapter.notifyDataSetChanged()
                         }
@@ -1013,8 +1027,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             }
             finishScheduleAdapter.setList(schedules)
             mFinishSchedules = finishScheduleAdapter.data
-            finishScheduleAdapter.otherDate = scheduleAdapter.data
-            scheduleAdapter.otherDate = finishScheduleAdapter.data
         })
     }
 
@@ -1184,7 +1196,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         return Pair(textColor, timeText.toString())
     }
 
-    private fun addLabel(){
+    private fun addLabel() {
         val label = Label()
         label.title = labelBinding.labelAddEdit.text.toString()
         label.color = -0x98641c

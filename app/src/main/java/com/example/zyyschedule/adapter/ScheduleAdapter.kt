@@ -26,7 +26,6 @@ class ScheduleAdapter(layoutResId: Int) :BaseQuickAdapter<Schedule, BaseViewHold
     private lateinit var owner: ViewModelStoreOwner
     private lateinit var vm: CalendarViewModel
     private lateinit var date: Date
-    var otherDate: List<Schedule>? = null
     var pitchOnNumber: MutableLiveData<Int> = MutableLiveData(0)
 
     fun setOwner(owner: ViewModelStoreOwner) {
@@ -65,13 +64,6 @@ class ScheduleAdapter(layoutResId: Int) :BaseQuickAdapter<Schedule, BaseViewHold
             for (i in data) {
                 if (i.isEditorChecked) {
                     number += 1
-                }
-            }
-            otherDate?.let {
-                for (i in it) {
-                    if (i.isEditorChecked) {
-                        number += 1
-                    }
                 }
             }
             pitchOnNumber.value = number

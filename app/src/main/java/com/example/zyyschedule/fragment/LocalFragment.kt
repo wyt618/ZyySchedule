@@ -99,23 +99,29 @@ class LocalFragment : Fragment(), View.OnClickListener {
             })
         //编辑模式下选中的监听
         scheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
-            LiveEventBus
-                .get("pitchOnNumber", Int::class.java)
-                .post(it)
-            if (it > 0) {
-                enabledTrue()
-            } else {
-                enabledFalse()
+            finishScheduleAdapter.pitchOnNumber.value?.let { fNumber ->
+                val number = it + fNumber
+                LiveEventBus
+                    .get("pitchOnNumber", Int::class.java)
+                    .post(number)
+                if (number > 0) {
+                    enabledTrue()
+                } else {
+                    enabledFalse()
+                }
             }
         })
         finishScheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
-            LiveEventBus
-                .get("pitchOnNumber", Int::class.java)
-                .post(it)
-            if (it > 0) {
-                enabledTrue()
-            } else {
-                enabledFalse()
+            scheduleAdapter.pitchOnNumber.value?.let { ufNumber ->
+                val number = it + ufNumber
+                LiveEventBus
+                    .get("pitchOnNumber", Int::class.java)
+                    .post(number)
+                if (number > 0) {
+                    enabledTrue()
+                } else {
+                    enabledFalse()
+                }
             }
         })
         //完成和未完成日程item长按事件
@@ -228,8 +234,6 @@ class LocalFragment : Fragment(), View.OnClickListener {
             }
             finishScheduleAdapter.setList(schedules)
             mFinishSchedules = finishScheduleAdapter.data
-            finishScheduleAdapter.otherDate = scheduleAdapter.data
-            scheduleAdapter.otherDate = finishScheduleAdapter.data
         })
     }
 
