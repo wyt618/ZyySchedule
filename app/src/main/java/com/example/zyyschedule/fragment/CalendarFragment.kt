@@ -151,6 +151,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         binding.calendarView.setOnCalendarSelectListener(this)
         binding.fabBtn.setOnClickListener(this)
         binding.goBack.setOnClickListener(this)
+        binding.deleteButton.setOnClickListener(this)
         binding.vm = vm
         binding.lifecycleOwner = this
         addScheduleBinding.addScheduleSelectTime.setOnClickListener(this)
@@ -162,7 +163,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         addScheduleBinding.remindButton.setOnClickListener(this)
         addScheduleBinding.remindText.setOnClickListener(this)
         addScheduleBinding.sendSchedule.setOnClickListener(this)
-        binding.deleteButton.setOnClickListener(this)
+        labelItemFootBinding.insertLabelText.setOnClickListener(this)
         addScheduleBinding.vm = vm
         addScheduleBinding.lifecycleOwner = this
         timePickerBinding.hourPicker.maxValue = 23
@@ -514,9 +515,11 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             override fun onDrawerClosed(drawerView: View) {
                 binding.divider.visibility = View.GONE
                 binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                LiveEventBus
-                    .get("SomeF_MainA", String::class.java)
-                    .post("visible_navigation")
+                if(binding.editorLayout.visibility == View.GONE) {
+                    LiveEventBus
+                        .get("SomeF_MainA", String::class.java)
+                        .post("visible_navigation")
+                }
                 scheduleAdapter.draggableModule.isSwipeEnabled = true
                 scheduleAdapter.draggableModule.isDragEnabled = true
                 finishScheduleAdapter.draggableModule.isSwipeEnabled = true
@@ -589,6 +592,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 R.id.send_schedule -> addSchedule()
                 R.id.go_back -> exitEditor()
                 R.id.delete_button -> gotoDeleteDialog()
+                R.id.insert_label_text -> addLabel()
             }
         }
     }
@@ -1153,6 +1157,13 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             textColor = Color.RED
         }
         return Pair(textColor, timeText.toString())
+    }
+
+    private fun addLabel(){
+        val label = Label()
+        label.title = labelBinding.labelAddEdit.text.toString()
+        label.color = -0x98641c
+        vm.insertLabel(label)
     }
 
 }

@@ -258,6 +258,15 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
             }
         }
     }
+    fun insertLabel(vararg labels:Label){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                dataRepository.insertLabel(*labels)
+            } catch (e: java.lang.Exception) {
+                Log.i("calendar", "插入标签失败：$e")
+            }
+        }
+    }
 
     private fun getDateForRemindToTime(selectYear: Int, selectMonth: Int, selectDay: Int, time: String) {
         remindTime = "$selectYear-$selectMonth-$selectDay $time:00"
