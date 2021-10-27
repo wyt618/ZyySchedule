@@ -6,14 +6,14 @@
     android:orientation="horizontal"
     android:background="?attr/selectableItemBackground">
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/priority_flag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_6dp"
         android:layout_marginBottom="@dimen/space_6dp"/>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/priority_title"
         android:layout_width="@dimen/space_143dp"
         android:layout_height="match_parent"

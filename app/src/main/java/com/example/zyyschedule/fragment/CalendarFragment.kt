@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
@@ -387,6 +388,15 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 }
                 binding.editTitle.setText(it.title)
                 binding.editDetailed.setText(it.detailed)
+                binding.editFlag.setImageResource(R.drawable.priority_flag)
+                var imageColor = 0
+                when (it.priority){
+                    0 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_null)
+                    1 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_low)
+                    2 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_middle)
+                    3 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_high)
+                }
+                binding.editFlag.imageTintList = ColorStateList.valueOf(imageColor)
                 //处理多标签显示
                 if (!it.labelId.equals("~0~")) {
                     val labelIds = it.labelId?.split("~")?.dropWhile { labelId ->
@@ -423,6 +433,16 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 }
                 binding.editTitle.setText(it.title)
                 binding.editDetailed.setText(it.detailed)
+                binding.editFlag.setImageResource(R.drawable.priority_flag)
+                var imageColor = 0
+                when (it.priority){
+                    0 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_null)
+                    1 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_low)
+                    2 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_middle)
+                    3 -> imageColor = ContextCompat.getColor(requireContext(), R.color.priority_high)
+                }
+                binding.editFlag.imageTintList = ColorStateList.valueOf(imageColor)
+                //处理多标签显示
                 if (!it.labelId.equals("~0~")) {
                     val labelIds = it.labelId?.split("~")?.dropWhile { labelId ->
                         labelId.isEmpty()

@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.os.Build
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -24,7 +25,7 @@ class PriorityListAdapter(layoutResId: Int) :
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun convert(holder: BaseViewHolder, item: PriorityBean) {
         holder.setText(R.id.priority_title, item.priorityTitle)
-        val priorityFlag = holder.getView<ImageView>(R.id.priority_flag)
+        val priorityFlag = holder.getView<AppCompatImageView>(R.id.priority_flag)
         when (item.priorityType) {
             0 -> {
                 textColor = ContextCompat.getColor(context, R.color.priority_null)

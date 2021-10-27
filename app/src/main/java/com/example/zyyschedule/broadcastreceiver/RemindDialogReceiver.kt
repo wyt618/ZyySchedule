@@ -3,6 +3,8 @@ package com.example.zyyschedule.broadcastreceiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
@@ -33,7 +35,7 @@ class RemindDialogReceiver : BroadcastReceiver() {
         try {
             windowManager.removeView(binding.root)
         } catch (e: Exception) {
-            Log.i("RemindDialogReceiver",e.toString() )
+            Log.i("RemindDialogReceiver", e.toString())
         }
         binding = RemindGlobalDialogBinding.inflate(LayoutInflater.from(context))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -69,16 +71,15 @@ class RemindDialogReceiver : BroadcastReceiver() {
                 false
             }
         }
-        val flagDrawable = ContextCompat.getDrawable(context, R.drawable.priority_flag)
-        if (flagDrawable != null) {
-            when (schedule.priority) {
-                0 -> flagDrawable.setTint(ContextCompat.getColor(context, R.color.priority_null))
-                1 -> flagDrawable.setTint(ContextCompat.getColor(context, R.color.priority_low))
-                2 -> flagDrawable.setTint(ContextCompat.getColor(context, R.color.priority_middle))
-                3 -> flagDrawable.setTint(ContextCompat.getColor(context, R.color.priority_high))
-            }
+        var imageColor = 0
+        binding.priorityIcon.setImageResource(R.drawable.priority_flag)
+        when (schedule.priority) {
+            0 -> imageColor = ContextCompat.getColor(context, R.color.priority_null)
+            1 -> imageColor = ContextCompat.getColor(context, R.color.priority_low)
+            2 -> imageColor = ContextCompat.getColor(context, R.color.priority_middle)
+            3 -> imageColor = ContextCompat.getColor(context, R.color.priority_high)
         }
-        binding.priorityIcon.setImageDrawable(flagDrawable)
+        binding.priorityIcon.imageTintList = ColorStateList.valueOf(imageColor)
         if (schedule.priority != 0) {
             binding.priorityIcon.visibility = View.VISIBLE
         } else {
