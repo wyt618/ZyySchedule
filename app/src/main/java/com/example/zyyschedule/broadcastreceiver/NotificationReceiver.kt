@@ -7,7 +7,7 @@ import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import androidx.core.app.NotificationCompat.PRIORITY_MAX
+import androidx.core.app.NotificationCompat
 import com.blankj.utilcode.util.NotificationUtils
 import com.example.zyyschedule.R
 import com.example.zyyschedule.database.Schedule
@@ -32,7 +32,12 @@ class NotificationReceiver : BroadcastReceiver() {
                     param.setContentText(schedule.detailed)
                     param.setDefaults(Notification.DEFAULT_SOUND or Notification.DEFAULT_VIBRATE)
                     param.setContentIntent(toRemindDialog)
-                    param.priority = PRIORITY_MAX
+                    when(schedule.priority){
+                        0 -> param.priority = NotificationCompat.PRIORITY_MIN
+                        1 -> param.priority = NotificationCompat.PRIORITY_LOW
+                        2 -> param.priority = NotificationCompat.PRIORITY_HIGH
+                        3 -> param.priority = NotificationCompat.PRIORITY_MAX
+                    }
                 }
             }
             NotificationUtils.setNotificationBarVisibility(true)

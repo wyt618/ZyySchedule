@@ -75,9 +75,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private lateinit var scheduleAdapter: ScheduleAdapter
     private lateinit var priorityListAdapter: PriorityListAdapter
     private var labelAdapter = LabelAdapter(R.layout.label_item)
-    private var remindAdapter = RemindAdapter(R.layout.remind_item)
-    private var editScheduleLabelAdapter =
-        EditScheduleLabelAdapter(R.layout.edit_schedule_view_label_item)
+    private var remindAdapter = RemindAdapter()
+    private var editScheduleLabelAdapter = EditScheduleLabelAdapter()
 
     private lateinit var priorityDialog: AlertDialog
     private lateinit var labelChoose: AlertDialog
@@ -446,6 +445,12 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
         //编辑状态的日程数据更新
         editSchedule.observe(viewLifecycleOwner) {
+            if(it.state == "0") {
+                it.tagRemind = false
+                LiveEventBus
+                    .get("SomeF_MainA", String::class.java)
+                    .post("update_remind")
+            }
             vm.updateSchedule(it)
         }
 

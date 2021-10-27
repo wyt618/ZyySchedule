@@ -9,8 +9,8 @@ import com.example.zyyschedule.R
 import com.example.zyyschedule.RemindBean
 import com.example.zyyschedule.databinding.RemindListHeadBinding
 
-open class RemindAdapter(layoutResId: Int) :
-    BaseQuickAdapter<RemindBean, BaseViewHolder>(layoutResId) {
+open class RemindAdapter :
+    BaseQuickAdapter<RemindBean, BaseViewHolder>(R.layout.remind_item) {
     private lateinit var remindListHeadBinding: RemindListHeadBinding
     var addRemind: StringBuffer = StringBuffer("无提醒")
     override fun convert(holder: BaseViewHolder, item: RemindBean) {

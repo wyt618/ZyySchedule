@@ -85,6 +85,8 @@ class RemindDialogReceiver : BroadcastReceiver() {
             binding.priorityIcon.visibility = View.GONE
         }
         binding.date.text = schedule.startTime?.let { checkNowDay(it) }
+        binding.remindTitle.text = schedule.title
+        binding.remindDetailed.text = schedule.detailed
         windowManager.addView(binding.root, params)
     }
 

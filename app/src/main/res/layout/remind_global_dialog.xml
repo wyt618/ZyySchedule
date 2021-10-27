@@ -9,8 +9,8 @@
 
         <LinearLayout
             android:id="@+id/remind_dialog"
-            android:layout_width="750dp"
-            android:layout_height="245dp"
+            android:layout_width="@dimen/space_750dp"
+            android:layout_height="@dimen/space_245dp"
             android:background="@drawable/add_schedule"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -36,12 +36,38 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_12sp"
                     android:textColor="@color/color_schedule_start"/>
-                <TextView
-                    android:id="@+id/label_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_size_12sp"
-                    android:textColor="@color/black" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/space_0dp"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/space_6dp"
+                android:layout_marginTop="@dimen/space_6dp">
+
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fillViewport="true">
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/remind_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_size_24sp"
+                            android:textStyle="bold"/>
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/remind_detailed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_size_16sp"
+                            />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.core.widget.NestedScrollView>
+
             </LinearLayout>
 
         </LinearLayout>

@@ -7,8 +7,8 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.example.zyyschedule.R
 import com.example.zyyschedule.database.Label
 
-class EditScheduleLabelAdapter(layoutResId: Int) :
-    BaseQuickAdapter<Label, BaseViewHolder>(layoutResId) {
+class EditScheduleLabelAdapter :
+    BaseQuickAdapter<Label, BaseViewHolder>(R.layout.edit_schedule_view_label_item) {
     override fun convert(holder: BaseViewHolder, item: Label) {
         holder.setText(R.id.label_title, item.title)
         holder.getView<ConstraintLayout>(R.id.label_background).backgroundTintList =

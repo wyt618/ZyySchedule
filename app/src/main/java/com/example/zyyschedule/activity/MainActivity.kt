@@ -54,8 +54,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             for (i in schedules.indices) {
                 if (schedules[i].remind?.isNotEmpty() == true && !schedules[i].tagRemind) {
                     setNotificationRemind(schedules[i])
-                    schedules[i].id?.let { id -> vm.updateRemindTag(id) }
-
                 }
             }
         })
@@ -68,6 +66,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     }
                     "visible_navigation" -> {
                         binding.bottomNavigationView.visibility = View.VISIBLE
+                    }
+                    "update_remind" -> {
+                        vm.getALLUnFinishOfRemind().observe(this, { schedules: List<Schedule> ->
+                            for (i in schedules.indices) {
+                                if (schedules[i].remind?.isNotEmpty() == true && !schedules[i].tagRemind) {
+                                    setNotificationRemind(schedules[i])
+                                }
+                            }
+                        })
                     }
                 }
             })
@@ -131,6 +138,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     ?.let { PendingIntent.getBroadcast(this, it, intent, FLAG_UPDATE_CURRENT) }
                 val am = getSystemService(ALARM_SERVICE) as AlarmManager
                 am[AlarmManager.RTC_WAKEUP, date.time] = sender
+                schedule.id?.let { id -> vm.updateRemindTag(id) }
             }
         }
     }
