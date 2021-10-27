@@ -22,13 +22,13 @@ import java.util.*
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class CalendarViewModel(application: Application) : AndroidViewModel(application) {
     var day = 0
-    var addScheduleDateAgo: MutableLiveData<String>
-    var addScheduleTime: MutableLiveData<String>
+    var addScheduleDateAgo: MutableLiveData<String> = MutableLiveData()
+    var addScheduleTime: MutableLiveData<String> = MutableLiveData()
     private lateinit var dateAgo: String
-    var priorityid: MutableLiveData<Int>
-    var priority: MutableLiveData<String>
-    var label: MutableLiveData<String>
-    var remindText: MutableLiveData<String>
+    var priorityid: MutableLiveData<Int> = MutableLiveData()
+    var priority: MutableLiveData<String> = MutableLiveData()
+    var label: MutableLiveData<String> = MutableLiveData()
+    var remindText: MutableLiveData<String> = MutableLiveData()
     private var dataRepository: DataRepository = DataRepository(application)
     private lateinit var priorityBean: PriorityBean
     private lateinit var remindBean: RemindBean
@@ -38,12 +38,6 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     init {
         val calendar = Calendar.getInstance()
         day = calendar[Calendar.DAY_OF_MONTH]
-        addScheduleDateAgo = MutableLiveData()
-        addScheduleTime = MutableLiveData()
-        priority = MutableLiveData()
-        priorityid = MutableLiveData()
-        label = MutableLiveData()
-        remindText = MutableLiveData()
         addScheduleTime.value = "00:00"
         priority.value = application.getString(R.string.priority_null_text)
         label.value = "无标签"
@@ -370,7 +364,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
                 textTime
             )
             internalRemindTime = internalRemindTime.replace("无提醒", "")
-            internalRemindTime = internalRemindTime.replace("准时,", remindToTime(1) + ",")
+            internalRemindTime = internalRemindTime.replace(",准时", remindToTime(1) + ",")
             internalRemindTime = internalRemindTime.replace(",提前1分钟", remindToTime(2) + ",")
             internalRemindTime = internalRemindTime.replace(",提前5分钟", remindToTime(3) + ",")
             internalRemindTime = internalRemindTime.replace(",提前10分钟", remindToTime(4) + ",")

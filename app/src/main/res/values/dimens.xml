@@ -27,6 +27,7 @@
     <dimen name="schedule_button_radius_size">3dp</dimen>
     <dimen name="schedule_item_center_size">50dp</dimen>
 
+    <dimen name="space_0dp">0dp</dimen>
     <dimen name="space_2dp">2dp</dimen>
     <dimen name="space_3dp">3dp</dimen>
     <dimen name="space_6dp">6dp</dimen>

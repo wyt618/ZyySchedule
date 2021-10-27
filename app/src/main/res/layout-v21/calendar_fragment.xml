@@ -343,48 +343,56 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edit_title"
+                android:layout_height="@dimen/space_0dp"
+                android:layout_weight="1">
+                <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxHeight="@dimen/space_180dp"
-                    android:textSize="@dimen/text_size_24sp"
-                    android:textStyle="bold"
-                    android:layout_marginStart="@dimen/space_10dp"
-                    android:layout_marginTop="@dimen/space_10dp"
-                    android:background="@null"
-                    />
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                    android:layout_height="match_parent"
+                    android:fillViewport="true">
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/edit_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_size_24sp"
+                            android:textStyle="bold"
+                            android:layout_marginStart="@dimen/space_10dp"
+                            android:layout_marginTop="@dimen/space_10dp"
+                            android:background="@null"
+                            android:nestedScrollingEnabled="false"
+                            />
 
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/edit_detailed"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_size_16sp"
+                            android:layout_marginStart="@dimen/space_10dp"
+                            android:layout_marginTop="@dimen/space_10dp"
+                            android:background="@null"
+                            android:hint="@string/edit_detailed_hint"
+                            android:nestedScrollingEnabled="false"
+                            />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/edit_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_10dp"
+                            android:nestedScrollingEnabled="false"
+                            />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                </androidx.core.widget.NestedScrollView>
+            </androidx.appcompat.widget.LinearLayoutCompat>
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edit_detailed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxHeight="@dimen/space_180dp"
-                    android:textSize="@dimen/text_size_16sp"
-                    android:layout_marginStart="@dimen/space_10dp"
-                    android:layout_marginTop="@dimen/space_10dp"
-                    android:background="@null"
-                    android:hint="@string/edit_detailed_hint"
-                    />
+                android:layout_height="@dimen/space_52dp">
+
             </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/edit_label"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/space_180dp"
-                android:layout_marginTop="@dimen/space_10dp"
-                />
-
         </androidx.appcompat.widget.LinearLayoutCompat>
-
     </com.example.zyyschedule.widget.CustomDrawerLayout>
 
 
