@@ -90,11 +90,13 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private var selectYear: Int = 0
     private var selectMonth: Int = 0
     private var selectDay: Int = 0
+    private lateinit var labelWindow: PopupWindow
     val day: MutableLiveData<String> = MutableLiveData(
         "%" + selectYear + "-" + processingTime(selectMonth) + "-" + processingTime(selectDay) + "%"
     )
     private lateinit var time: java.util.Calendar
     private var editSchedule: MutableLiveData<Schedule> = MutableLiveData()
+    private var editLabel: Label = Label() //编辑界面长按后选中的label
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -268,14 +270,14 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             }
         })
         finishScheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
-            scheduleAdapter.pitchOnNumber.value?.let{ ufNumber ->
-            val number = it + ufNumber
-            if (number > 0) {
-                enabledTrue()
-            } else {
-                enabledFalse()
-            }
-            binding.goBackText.text = "选中${number}项"
+            scheduleAdapter.pitchOnNumber.value?.let { ufNumber ->
+                val number = it + ufNumber
+                if (number > 0) {
+                    enabledTrue()
+                } else {
+                    enabledFalse()
+                }
+                binding.goBackText.text = "选中${number}项"
             }
         })
         //对标签数据进行监听，刷新标签选择对话框，对话框点击事件
@@ -513,8 +515,9 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             editSchedule.value = editSchedule.value
         }
 
-        editScheduleLabelAdapter.setOnItemLongClickListener { _: BaseQuickAdapter<Any?, BaseViewHolder>, item: View, _: Int ->
-            val labelWindow =
+        editScheduleLabelAdapter.setOnItemLongClickListener { adapter: BaseQuickAdapter<Any?, BaseViewHolder>, item: View, position: Int ->
+            editLabel = adapter.data[position] as Label
+            labelWindow =
                 PopupWindow(
                     labelLongClickBinding.root, WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
@@ -527,16 +530,16 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     R.drawable.button_bg_press
                 )
             )
-
             val location = IntArray(2)
             item.getLocationOnScreen(location)
             labelWindow.showAtLocation(
                 binding.editLabel, Gravity.START and Gravity.TOP,
-                location[0], location[1] - item.height - 5
+                location[0], location[1] - item.height - 34
             )
             true
         }
-
+        labelLongClickBinding.jumpImage.setOnClickListener(this)
+        labelLongClickBinding.deleteImage.setOnClickListener(this)
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
             override fun onDrawerOpened(drawerView: View) {
@@ -632,6 +635,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 R.id.go_back -> exitEditor()
                 R.id.delete_button -> gotoDeleteDialog()
                 R.id.insert_label_text -> addLabel()
+                R.id.jump_image -> jumpLabelFragment()
             }
         }
     }
@@ -1202,6 +1206,25 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         label.color = -0x98641c
         vm.insertLabel(label)
     }
+
+    private fun jumpLabelFragment() {
+        LiveEventBus
+            .get("SomeF_MainA", String::class.java)
+            .post("visible_navigation")
+        val gson = Gson()
+        val json = gson.toJson(editLabel)
+        val bundle = Bundle()
+        bundle.putString("label",json.toString())
+        val sf = ScheduleFragment()
+        sf.arguments = bundle
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment, sf, null)
+            .addToBackStack(null)
+            .commit()
+        labelWindow.dismiss()
+    }
+
 
 }
 

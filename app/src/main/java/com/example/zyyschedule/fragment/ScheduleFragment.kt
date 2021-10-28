@@ -17,6 +17,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.example.zyyschedule.R
@@ -25,14 +26,16 @@ import com.example.zyyschedule.adapter.LabelAdapter
 import com.example.zyyschedule.database.Label
 import com.example.zyyschedule.databinding.ScheduleFragmentBinding
 import com.example.zyyschedule.viewmodel.ScheduleViewModel
+import com.google.gson.Gson
 import com.jeremyliao.liveeventbus.LiveEventBus
 
 @SuppressLint("NotifyDataSetChanged")
-class ScheduleFragment : Fragment(), View.OnClickListener {
+class ScheduleFragment() : Fragment(), View.OnClickListener {
     private lateinit var binding: ScheduleFragmentBinding
     private val vm: ScheduleViewModel by viewModels()
     private val labelAdapter: LabelAdapter = LabelAdapter(R.layout.label_item)
     private lateinit var labelItemEditorButton: View
+    private var jumpLabel:MutableLiveData<Label> = MutableLiveData()
 
     @SuppressLint("InflateParams")
     override fun onCreateView(
@@ -42,6 +45,12 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.schedule_fragment, container, false)
         labelItemEditorButton = inflater.inflate(R.layout.label_item_editor_button, null)
+        val gson = Gson()
+        val bundle:Bundle? = arguments
+        bundle?.let {
+          jumpLabel.value = gson.fromJson(it.getString("label"),Label::class.java)
+        }
+
         return binding.root
     }
 
@@ -68,9 +77,18 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
                     "visibility_titleBar" -> {
                         exitEditor()
                     }
-
                 }
             })
+
+        jumpLabel.observe(viewLifecycleOwner,{
+            if(it != null) {
+                val ft = requireActivity().supportFragmentManager.beginTransaction()
+                ft.setTransition(FragmentTransaction.TRANSIT_NONE)
+                ft.replace(R.id.scheduleFragment, LabelFragment("%~${it.id}~%"), null)
+                    .commit()
+                binding.scheduleTitleBarTitle.text = it.title
+            }
+        })
         LiveEventBus
             .get("pitchOnNumber", Int::class.java)
             .observe(viewLifecycleOwner, {
