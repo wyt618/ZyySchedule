@@ -34,7 +34,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     private lateinit var priorityBean: PriorityBean
     private lateinit var remindBean: RemindBean
     private lateinit var remindTime: String
-
+    var checkAllTag:MutableLiveData<Int> = MutableLiveData(-1)
 
     init {
         val calendar = Calendar.getInstance()

@@ -16,6 +16,7 @@
     <string name="title_plus_list">Add a label</string>
     <string name="cancel">Clear</string>
     <string name="check_all">Check All</string>
+    <string name="to_cancel_all">To cancel all</string>
     <string name="schedule_setting">Add labels</string>
     <string name="dialog_edit_text">Enter the label</string>
     <string name="finish">Complete</string>

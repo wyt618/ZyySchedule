@@ -85,8 +85,12 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private lateinit var remindDialog: AlertDialog
     private lateinit var builder: AlertDialog.Builder
 
-    private lateinit var mSchedules: List<Schedule>
-    private lateinit var mFinishSchedules: List<Schedule>
+    private val mSchedules: List<Schedule> by lazy {
+        scheduleAdapter.data
+    }
+    private val mFinishSchedules: List<Schedule> by lazy {
+        finishScheduleAdapter.data
+    }
     private var selectYear: Int = 0
     private var selectMonth: Int = 0
     private var selectDay: Int = 0
@@ -97,6 +101,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private lateinit var time: java.util.Calendar
     private var editSchedule: MutableLiveData<Schedule> = MutableLiveData()
     private var editLabel: Label = Label() //编辑界面长按后选中的label
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -156,6 +161,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         binding.fabBtn.setOnClickListener(this)
         binding.goBack.setOnClickListener(this)
         binding.deleteButton.setOnClickListener(this)
+        binding.checkAll.setOnClickListener(this)
+        binding.toCancelAll.setOnClickListener(this)
         binding.vm = vm
         binding.lifecycleOwner = this
         addScheduleBinding.addScheduleSelectTime.setOnClickListener(this)
@@ -268,6 +275,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     enabledFalse()
                 }
                 binding.goBackText.text = "选中${number}项"
+                vm.checkAllTag.value = number
             }
         })
         finishScheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
@@ -279,6 +287,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     enabledFalse()
                 }
                 binding.goBackText.text = "选中${number}项"
+                vm.checkAllTag.value = number
             }
         })
         //对标签数据进行监听，刷新标签选择对话框，对话框点击事件
@@ -286,6 +295,18 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             labelAdapter.setList(labels)
             if (labels != null) {
                 labelAdapter.notifyItemChanged(labels.size)
+            }
+        })
+        //全选按钮的显示
+        vm.checkAllTag.observe(viewLifecycleOwner, {
+            if (it != -1) {
+                if (it == mSchedules.size + mFinishSchedules.size && it != 0) {
+                    binding.checkAll.visibility = View.GONE
+                    binding.toCancelAll.visibility = View.VISIBLE
+                } else {
+                    binding.checkAll.visibility = View.VISIBLE
+                    binding.toCancelAll.visibility = View.GONE
+                }
             }
         })
 
@@ -345,7 +366,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
         //完成和未完成日程item长按事件
         scheduleAdapter.setOnItemLongClickListener { adapter, _, _ ->
-            if(binding.drawerLayout.isDrawerOpen(Gravity.END)) {
+            if (binding.drawerLayout.isDrawerOpen(Gravity.END)) {
                 binding.drawerLayout.closeDrawer(Gravity.END)
             }
             binding.rlTool.visibility = View.GONE
@@ -366,7 +387,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             true
         }
         finishScheduleAdapter.setOnItemLongClickListener { adapter, _, _ ->
-            if(binding.drawerLayout.isDrawerOpen(Gravity.END)) {
+            if (binding.drawerLayout.isDrawerOpen(Gravity.END)) {
                 binding.drawerLayout.closeDrawer(Gravity.END)
             }
             binding.rlTool.visibility = View.GONE
@@ -644,6 +665,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 R.id.insert_label_text -> addLabel()
                 R.id.jump_image -> jumpLabelFragment()
                 R.id.delete_image -> deleteLabelFromSchedule()
+                R.id.check_all -> checkAll()
+                R.id.to_cancel_all -> toCancelAll()
             }
         }
     }
@@ -1024,7 +1047,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                     scheduleFootBinding.root.visibility = View.VISIBLE
                 }
                 scheduleAdapter.setList(schedules)
-                mSchedules = scheduleAdapter.data
             })
         vm.getFinishedScheduleOfDay(day).observe(viewLifecycleOwner, { schedules: List<Schedule> ->
             for (i in schedules.indices) {
@@ -1038,7 +1060,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 finishScheduleFootBinding.root.visibility = View.VISIBLE
             }
             finishScheduleAdapter.setList(schedules)
-            mFinishSchedules = finishScheduleAdapter.data
         })
     }
 
@@ -1166,7 +1187,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         val gson = Gson()
         val json = gson.toJson(editLabel)
         val bundle = Bundle()
-        bundle.putString("label",json.toString())
+        bundle.putString("label", json.toString())
         val sf = ScheduleFragment()
         sf.arguments = bundle
         requireActivity().supportFragmentManager
@@ -1177,8 +1198,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         labelWindow.dismiss()
     }
 
-    private fun deleteLabelFromSchedule(){
-        editSchedule.value?.labelId = editSchedule.value?.labelId?.replace("~${editLabel.id}~","~")
+    private fun deleteLabelFromSchedule() {
+        editSchedule.value?.labelId = editSchedule.value?.labelId?.replace("~${editLabel.id}~", "~")
         editSchedule.value = editSchedule.value
         //更新显示
         if (!editSchedule.value?.labelId.equals("~0~")) {
@@ -1203,6 +1224,34 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         labelWindow.dismiss()
     }
 
+    private fun checkAll() {
+        binding.checkAll.visibility = View.GONE
+        binding.toCancelAll.visibility = View.VISIBLE
+        for (i in mSchedules.indices) {
+            mSchedules[i].isEditorChecked = true
+        }
+        for (i in mFinishSchedules.indices) {
+            mFinishSchedules[i].isEditorChecked = true
+        }
+        scheduleAdapter.pitchOnNumber.value = mSchedules.size
+        finishScheduleAdapter.pitchOnNumber.value = mFinishSchedules.size
+        scheduleAdapter.notifyDataSetChanged()
+        finishScheduleAdapter.notifyDataSetChanged()
+    }
 
+    private fun toCancelAll() {
+        binding.checkAll.visibility = View.VISIBLE
+        binding.toCancelAll.visibility = View.GONE
+        for (i in mSchedules.indices) {
+            mSchedules[i].isEditorChecked = false
+        }
+        for (i in mFinishSchedules.indices) {
+            mFinishSchedules[i].isEditorChecked = false
+        }
+        scheduleAdapter.pitchOnNumber.value = 0
+        finishScheduleAdapter.pitchOnNumber.value = 0
+        scheduleAdapter.notifyDataSetChanged()
+        finishScheduleAdapter.notifyDataSetChanged()
+    }
 }
 

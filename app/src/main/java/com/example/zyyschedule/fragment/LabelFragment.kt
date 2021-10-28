@@ -37,8 +37,12 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
     private val vm: ScheduleViewModel by viewModels()
     private lateinit var scheduleAdapter: ScheduleAdapter
     private lateinit var finishScheduleAdapter: ScheduleAdapter
-    private lateinit var mSchedules: List<Schedule>
-    private lateinit var mFinishSchedules: List<Schedule>
+    private  val mSchedules: List<Schedule> by lazy {
+       scheduleAdapter.data
+    }
+    private val mFinishSchedules: List<Schedule> by lazy{
+        finishScheduleAdapter.data
+    }
     private lateinit var scheduleHeadBinding: ScheduleListHeadBinding
     private lateinit var scheduleFootBinding: ScheduleFootBinding
     private lateinit var scheduleListFinishHeadBinding: ScheduleListFinishHeadBinding
@@ -66,6 +70,8 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.deleteButton.setOnClickListener(this)
+        binding.checkAll.setOnClickListener(this)
+        binding.toCancelAll.setOnClickListener(this)
         builder = AlertDialog.Builder(context)
         val labelSchedule = LinearLayoutManager(context)
         labelSchedule.orientation = LinearLayoutManager.VERTICAL
@@ -112,6 +118,7 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
                 } else {
                     enabledFalse()
                 }
+                vm.checkAllTag.value = number
             }
         })
         finishScheduleAdapter.pitchOnNumber.observe(viewLifecycleOwner, {
@@ -124,6 +131,19 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
                     enabledTrue()
                 } else {
                     enabledFalse()
+                }
+                vm.checkAllTag.value = number
+            }
+        })
+        //全选按钮的显示
+        vm.checkAllTag.observe(viewLifecycleOwner,{
+            if(it != -1){
+                if(it == mSchedules.size+mFinishSchedules.size &&  it != 0){
+                    binding.checkAll.visibility = View.GONE
+                    binding.toCancelAll.visibility = View.VISIBLE
+                }else{
+                    binding.checkAll.visibility = View.VISIBLE
+                    binding.toCancelAll.visibility = View.GONE
                 }
             }
         })
@@ -171,6 +191,8 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
         v?.let {
             when (it.id) {
                 R.id.delete_button -> gotoDeleteDialog()
+                R.id.check_all -> checkAll()
+                R.id.to_cancel_all -> toCancelAll()
             }
         }
     }
@@ -225,7 +247,6 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
                         scheduleFootBinding.root.visibility = View.VISIBLE
                     }
                     scheduleAdapter.setList(schedules)
-                    mSchedules = scheduleAdapter.data
                 })
             vm.getFScheduleOfLabel(mLabelId)
                 .observe(viewLifecycleOwner, { schedules: List<Schedule> ->
@@ -240,10 +261,7 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
                         finishScheduleFootBinding.root.visibility = View.VISIBLE
                     }
                     finishScheduleAdapter.setList(schedules)
-                    mFinishSchedules = finishScheduleAdapter.data
                 })
-        } else {
-
         }
     }
 
@@ -325,5 +343,35 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
                 am.cancel(sender)
             }
         }
+    }
+
+    private fun checkAll() {
+        binding.checkAll.visibility = View.GONE
+        binding.toCancelAll.visibility = View.VISIBLE
+        for (i in mSchedules.indices) {
+            mSchedules[i].isEditorChecked = true
+        }
+        for (i in mFinishSchedules.indices) {
+            mFinishSchedules[i].isEditorChecked = true
+        }
+        scheduleAdapter.pitchOnNumber.value = mSchedules.size
+        finishScheduleAdapter.pitchOnNumber.value = mFinishSchedules.size
+        scheduleAdapter.notifyDataSetChanged()
+        finishScheduleAdapter.notifyDataSetChanged()
+    }
+
+    private fun toCancelAll() {
+        binding.checkAll.visibility = View.VISIBLE
+        binding.toCancelAll.visibility = View.GONE
+        for (i in mSchedules.indices) {
+            mSchedules[i].isEditorChecked = false
+        }
+        for (i in mFinishSchedules.indices) {
+            mFinishSchedules[i].isEditorChecked = false
+        }
+        scheduleAdapter.pitchOnNumber.value = 0
+        finishScheduleAdapter.pitchOnNumber.value = 0
+        scheduleAdapter.notifyDataSetChanged()
+        finishScheduleAdapter.notifyDataSetChanged()
     }
 }
