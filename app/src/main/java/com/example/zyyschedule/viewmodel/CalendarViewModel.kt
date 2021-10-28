@@ -3,6 +3,7 @@ package com.example.zyyschedule.viewmodel
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.graphics.Color
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -390,5 +391,61 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
             internalRemindTime = internalRemindTime.replace(",提前2天", remindToTime(15) + ",")
         }
         return internalRemindTime
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun editTimeText(date: String?): Pair<Int, String> {
+        val weekDays = arrayOf("日", "一", "二", "三", "四", "五", "六")
+        val now = Calendar.getInstance()
+        val startDate = Calendar.getInstance()
+        val timeText = StringBuffer("")
+        val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        var textColor = Color.BLACK
+        date?.let { d ->
+            std.parse(d)?.let {
+                startDate.time = it
+            }
+        }
+        if (startDate[Calendar.YEAR] != now[Calendar.YEAR]) {
+            timeText.append(startDate[Calendar.YEAR]).append("年")
+        }
+        if (startDate[Calendar.MONTH] == now[Calendar.MONTH]) {
+            when (startDate[Calendar.WEEK_OF_MONTH]) {
+                now[Calendar.WEEK_OF_MONTH] -> timeText.append("周${weekDays[startDate[Calendar.DAY_OF_WEEK] - 1]}")
+                    .append(",")
+                now[Calendar.WEEK_OF_MONTH] - 1 -> timeText.append("上周${weekDays[startDate[Calendar.DAY_OF_WEEK] - 1]}")
+                    .append(",")
+            }
+            when (startDate[Calendar.DAY_OF_MONTH]) {
+                now[Calendar.DAY_OF_MONTH] -> {
+                    timeText.delete(0, timeText.length)
+                    timeText.append("今天").append(",")
+                }
+                now[Calendar.DAY_OF_MONTH] - 1 -> {
+                    timeText.delete(0, timeText.length)
+                    timeText.append("昨天").append(",")
+                }
+                now[Calendar.DAY_OF_MONTH] + 1 -> {
+                    timeText.delete(0, timeText.length)
+                    timeText.append("明天").append(",")
+                }
+            }
+        }
+        timeText.append(startDate[Calendar.MONTH] + 1).append("月")
+            .append(startDate[Calendar.DAY_OF_MONTH]).append("日")
+        if (startDate[Calendar.HOUR] < 10) {
+            timeText.append(",").append("0${startDate[Calendar.HOUR]}")
+        } else {
+            timeText.append(",").append("${startDate[Calendar.HOUR]}")
+        }
+        if (startDate[Calendar.MINUTE] < 10) {
+            timeText.append(":").append("0${startDate[Calendar.MINUTE]}")
+        } else {
+            timeText.append(":").append("${startDate[Calendar.HOUR]}")
+        }
+        if (now.time > startDate.time) {
+            textColor = Color.RED
+        }
+        return Pair(textColor, timeText.toString())
     }
 }

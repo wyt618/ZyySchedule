@@ -138,6 +138,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     }
 
 
+    @SuppressLint("WrongConstant")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         time = java.util.Calendar.getInstance()
@@ -344,6 +345,9 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
         //完成和未完成日程item长按事件
         scheduleAdapter.setOnItemLongClickListener { adapter, _, _ ->
+            if(binding.drawerLayout.isDrawerOpen(Gravity.END)) {
+                binding.drawerLayout.closeDrawer(Gravity.END)
+            }
             binding.rlTool.visibility = View.GONE
             binding.editTool.visibility = View.VISIBLE
             binding.editorLayout.visibility = View.VISIBLE
@@ -362,6 +366,9 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             true
         }
         finishScheduleAdapter.setOnItemLongClickListener { adapter, _, _ ->
+            if(binding.drawerLayout.isDrawerOpen(Gravity.END)) {
+                binding.drawerLayout.closeDrawer(Gravity.END)
+            }
             binding.rlTool.visibility = View.GONE
             binding.editTool.visibility = View.VISIBLE
             binding.editorLayout.visibility = View.VISIBLE
@@ -389,7 +396,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             }
             editSchedule.value = mFinishSchedules[position]
             editSchedule.value?.let { it ->
-                val (color, text) = editTimeText(it.startTime)
+                val (color, text) = vm.editTimeText(it.startTime)
                 binding.editDate.text = text
                 binding.editDate.setTextColor(color)
                 when (it.state) {
@@ -437,7 +444,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             }
             editSchedule.value = mSchedules[position]
             editSchedule.value?.let {
-                val (color, text) = editTimeText(it.startTime)
+                val (color, text) = vm.editTimeText(it.startTime)
                 binding.editDate.text = text
                 binding.editDate.setTextColor(color)
                 when (it.state) {
@@ -636,6 +643,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 R.id.delete_button -> gotoDeleteDialog()
                 R.id.insert_label_text -> addLabel()
                 R.id.jump_image -> jumpLabelFragment()
+                R.id.delete_image -> deleteLabelFromSchedule()
             }
         }
     }
@@ -1144,62 +1152,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
     }
 
-    @SuppressLint("SimpleDateFormat")
-    fun editTimeText(date: String?): Pair<Int, String> {
-        val weekDays = arrayOf("日", "一", "二", "三", "四", "五", "六")
-        val now = java.util.Calendar.getInstance()
-        val startDate = java.util.Calendar.getInstance()
-        val timeText = StringBuffer("")
-        val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        var textColor = Color.BLACK
-        date?.let { d ->
-            std.parse(d)?.let {
-                startDate.time = it
-            }
-        }
-        if (startDate[java.util.Calendar.YEAR] != now[java.util.Calendar.YEAR]) {
-            timeText.append(startDate[java.util.Calendar.YEAR]).append("年")
-        }
-        if (startDate[java.util.Calendar.MONTH] == now[java.util.Calendar.MONTH]) {
-            when (startDate[java.util.Calendar.WEEK_OF_MONTH]) {
-                now[java.util.Calendar.WEEK_OF_MONTH] -> timeText.append("周${weekDays[startDate[java.util.Calendar.DAY_OF_WEEK] - 1]}")
-                    .append(",")
-                now[java.util.Calendar.WEEK_OF_MONTH] - 1 -> timeText.append("上周${weekDays[startDate[java.util.Calendar.DAY_OF_WEEK] - 1]}")
-                    .append(",")
-            }
-            when (startDate[java.util.Calendar.DAY_OF_MONTH]) {
-                now[java.util.Calendar.DAY_OF_MONTH] -> {
-                    timeText.delete(0, timeText.length)
-                    timeText.append("今天").append(",")
-                }
-                now[java.util.Calendar.DAY_OF_MONTH] - 1 -> {
-                    timeText.delete(0, timeText.length)
-                    timeText.append("昨天").append(",")
-                }
-                now[java.util.Calendar.DAY_OF_MONTH] + 1 -> {
-                    timeText.delete(0, timeText.length)
-                    timeText.append("明天").append(",")
-                }
-            }
-        }
-        timeText.append(startDate[java.util.Calendar.MONTH] + 1).append("月")
-            .append(startDate[java.util.Calendar.DAY_OF_MONTH]).append("日")
-        if (startDate[java.util.Calendar.HOUR] < 10) {
-            timeText.append(",").append("0${startDate[java.util.Calendar.HOUR]}")
-        } else {
-            timeText.append(",").append("${startDate[java.util.Calendar.HOUR]}")
-        }
-        if (startDate[java.util.Calendar.MINUTE] < 10) {
-            timeText.append(":").append("0${startDate[java.util.Calendar.MINUTE]}")
-        } else {
-            timeText.append(":").append("${startDate[java.util.Calendar.HOUR]}")
-        }
-        if (now.time > startDate.time) {
-            textColor = Color.RED
-        }
-        return Pair(textColor, timeText.toString())
-    }
-
     private fun addLabel() {
         val label = Label()
         label.title = labelBinding.labelAddEdit.text.toString()
@@ -1222,6 +1174,32 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             .replace(R.id.fragment, sf, null)
             .addToBackStack(null)
             .commit()
+        labelWindow.dismiss()
+    }
+
+    private fun deleteLabelFromSchedule(){
+        editSchedule.value?.labelId = editSchedule.value?.labelId?.replace("~${editLabel.id}~","~")
+        editSchedule.value = editSchedule.value
+        //更新显示
+        if (!editSchedule.value?.labelId.equals("~0~")) {
+            val labelIds = editSchedule.value?.labelId?.split("~")?.dropWhile { labelId ->
+                labelId.isEmpty()
+            }?.toTypedArray()
+            labelIds?.let {
+                val labelList: ArrayList<Label> = arrayListOf()
+                for (i in labelIds.indices) {
+                    if (labelIds[i] != "" && labelIds[i] != "0") {
+                        vm.getLabelTitle(labelIds[i]).observe(viewLifecycleOwner) { label ->
+                            labelList.add(label)
+                            editScheduleLabelAdapter.setList(labelList)
+                        }
+                    }
+                }
+            }
+        } else {
+            editScheduleLabelAdapter.setList(null)
+        }
+        editScheduleLabelAdapter.notifyDataSetChanged()
         labelWindow.dismiss()
     }
 

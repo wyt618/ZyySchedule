@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
@@ -16,7 +15,6 @@ import com.example.zyyschedule.R
 import com.example.zyyschedule.database.Schedule
 import com.example.zyyschedule.databinding.RemindGlobalDialogBinding
 import com.google.gson.Gson
-import java.lang.Exception
 import java.util.*
 
 @Suppress("DEPRECATED_IDENTITY_EQUALS", "DEPRECATION")
