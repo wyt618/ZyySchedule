@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Color
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -26,23 +27,33 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     var addScheduleDateAgo: MutableLiveData<String> = MutableLiveData()
     var addScheduleTime: MutableLiveData<String> = MutableLiveData()
     private lateinit var dateAgo: String
-    var priorityId: MutableLiveData<Int> = MutableLiveData()
-    var priority: MutableLiveData<String> = MutableLiveData()
+
+    private val _priorityStyle = MutableLiveData(
+        PriorityBean(
+            application.getString(R.string.priority_null_text),
+            0,
+            ContextCompat.getColor(application, R.color.priority_null)
+        )
+    )
+    val priorityStyle: LiveData<PriorityBean> = _priorityStyle
+
+    fun updatePriority(priorityBean: PriorityBean) {
+        _priorityStyle.postValue(priorityBean)
+    }
+
     var label: MutableLiveData<String> = MutableLiveData()
     var remindText: MutableLiveData<String> = MutableLiveData()
     private var dataRepository: DataRepository = DataRepository(application)
     private lateinit var priorityBean: PriorityBean
     private lateinit var remindBean: RemindBean
     private lateinit var remindTime: String
-    var checkAllTag:MutableLiveData<Int> = MutableLiveData(-1)
+    var checkAllTag: MutableLiveData<Int> = MutableLiveData(-1)
 
     init {
         val calendar = Calendar.getInstance()
         day = calendar[Calendar.DAY_OF_MONTH]
         addScheduleTime.value = "00:00"
-        priority.value = application.getString(R.string.priority_null_text)
         label.value = "无标签"
-        priorityId.value = 0
         remindText.value = "无提醒"
     }
 
@@ -102,18 +113,22 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         priorityBean = PriorityBean()
         priorityBean.priorityTitle = context.getString(R.string.priority_null_text)
         priorityBean.priorityType = 0
+        priorityBean.priorityColor = ContextCompat.getColor(context, R.color.priority_null)
         ary.add(priorityBean)
         priorityBean = PriorityBean()
         priorityBean.priorityTitle = context.getString(R.string.priority_low_text)
         priorityBean.priorityType = 1
+        priorityBean.priorityColor = ContextCompat.getColor(context, R.color.priority_low)
         ary.add(priorityBean)
         priorityBean = PriorityBean()
         priorityBean.priorityTitle = context.getString(R.string.priority_medium_text)
         priorityBean.priorityType = 2
+        priorityBean.priorityColor = ContextCompat.getColor(context, R.color.priority_middle)
         ary.add(priorityBean)
         priorityBean = PriorityBean()
         priorityBean.priorityTitle = context.getString(R.string.priority_high_text)
         priorityBean.priorityType = 3
+        priorityBean.priorityColor = ContextCompat.getColor(context, R.color.priority_high)
         ary.add(priorityBean)
         return ary
     }
@@ -250,7 +265,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun updateSchedule(vararg schedule:Schedule){
+    fun updateSchedule(vararg schedule: Schedule) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 dataRepository.updateSchedule(*schedule)
@@ -259,7 +274,8 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
             }
         }
     }
-    fun insertLabel(vararg labels:Label){
+
+    fun insertLabel(vararg labels: Label) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 dataRepository.insertLabel(*labels)
@@ -269,7 +285,12 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    private fun getDateForRemindToTime(selectYear: Int, selectMonth: Int, selectDay: Int, time: String) {
+    private fun getDateForRemindToTime(
+        selectYear: Int,
+        selectMonth: Int,
+        selectDay: Int,
+        time: String
+    ) {
         remindTime = "$selectYear-$selectMonth-$selectDay $time:00"
     }
 
@@ -353,16 +374,23 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         return dataRepository.getLabelTitle(id)
     }
 
-    fun checkLabelTFI(labelText:String):LiveData<Int>{
+    fun checkLabelTFI(labelText: String): LiveData<Int> {
         return dataRepository.checkLabelTFI(labelText)
     }
-    fun fuzzyLabelTitle(labelText: String):LiveData<List<Label>>{
+
+    fun fuzzyLabelTitle(labelText: String): LiveData<List<Label>> {
         return dataRepository.fuzzyLabelTitle(labelText)
     }
 
 
     //将提醒字符转化为时间字符
-    fun remindChangeTime(remindTime:String,selectYear:Int,selectMonth:Int,selectDay:Int,textTime:String): String {
+    fun remindChangeTime(
+        remindTime: String,
+        selectYear: Int,
+        selectMonth: Int,
+        selectDay: Int,
+        textTime: String
+    ): String {
         var internalRemindTime = remindTime
         if (internalRemindTime == "无提醒") {
             internalRemindTime = ""

@@ -85,7 +85,7 @@
                 android:id="@+id/text_priority"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{vm.priority}"
+                android:text="@string/priority_null_text"
                 android:textColor="@color/priority_null"
                 android:textSize="@dimen/text_size_18sp" />
             <TextView
@@ -93,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_size_18sp"
-                android:text="@{String.valueOf(vm.priorityId)}"
+                android:text="0"
                 android:visibility="gone"
                 />
 

@@ -20,7 +20,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.CompoundButton
+import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -29,7 +31,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -38,12 +40,14 @@ import com.blankj.utilcode.util.NotificationUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemSwipeListener
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.example.zyyschedule.PriorityBean
 import com.example.zyyschedule.R
 import com.example.zyyschedule.adapter.*
 import com.example.zyyschedule.broadcastreceiver.NotificationReceiver
 import com.example.zyyschedule.database.Label
 import com.example.zyyschedule.database.Schedule
 import com.example.zyyschedule.databinding.*
+import com.example.zyyschedule.dialog.PriorityDialog
 import com.example.zyyschedule.viewmodel.CalendarViewModel
 import com.google.gson.Gson
 import com.haibin.calendarview.Calendar
@@ -57,7 +61,7 @@ import java.util.*
 
 @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
 class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalendarSelectListener {
-    private val vm: CalendarViewModel by viewModels()
+    private val vm: CalendarViewModel by activityViewModels()
     private lateinit var binding: CalendarFragmentBinding
     private lateinit var dateJumpDialog: DialogDateBinding
     private lateinit var addScheduleBinding: AddScheduleBinding
@@ -74,12 +78,10 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private lateinit var labelItemFootBinding: LabbelItemFootBinding
     private lateinit var finishScheduleAdapter: ScheduleAdapter
     private lateinit var scheduleAdapter: ScheduleAdapter
-    private lateinit var priorityListAdapter: PriorityListAdapter
     private var labelAdapter = LabelAdapter(R.layout.label_item)
     private var remindAdapter = RemindAdapter()
     private var editScheduleLabelAdapter = EditScheduleLabelAdapter()
 
-    private lateinit var priorityDialog: AlertDialog
     private lateinit var labelChoose: AlertDialog
     private lateinit var addSchedule: AlertDialog
     private lateinit var remindDialog: AlertDialog
@@ -258,6 +260,12 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             ) {
             }
         })
+        vm.priorityStyle.observe(viewLifecycleOwner) {
+            addScheduleBinding.textPriority.setTextColor(it.priorityColor)
+            addScheduleBinding.textPriority.text = it.priorityTitle
+            addScheduleBinding.priorityId.text = it.priorityType.toString()
+            addScheduleBinding.priorityButton.imageTintList = ColorStateList.valueOf(it.priorityColor)
+        }
 
         //绑定adapter
         binding.scheduleList.adapter = scheduleAdapter
@@ -714,15 +722,11 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun gotoAddSchedule() {
         addScheduleBinding.editText.text = null
-        addScheduleBinding.priorityButton.setImageResource(R.drawable.priority_flag)
-        addScheduleBinding.textPriority.setTextColor(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.priority_null
-            )
-        )
-        vm.priority.postValue(getString(R.string.priority_null_text))
-        vm.priorityId.postValue(0)
+        vm.updatePriority(PriorityBean(
+            requireContext().getString(R.string.priority_null_text),
+            0,
+            ContextCompat.getColor(requireContext(), R.color.priority_null)
+        ))
         vm.label.postValue(getString(R.string.title_not_classified))
         addScheduleBinding.scheduleLabelId.text = "~0~"
         vm.addScheduleTime.postValue("00:00")
@@ -810,35 +814,11 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         builder.create().show()
     }
 
+
     //选择优先级
     private fun gotoPriority() {
-        val layoutManager = LinearLayoutManager(context)
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
-        priorityDialogBinding.priorityList.layoutManager = layoutManager
-        val priorityData = vm.priorityListData(requireContext())
-        priorityListAdapter = PriorityListAdapter(R.layout.priority_item)
-        priorityListAdapter.setList(priorityData)
-        priorityListAdapter.getMContext(requireContext())
-        priorityListAdapter.setOnItemClickListener { _: BaseQuickAdapter<*, *>?, view: View, position: Int ->
-            val text = view.findViewById<TextView>(R.id.priority_title)
-            val flag = view.findViewById<ImageView>(R.id.priority_flag)
-            addScheduleBinding.textPriority.setTextColor(text.textColors)
-            vm.priority.value = text.text.toString()
-            vm.priorityId.value = position
-            addScheduleBinding.priorityButton.setImageDrawable(flag.drawable)
-            priorityDialog.dismiss()
-        }
-        priorityDialogBinding.priorityList.adapter = priorityListAdapter
-        if (priorityDialogBinding.root.parent != null) {
-            val vg = priorityDialogBinding.root.parent as ViewGroup
-            vg.removeView(priorityDialogBinding.root)
-        }
-        builder = AlertDialog.Builder(context)
-        builder.setTitle(R.string.priority_dialog_title)
-            .setView(priorityDialogBinding.root)
-        priorityDialog = builder.create()
-        priorityDialog.window!!.setBackgroundDrawableResource(R.drawable.dialog_background)
-        priorityDialog.show()
+        val priorityDialog = PriorityDialog()
+        priorityDialog.showNow(childFragmentManager, "priorityDialog")
     }
 
     //选择标签对话框
