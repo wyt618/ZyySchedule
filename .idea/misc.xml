@@ -83,6 +83,7 @@
         <entry key="app/src/main/res/layout/label_long_click_popup_window.xml" value="0.67" />
         <entry key="app/src/main/res/layout/priority_dialog.xml" value="0.15625" />
         <entry key="app/src/main/res/layout/priority_item.xml" value="0.15625" />
+        <entry key="app/src/main/res/layout/remind_dialog.xml" value="0.1765625" />
         <entry key="app/src/main/res/layout/remind_item.xml" value="0.22916666666666666" />
         <entry key="app/src/main/res/layout/schedule_fragment.xml" value="0.2375" />
         <entry key="app/src/main/res/layout/schedule_item.xml" value="0.22604166666666667" />

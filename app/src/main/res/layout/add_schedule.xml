@@ -126,6 +126,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/ic_baseline_add_alert_24"
                 android:layout_marginTop="@dimen/space_3dp"/>
+
             <TextView
                 android:id="@+id/remind_text"
                 android:layout_width="wrap_content"
@@ -134,8 +135,7 @@
                 android:maxEms="5"
                 android:singleLine="true"
                 android:textColor="@color/color_schedule_start"
-                android:textSize="@dimen/text_size_18sp"
-                android:text="@{vm.remindText}"/>
+                android:textSize="@dimen/text_size_18sp" />
 
             <TextView
                 android:layout_width="0dp"

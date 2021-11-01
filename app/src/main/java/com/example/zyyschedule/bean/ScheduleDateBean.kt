@@ -1,6 +1,6 @@
 package com.example.zyyschedule.bean
 
-data class ScheduleDateBean (
+data class ScheduleTimeBean (
     var hour:Int = 0 ,
     var minute:Int = 0
         )

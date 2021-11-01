@@ -13,7 +13,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.zyyschedule.bean.PriorityBean
 import com.example.zyyschedule.R
 import com.example.zyyschedule.bean.RemindBean
-import com.example.zyyschedule.bean.ScheduleDateBean
+import com.example.zyyschedule.bean.ScheduleTimeBean
 import com.example.zyyschedule.database.DataRepository
 import com.example.zyyschedule.database.Label
 import com.example.zyyschedule.database.Schedule
@@ -27,7 +27,6 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     var day = 0
     var addScheduleDateAgo: MutableLiveData<String> = MutableLiveData()
     private lateinit var dateAgo: String
-    val date: Calendar = Calendar.getInstance()
     private val _priorityStyle = MutableLiveData(
         PriorityBean(
             application.getString(R.string.priority_null_text),
@@ -41,17 +40,20 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         _priorityStyle.postValue(priorityBean)
     }
 
-    private val _scheduleDate = MutableLiveData(ScheduleDateBean())
+    private val _scheduleDate = MutableLiveData(ScheduleTimeBean())
 
-    val scheduleDate: LiveData<ScheduleDateBean> = _scheduleDate
+    val scheduleDate: LiveData<ScheduleTimeBean> = _scheduleDate
 
-    fun updateScheduleDate(date: ScheduleDateBean) {
+    fun updateScheduleDate(date: ScheduleTimeBean) {
         _scheduleDate.postValue(date)
     }
 
 
     var label: MutableLiveData<String> = MutableLiveData()
-    var remindText: MutableLiveData<String> = MutableLiveData()
+
+    var remindText: MutableLiveData<String> = MutableLiveData("无提醒")
+
+
     private var dataRepository: DataRepository = DataRepository(application)
     private lateinit var priorityBean: PriorityBean
     private lateinit var remindBean: RemindBean
@@ -62,7 +64,6 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         val calendar = Calendar.getInstance()
         day = calendar[Calendar.DAY_OF_MONTH]
         label.value = "无标签"
-        remindText.value = "无提醒"
     }
 
 

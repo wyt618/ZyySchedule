@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.example.zyyschedule.R
-import com.example.zyyschedule.bean.ScheduleDateBean
+import com.example.zyyschedule.bean.ScheduleTimeBean
 import com.example.zyyschedule.databinding.TimepickerDialogBinding
 import com.example.zyyschedule.viewmodel.CalendarViewModel
 
@@ -37,7 +37,7 @@ class TimePickerDialog : AppCompatDialogFragment() {
         super.onResume()
     }
 
-    private fun initView(){
+    fun initView(){
         binding.hourPicker.maxValue = 23
         binding.minePicker.maxValue = 59
         binding.hourPicker.minValue = 0
@@ -52,7 +52,7 @@ class TimePickerDialog : AppCompatDialogFragment() {
         }
 
         binding.okButton.setOnClickListener {
-            vm.updateScheduleDate(ScheduleDateBean(binding.hourPicker.value,binding.minePicker.value))
+            vm.updateScheduleDate(ScheduleTimeBean(binding.hourPicker.value,binding.minePicker.value))
             dialog?.dismiss()
         }
     }

@@ -39,7 +39,7 @@ open class RemindAdapter :
     }
 
 
-    fun setHeader(binding: RemindListHeadBinding) {
+    fun setCheckAll(binding: RemindListHeadBinding) {
         remindListHeadBinding = binding
     }
 }
