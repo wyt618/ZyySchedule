@@ -40,14 +40,16 @@ import com.blankj.utilcode.util.NotificationUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemSwipeListener
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
-import com.example.zyyschedule.PriorityBean
+import com.example.zyyschedule.bean.PriorityBean
 import com.example.zyyschedule.R
 import com.example.zyyschedule.adapter.*
+import com.example.zyyschedule.bean.ScheduleDateBean
 import com.example.zyyschedule.broadcastreceiver.NotificationReceiver
 import com.example.zyyschedule.database.Label
 import com.example.zyyschedule.database.Schedule
 import com.example.zyyschedule.databinding.*
 import com.example.zyyschedule.dialog.PriorityDialog
+import com.example.zyyschedule.dialog.TimePickerDialog
 import com.example.zyyschedule.viewmodel.CalendarViewModel
 import com.google.gson.Gson
 import com.haibin.calendarview.Calendar
@@ -66,7 +68,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private lateinit var dateJumpDialog: DialogDateBinding
     private lateinit var addScheduleBinding: AddScheduleBinding
     private lateinit var timePickerBinding: TimepickerDialogBinding
-    private lateinit var priorityDialogBinding: PriorityDialogBinding
     private lateinit var remindListHeadBinding: RemindListHeadBinding
     private lateinit var scheduleListHeadBinding: ScheduleListHeadBinding
     private lateinit var scheduleFootBinding: ScheduleFootBinding
@@ -116,8 +117,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             DataBindingUtil.inflate(inflater, R.layout.add_schedule, container, false)
         timePickerBinding =
             DataBindingUtil.inflate(inflater, R.layout.timepicker_dialog, container, false)
-        priorityDialogBinding =
-            DataBindingUtil.inflate(inflater, R.layout.priority_dialog, container, false)
         labelBinding =
             DataBindingUtil.inflate(inflater, R.layout.all_label_dialog, container, false)
         remindDialogBinding =
@@ -179,12 +178,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         labelItemFootBinding.insertLabelText.setOnClickListener(this)
         addScheduleBinding.vm = vm
         addScheduleBinding.lifecycleOwner = this
-        timePickerBinding.hourPicker.maxValue = 23
-        timePickerBinding.hourPicker.minValue = 0
-        timePickerBinding.hourPicker.value = 0
-        timePickerBinding.minePicker.minValue = 0
-        timePickerBinding.minePicker.maxValue = 59
-        timePickerBinding.minePicker.value = 0
         labelBinding.labelList.layoutManager = layoutManager
         labelAdapter.setLoadFragment("CalendarFragment")
         labelAdapter.addFooterView(labelItemFootBinding.root)
@@ -260,11 +253,15 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             ) {
             }
         })
+        //更新优先级
         vm.priorityStyle.observe(viewLifecycleOwner) {
             addScheduleBinding.textPriority.setTextColor(it.priorityColor)
             addScheduleBinding.textPriority.text = it.priorityTitle
             addScheduleBinding.priorityId.text = it.priorityType.toString()
             addScheduleBinding.priorityButton.imageTintList = ColorStateList.valueOf(it.priorityColor)
+        }
+        vm.scheduleDate.observe(viewLifecycleOwner){date ->
+            addScheduleBinding.textTime.text = "${processingTime(date.hour)}:${processingTime(date.minute)}"
         }
 
         //绑定adapter
@@ -722,15 +719,18 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun gotoAddSchedule() {
         addScheduleBinding.editText.text = null
-        vm.updatePriority(PriorityBean(
+        vm.updatePriority(
+            PriorityBean(
             requireContext().getString(R.string.priority_null_text),
             0,
             ContextCompat.getColor(requireContext(), R.color.priority_null)
-        ))
+        )
+        )
+        val date:java.util.Calendar = java.util.Calendar.getInstance()
         vm.label.postValue(getString(R.string.title_not_classified))
         addScheduleBinding.scheduleLabelId.text = "~0~"
-        vm.addScheduleTime.postValue("00:00")
         vm.remindText.postValue("无提醒")
+        vm.updateScheduleDate(ScheduleDateBean(date[java.util.Calendar.HOUR_OF_DAY],date[java.util.Calendar.MINUTE]))
         remindAdapter.addRemind = StringBuffer("无提醒")
         binding.fabBtn.visibility = View.GONE
         addScheduleBinding.sendSchedule.isClickable =
@@ -775,43 +775,45 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
 
     //选择时间对话框
     private fun gotoGetTime() {
-        time = java.util.Calendar.getInstance()
-        timePickerBinding.hourPicker.value = time[java.util.Calendar.HOUR_OF_DAY]
-        timePickerBinding.minePicker.value = time[java.util.Calendar.MINUTE]
-        if (timePickerBinding.root.parent != null) {
-            val vg = timePickerBinding.root.parent as ViewGroup
-            vg.removeView(timePickerBinding.root)
-        }
-        builder = AlertDialog.Builder(context)
-        builder.setView(timePickerBinding.root)
-            .setTitle(R.string.add_schedule_timePicker)
-            .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
-            .setPositiveButton(
-                R.string.dialog_button_ok
-            ) { _, _ ->
-                vm.addScheduleTime.setValue(
-                    processingTime(timePickerBinding.hourPicker.value) + ":" + processingTime(
-                        timePickerBinding.minePicker.value
-                    )
-                )
-            }
-            .setOnDismissListener {
-                if (addScheduleBinding.textTime.text.toString() == "00:00") {
-                    timePickerBinding.hourPicker.value = 0
-                    timePickerBinding.minePicker.value = 0
-                } else {
-                    timePickerBinding.hourPicker.value =
-                        Objects.requireNonNull(vm.addScheduleTime.value!!.substring(0, 2).toInt())
-                    timePickerBinding.minePicker.value =
-                        vm.addScheduleTime.value!!.substring(3).toInt()
-                }
-                vm.addScheduleTime.setValue(
-                    processingTime(timePickerBinding.hourPicker.value) + ":" + processingTime(
-                        timePickerBinding.minePicker.value
-                    )
-                )
-            }
-        builder.create().show()
+//        time = java.util.Calendar.getInstance()
+//        timePickerBinding.hourPicker.value = time[java.util.Calendar.HOUR_OF_DAY]
+//        timePickerBinding.minePicker.value = time[java.util.Calendar.MINUTE]
+//        if (timePickerBinding.root.parent != null) {
+//            val vg = timePickerBinding.root.parent as ViewGroup
+//            vg.removeView(timePickerBinding.root)
+//        }
+//        builder = AlertDialog.Builder(context)
+//        builder.setView(timePickerBinding.root)
+//            .setTitle(R.string.add_schedule_timePicker)
+//            .setNeutralButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.dismiss() }
+//            .setPositiveButton(
+//                R.string.dialog_button_ok
+//            ) { _, _ ->
+//                vm.addScheduleTime.setValue(
+//                    processingTime(timePickerBinding.hourPicker.value) + ":" + processingTime(
+//                        timePickerBinding.minePicker.value
+//                    )
+//                )
+//            }
+//            .setOnDismissListener {
+//                if (addScheduleBinding.textTime.text.toString() == "00:00") {
+//                    timePickerBinding.hourPicker.value = 0
+//                    timePickerBinding.minePicker.value = 0
+//                } else {
+//                    timePickerBinding.hourPicker.value =
+//                        Objects.requireNonNull(vm.addScheduleTime.value!!.substring(0, 2).toInt())
+//                    timePickerBinding.minePicker.value =
+//                        vm.addScheduleTime.value!!.substring(3).toInt()
+//                }
+//                vm.addScheduleTime.setValue(
+//                    processingTime(timePickerBinding.hourPicker.value) + ":" + processingTime(
+//                        timePickerBinding.minePicker.value
+//                    )
+//                )
+//            }
+//        builder.create().show()
+        val timePickerDialog = TimePickerDialog()
+        timePickerDialog.showNow(childFragmentManager,"timePickerDialog")
     }
 
 
@@ -892,7 +894,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         val startTime =
             selectYear.toString() + "-" + processingTime(selectMonth) + "-" + processingTime(
                 selectDay
-            ) + " " + vm.addScheduleTime.value + ":00"
+            ) + " " + addScheduleBinding.textTime.text + ":00"
         schedule.startTime = startTime
         schedule.endTime = null
         schedule.remind = vm.remindChangeTime(

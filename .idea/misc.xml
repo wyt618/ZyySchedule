@@ -88,6 +88,7 @@
         <entry key="app/src/main/res/layout/schedule_item.xml" value="0.22604166666666667" />
         <entry key="app/src/main/res/layout/schedule_item_local.xml" value="0.26197916666666665" />
         <entry key="app/src/main/res/layout/setting_fragment.xml" value="0.29322916666666665" />
+        <entry key="app/src/main/res/layout/timepicker_dialog.xml" value="0.13851351351351351" />
         <entry key="app/src/main/res/menu/left_menu.xml" value="0.23125" />
       </map>
     </option>

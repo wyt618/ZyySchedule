@@ -1,4 +1,4 @@
-package com.example.zyyschedule
+package com.example.zyyschedule.bean
 
 data class PriorityBean(
         var priorityTitle: String = "",

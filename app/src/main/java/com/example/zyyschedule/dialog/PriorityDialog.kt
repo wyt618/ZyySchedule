@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
-import com.example.zyyschedule.PriorityBean
+import com.example.zyyschedule.bean.PriorityBean
 import com.example.zyyschedule.R
 import com.example.zyyschedule.adapter.PriorityListAdapter
 import com.example.zyyschedule.databinding.PriorityDialogBinding
@@ -57,7 +57,7 @@ class PriorityDialog : AppCompatDialogFragment() {
     }
 
     override fun onResume() {
-        dialog?.window?.setLayout(600, 300)
+        dialog?.window?.setLayout(600, 350)
         super.onResume()
     }
 

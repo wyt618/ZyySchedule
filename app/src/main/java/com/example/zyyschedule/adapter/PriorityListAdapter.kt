@@ -5,7 +5,7 @@ import android.content.res.ColorStateList
 import androidx.appcompat.widget.AppCompatImageView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
-import com.example.zyyschedule.PriorityBean
+import com.example.zyyschedule.bean.PriorityBean
 import com.example.zyyschedule.R
 
 class PriorityListAdapter :

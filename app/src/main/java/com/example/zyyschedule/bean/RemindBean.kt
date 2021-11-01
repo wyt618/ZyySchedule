@@ -1,4 +1,4 @@
-package com.example.zyyschedule
+package com.example.zyyschedule.bean
 
 data class RemindBean(
         var remindTitle: String = "",

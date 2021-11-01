@@ -1,12 +1,11 @@
 package com.example.zyyschedule.adapter
 
-import android.annotation.SuppressLint
 import android.widget.CompoundButton
 import androidx.appcompat.widget.AppCompatCheckBox
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.example.zyyschedule.R
-import com.example.zyyschedule.RemindBean
+import com.example.zyyschedule.bean.RemindBean
 import com.example.zyyschedule.databinding.RemindListHeadBinding
 
 open class RemindAdapter :

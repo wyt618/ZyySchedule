@@ -70,7 +70,6 @@
                 android:id="@+id/textTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{vm.addScheduleTime}"
                 android:textColor="@color/color_schedule_start"
                 android:textSize="@dimen/text_size_18sp" />
 

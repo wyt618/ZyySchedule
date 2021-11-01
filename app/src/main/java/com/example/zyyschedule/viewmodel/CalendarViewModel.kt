@@ -10,9 +10,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.zyyschedule.PriorityBean
+import com.example.zyyschedule.bean.PriorityBean
 import com.example.zyyschedule.R
-import com.example.zyyschedule.RemindBean
+import com.example.zyyschedule.bean.RemindBean
+import com.example.zyyschedule.bean.ScheduleDateBean
 import com.example.zyyschedule.database.DataRepository
 import com.example.zyyschedule.database.Label
 import com.example.zyyschedule.database.Schedule
@@ -25,9 +26,8 @@ import java.util.*
 class CalendarViewModel(application: Application) : AndroidViewModel(application) {
     var day = 0
     var addScheduleDateAgo: MutableLiveData<String> = MutableLiveData()
-    var addScheduleTime: MutableLiveData<String> = MutableLiveData()
     private lateinit var dateAgo: String
-
+    val date: Calendar = Calendar.getInstance()
     private val _priorityStyle = MutableLiveData(
         PriorityBean(
             application.getString(R.string.priority_null_text),
@@ -41,6 +41,15 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         _priorityStyle.postValue(priorityBean)
     }
 
+    private val _scheduleDate = MutableLiveData(ScheduleDateBean())
+
+    val scheduleDate: LiveData<ScheduleDateBean> = _scheduleDate
+
+    fun updateScheduleDate(date: ScheduleDateBean) {
+        _scheduleDate.postValue(date)
+    }
+
+
     var label: MutableLiveData<String> = MutableLiveData()
     var remindText: MutableLiveData<String> = MutableLiveData()
     private var dataRepository: DataRepository = DataRepository(application)
@@ -52,7 +61,6 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     init {
         val calendar = Calendar.getInstance()
         day = calendar[Calendar.DAY_OF_MONTH]
-        addScheduleTime.value = "00:00"
         label.value = "无标签"
         remindText.value = "无提醒"
     }
