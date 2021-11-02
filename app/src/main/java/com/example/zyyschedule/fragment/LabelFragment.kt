@@ -204,21 +204,13 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
                 for (i in mSchedules.indices) {
                     if (mSchedules[i].isEditorChecked) {
                         vm.deleteSchedule(mSchedules[i])
-                        mSchedules[i].labelId?.let { labelId ->
-                            vm.getLabelTitle(labelId).observe(this) {
-                                cancelNotification(mSchedules[i], it.title)
-                            }
-                        }
+                        cancelNotification(mSchedules[i])
                     }
                 }
                 for (i in mFinishSchedules.indices) {
                     if (mFinishSchedules[i].isEditorChecked) {
                         vm.deleteSchedule(mFinishSchedules[i])
-                        mFinishSchedules[i].labelId?.let { labelId ->
-                            vm.getLabelTitle(labelId).observe(this) {
-                                cancelNotification(mFinishSchedules[i], it.title)
-                            }
-                        }
+                        cancelNotification(mFinishSchedules[i])
                     }
                 }
                 dialog.dismiss()
@@ -313,8 +305,9 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
         }
     }
 
+    //删除时取消提醒的方法
     @SuppressLint("UnspecifiedImmutableFlag", "SimpleDateFormat")
-    private fun cancelNotification(schedule: Schedule, labelTitle: String?) {
+    private fun cancelNotification(schedule: Schedule) {
         val remind = schedule.remind?.split(",")?.dropLastWhile { it.isEmpty() }?.toTypedArray()
         val std = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         var date = Date()
@@ -332,7 +325,6 @@ class LabelFragment(labelId: String) : Fragment(), View.OnClickListener {
                 intent.action = "Notification_Receiver"
                 intent.putExtra("remindSchedule", gson.toJson(schedule))
                 intent.putExtra("PendingIntentCode", schedule.id?.plus(i * 1000))
-                intent.putExtra("LabelTitle", labelTitle)
                 val sender = schedule.id?.plus(i * 1000)?.let {
                     PendingIntent.getBroadcast(
                         requireContext(), it, intent,

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.graphics.Color
+import android.hardware.biometrics.BiometricManager
 import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
@@ -21,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class CalendarViewModel(application: Application) : AndroidViewModel(application) {
@@ -48,8 +50,14 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         _scheduleDate.postValue(date)
     }
 
+    private val _labelText = MutableLiveData(listOf("无标签","~0~"))
 
-    var label: MutableLiveData<String> = MutableLiveData()
+    val labelText:LiveData<List<String>> = _labelText
+
+    fun updateLabelText(label:List<String>){
+        _labelText.postValue(label)
+    }
+
 
     var remindText: MutableLiveData<String> = MutableLiveData("无提醒")
 
@@ -63,7 +71,6 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     init {
         val calendar = Calendar.getInstance()
         day = calendar[Calendar.DAY_OF_MONTH]
-        label.value = "无标签"
     }
 
 

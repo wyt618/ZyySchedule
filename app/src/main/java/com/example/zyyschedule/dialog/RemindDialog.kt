@@ -1,10 +1,6 @@
 package com.example.zyyschedule.dialog
 
-import android.app.AlertDialog
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +9,6 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.blankj.utilcode.util.NotificationUtils
 import com.example.zyyschedule.R
 import com.example.zyyschedule.adapter.RemindAdapter
 import com.example.zyyschedule.databinding.RemindDialogBinding
@@ -75,7 +70,6 @@ class RemindDialog: AppCompatDialogFragment() {
         binding.okButton.setOnClickListener {
             vm.remindText.postValue(remindAdapter.addRemind.toString())
             dialog?.dismiss()
-            getNotification()
         }
 
     }
@@ -85,24 +79,7 @@ class RemindDialog: AppCompatDialogFragment() {
         dialog?.window?.setLayout(500,700)
     }
 
-    //当通知未开启时弹出框
-    private fun getNotification() {
-        if (!NotificationUtils.areNotificationsEnabled()) {
-            val builder = AlertDialog.Builder(context)
-                .setCancelable(true)
-                .setTitle(R.string.notify_authority_dialog_title)
-                .setMessage(R.string.notify_authority_dialog_message)
-                .setNegativeButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.cancel() }
-                .setPositiveButton(R.string.notify_authority_dialog_ok_button) { dialog, _ ->
-                    dialog.cancel()
-                    val intent = Intent()
-                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                    intent.data = Uri.parse("package:" + requireActivity().packageName)
-                    startActivity(intent)
-                }
-            builder.create().show()
-        }
-    }
+
 
 
 }

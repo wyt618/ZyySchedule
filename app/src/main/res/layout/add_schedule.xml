@@ -111,8 +111,7 @@
                 android:maxEms="5"
                 android:singleLine="true"
                 android:textColor="@color/color_schedule_start"
-                android:textSize="@dimen/text_size_18sp"
-                android:text="@{vm.label}"/>
+                android:textSize="@dimen/text_size_18sp" />
             <TextView
                 android:id="@+id/schedule_label_id"
                 android:layout_width="wrap_content"

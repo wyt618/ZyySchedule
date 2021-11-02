@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/color_grey">
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/color_schedule_start">
     <!--显示默认的 drawable-->
     <item android:drawable="@color/calendar_background" />
 </ripple>

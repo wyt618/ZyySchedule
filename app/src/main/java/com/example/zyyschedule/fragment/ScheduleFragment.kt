@@ -30,10 +30,10 @@ import com.google.gson.Gson
 import com.jeremyliao.liveeventbus.LiveEventBus
 
 @SuppressLint("NotifyDataSetChanged")
-class ScheduleFragment() : Fragment(), View.OnClickListener {
+class ScheduleFragment : Fragment(), View.OnClickListener {
     private lateinit var binding: ScheduleFragmentBinding
     private val vm: ScheduleViewModel by viewModels()
-    private val labelAdapter: LabelAdapter = LabelAdapter(R.layout.label_item)
+    private val labelAdapter: LabelAdapter = LabelAdapter()
     private lateinit var labelItemEditorButton: View
     private var jumpLabel:MutableLiveData<Label> = MutableLiveData()
 

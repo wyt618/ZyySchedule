@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.NumberPicker
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -37,7 +38,9 @@ class TimePickerDialog : AppCompatDialogFragment() {
         super.onResume()
     }
 
-    fun initView(){
+    private fun initView(){
+        binding.hourPicker.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
+        binding.minePicker.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
         binding.hourPicker.maxValue = 23
         binding.minePicker.maxValue = 59
         binding.hourPicker.minValue = 0

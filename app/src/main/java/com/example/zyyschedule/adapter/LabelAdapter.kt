@@ -11,7 +11,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.example.zyyschedule.R
 import com.example.zyyschedule.database.Label
 
-class LabelAdapter(layoutResId: Int) : BaseQuickAdapter<Label, BaseViewHolder>(layoutResId) {
+class LabelAdapter : BaseQuickAdapter<Label, BaseViewHolder>(R.layout.label_item) {
     var labelTitles: String = "无标签"
     var labelIds: String = "~0~"
     private lateinit var loadFragment: String

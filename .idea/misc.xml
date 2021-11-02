@@ -73,6 +73,7 @@
         <entry key="app/src/main/res/layout/add_schedule.xml" value="0.3482789855072464" />
         <entry key="app/src/main/res/layout/all_label_dialog.xml" value="0.23072916666666668" />
         <entry key="app/src/main/res/layout/calendar_fragment.xml" value="0.24270833333333333" />
+        <entry key="app/src/main/res/layout/colorpicker_dialog.xml" value="0.17916666666666667" />
         <entry key="app/src/main/res/layout/dialog_date.xml" value="0.22604166666666667" />
         <entry key="app/src/main/res/layout/fragment_label.xml" value="0.15625" />
         <entry key="app/src/main/res/layout/fragment_local.xml" value="0.14739583333333334" />
@@ -80,6 +81,7 @@
         <entry key="app/src/main/res/layout/labbel_item_foot.xml" value="0.2375" />
         <entry key="app/src/main/res/layout/label_dialog_head.xml" value="0.3482789855072464" />
         <entry key="app/src/main/res/layout/label_item.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/label_item_editor_button.xml" value="0.17916666666666667" />
         <entry key="app/src/main/res/layout/label_long_click_popup_window.xml" value="0.67" />
         <entry key="app/src/main/res/layout/priority_dialog.xml" value="0.15625" />
         <entry key="app/src/main/res/layout/priority_item.xml" value="0.15625" />

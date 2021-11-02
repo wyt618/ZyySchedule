@@ -7,13 +7,14 @@ import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Context.ALARM_SERVICE
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
@@ -34,12 +35,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.ConvertUtils.dp2px
+import com.blankj.utilcode.util.NotificationUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemSwipeListener
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.example.zyyschedule.R
 import com.example.zyyschedule.adapter.EditScheduleLabelAdapter
-import com.example.zyyschedule.adapter.LabelAdapter
 import com.example.zyyschedule.adapter.ScheduleAdapter
 import com.example.zyyschedule.bean.PriorityBean
 import com.example.zyyschedule.bean.ScheduleTimeBean
@@ -47,6 +48,7 @@ import com.example.zyyschedule.broadcastreceiver.NotificationReceiver
 import com.example.zyyschedule.database.Label
 import com.example.zyyschedule.database.Schedule
 import com.example.zyyschedule.databinding.*
+import com.example.zyyschedule.dialog.LabelDialog
 import com.example.zyyschedule.dialog.PriorityDialog
 import com.example.zyyschedule.dialog.RemindDialog
 import com.example.zyyschedule.dialog.TimePickerDialog
@@ -71,15 +73,10 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
     private lateinit var scheduleFootBinding: ScheduleFootBinding
     private lateinit var scheduleListFinishHeadBinding: ScheduleListFinishHeadBinding
     private lateinit var finishScheduleFootBinding: FinishScheduleFootBinding
-    private lateinit var labelBinding: AllLabelDialogBinding
     private lateinit var labelLongClickBinding: LabelLongClickPopupWindowBinding
-    private lateinit var labelItemFootBinding: LabbelItemFootBinding
     private lateinit var finishScheduleAdapter: ScheduleAdapter
     private lateinit var scheduleAdapter: ScheduleAdapter
-    private var labelAdapter = LabelAdapter(R.layout.label_item)
     private var editScheduleLabelAdapter = EditScheduleLabelAdapter()
-
-    private lateinit var labelChoose: AlertDialog
     private lateinit var addSchedule: AlertDialog
     private lateinit var builder: AlertDialog.Builder
 
@@ -110,8 +107,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         dateJumpDialog = DataBindingUtil.inflate(inflater, R.layout.dialog_date, container, false)
         addScheduleBinding =
             DataBindingUtil.inflate(inflater, R.layout.add_schedule, container, false)
-        labelBinding =
-            DataBindingUtil.inflate(inflater, R.layout.all_label_dialog, container, false)
         scheduleListHeadBinding =
             DataBindingUtil.inflate(inflater, R.layout.schedule_list_head, container, false)
         scheduleFootBinding =
@@ -127,8 +122,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 container,
                 false
             )
-        labelItemFootBinding =
-            DataBindingUtil.inflate(inflater, R.layout.labbel_item_foot, container, false)
         return binding.root
     }
 
@@ -140,8 +133,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         selectYear = binding.calendarView.curYear
         selectMonth = binding.calendarView.curMonth
         selectDay = binding.calendarView.curDay
-        val layoutManager = LinearLayoutManager(context)
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
         binding.flCurrent.setOnClickListener(this)
         binding.tvYear.text = binding.calendarView.curYear.toString()
         binding.tvMonthDay.text =
@@ -164,13 +155,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         addScheduleBinding.remindButton.setOnClickListener(this)
         addScheduleBinding.remindText.setOnClickListener(this)
         addScheduleBinding.sendSchedule.setOnClickListener(this)
-        labelItemFootBinding.insertLabelText.setOnClickListener(this)
         addScheduleBinding.vm = vm
         addScheduleBinding.lifecycleOwner = this
-        labelBinding.labelList.layoutManager = layoutManager
-        labelAdapter.setLoadFragment("CalendarFragment")
-        labelAdapter.addFooterView(labelItemFootBinding.root)
-        labelBinding.labelList.adapter = labelAdapter
         scheduleListHeadBinding.scheduleListHead.text =
             selectMonth.toString() + "月" + selectDay + "日"
         val scheduleLayoutManager = LinearLayoutManager(context)
@@ -241,17 +227,28 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
             addScheduleBinding.priorityId.text = it.priorityType.toString()
             addScheduleBinding.priorityButton.imageTintList = ColorStateList.valueOf(it.priorityColor)
         }
-
+        //更新时间
         vm.scheduleDate.observe(viewLifecycleOwner){date ->
             addScheduleBinding.textTime.text = "${processingTime(date.hour)}:${processingTime(date.minute)}"
         }
-
+        //更新提醒
         vm.remindText.observe(viewLifecycleOwner){ remind ->
             if(remind.equals("无提醒")){
                 addScheduleBinding.remindText.text = remind
             }else{
                 addScheduleBinding.remindText.text = remind.substring(4)
             }
+        }
+        //更新标签
+        vm.labelText.observe(viewLifecycleOwner){
+            if(it[0] == "无标签") {
+                addScheduleBinding.scheduleLabel.text = it[0]
+                addScheduleBinding.scheduleLabelId.text = it[1]
+            }else{
+                addScheduleBinding.scheduleLabel.text = it[0].replace("无标签,","")
+                addScheduleBinding.scheduleLabelId.text = it[1]
+            }
+
         }
 
         //绑定adapter
@@ -285,13 +282,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 vm.checkAllTag.value = number
             }
         })
-        //对标签数据进行监听，刷新标签选择对话框，对话框点击事件
-        vm.getAllLabel().observe(viewLifecycleOwner, { labels: List<Label>? ->
-            labelAdapter.setList(labels)
-            if (labels != null) {
-                labelAdapter.notifyItemChanged(labels.size)
-            }
-        })
+
         //全选按钮的显示
         vm.checkAllTag.observe(viewLifecycleOwner, {
             if (it != -1) {
@@ -580,38 +571,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
 
             override fun onDrawerStateChanged(newState: Int) {}
         })
-        //对弹出选择标签的对话框editText进行监听
-        labelBinding.labelAddEdit.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-            override fun afterTextChanged(text: Editable?) {
-                val labelText: MutableLiveData<String> = MutableLiveData(text.toString())
-                labelText.observe(viewLifecycleOwner) {
-                    if (it.trim().isEmpty()) {
-                        vm.getAllLabel().observe(viewLifecycleOwner) { labelList ->
-                            labelAdapter.setList(labelList)
-                            labelAdapter.notifyDataSetChanged()
-                        }
-                        labelItemFootBinding.root.visibility = View.GONE
-                    } else {
-                        vm.checkLabelTFI(it).observe(viewLifecycleOwner) { count ->
-                            if (count > 0) {
-                                labelItemFootBinding.root.visibility = View.GONE
-                            } else {
-                                labelItemFootBinding.root.visibility = View.VISIBLE
-                                labelItemFootBinding.insertLabelText.text = "创建\"${it}\""
-                            }
-                        }
-                        vm.fuzzyLabelTitle("%$it%").observe(viewLifecycleOwner) { labels ->
-                            labelAdapter.setList(labels)
-                            labelAdapter.notifyDataSetChanged()
-                        }
-                    }
-                }
-            }
-        })
         val editViewLabelManager = FlowLayoutManager()
         binding.editLabel.addItemDecoration(SpaceItemDecoration(dp2px(10F)))
         binding.editLabel.layoutManager = editViewLabelManager
@@ -644,7 +604,6 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
                 R.id.send_schedule -> addSchedule()
                 R.id.go_back -> exitEditor()
                 R.id.delete_button -> gotoDeleteDialog()
-                R.id.insert_label_text -> addLabel()
                 R.id.jump_image -> jumpLabelFragment()
                 R.id.delete_image -> deleteLabelFromSchedule()
                 R.id.check_all -> checkAll()
@@ -704,9 +663,8 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         )
         )
         val date:java.util.Calendar = java.util.Calendar.getInstance()
-        vm.label.postValue(getString(R.string.title_not_classified))
-        addScheduleBinding.scheduleLabelId.text = "~0~"
         vm.remindText.postValue("无提醒")
+        vm.updateLabelText(listOf("无标签","~0~"))
         vm.updateScheduleDate(ScheduleTimeBean(date[java.util.Calendar.HOUR_OF_DAY],date[java.util.Calendar.MINUTE]))
         binding.fabBtn.visibility = View.GONE
         addScheduleBinding.sendSchedule.isClickable =
@@ -764,36 +722,18 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
 
     //选择标签对话框
     private fun gotoChooseLabel() {
-        if (labelBinding.root.parent != null) {
-            val vg = labelBinding.root.parent as ViewGroup
-            vg.removeView(labelBinding.root)
-        }
-        builder = AlertDialog.Builder(context)
-        builder.setTitle(R.string.label_dialog_title)
-            .setView(labelBinding.root)
-            .setPositiveButton(R.string.dialog_button_ok) { dialog: DialogInterface, _: Int ->
-                addScheduleBinding.scheduleLabelId.text = labelAdapter.labelIds
-                val labelText = labelAdapter.labelTitles.replace("无标签,", "")
-                addScheduleBinding.scheduleLabel.text = labelText
-                dialog.dismiss()
-            }
-            .setNeutralButton(R.string.dialog_button_cancel) { dialog: DialogInterface, _: Int ->
-                dialog.dismiss()
-            }
-        labelChoose = builder.create()
-        labelChoose.window!!.setBackgroundDrawableResource(R.drawable.dialog_background)
-        labelChoose.show()
-        val d = requireContext().resources!!.displayMetrics
-        val p = labelChoose.window!!.attributes
-        p.width = d.widthPixels / 3
-        p.height = d.heightPixels / 2
-        labelChoose.window!!.attributes = p
+    val labelDialog = LabelDialog()
+        labelDialog.showNow(childFragmentManager,"labelDialog")
     }
 
     //选择提醒
     private fun gotoAddRemind() {
-        val remindDialog = RemindDialog()
-        remindDialog.showNow(childFragmentManager,"remindDialog")
+        if (!NotificationUtils.areNotificationsEnabled()) {
+            getNotification()
+        }else {
+            val remindDialog = RemindDialog()
+            remindDialog.showNow(childFragmentManager, "remindDialog")
+        }
     }
 
     //新增日程到数据库
@@ -1048,12 +988,7 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         }
     }
 
-    private fun addLabel() {
-        val label = Label()
-        label.title = labelBinding.labelAddEdit.text.toString()
-        label.color = -0x98641c
-        vm.insertLabel(label)
-    }
+
 
     private fun jumpLabelFragment() {
         LiveEventBus
@@ -1127,6 +1062,24 @@ class CalendarFragment : Fragment(), View.OnClickListener, CalendarView.OnCalend
         finishScheduleAdapter.pitchOnNumber.value = 0
         scheduleAdapter.notifyDataSetChanged()
         finishScheduleAdapter.notifyDataSetChanged()
+    }
+
+
+    //当通知未开启时弹出框
+    private fun getNotification() {
+            val builder = AlertDialog.Builder(context)
+                .setCancelable(true)
+                .setTitle(R.string.notify_authority_dialog_title)
+                .setMessage(R.string.notify_authority_dialog_message)
+                .setNegativeButton(R.string.dialog_button_cancel) { dialog, _ -> dialog.cancel() }
+                .setPositiveButton(R.string.notify_authority_dialog_ok_button) { dialog, _ ->
+                    dialog.cancel()
+                    val intent = Intent()
+                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                    intent.data = Uri.parse("package:" + requireActivity().packageName)
+                    startActivity(intent)
+                }
+            builder.create().show()
     }
 }
 
