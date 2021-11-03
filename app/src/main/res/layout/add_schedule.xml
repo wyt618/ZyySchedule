@@ -14,22 +14,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/space_6dp"
-        android:paddingTop="@dimen/space_20dp"
         android:paddingLeft="@dimen/space_6dp"
-        android:paddingRight="@dimen/space_6dp">
+        android:paddingTop="@dimen/space_20dp"
+        android:paddingRight="@dimen/space_6dp"
+        android:paddingBottom="@dimen/space_6dp">
+
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.001"
-            android:layout_marginBottom ="8dp">
+            app:layout_constraintVertical_bias="0.001">
 
             <EditText
                 android:id="@+id/edit_text"
@@ -63,8 +64,8 @@
                 android:id="@+id/add_schedule_selectTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_baseline_query_builder_24"
-                android:layout_marginTop="@dimen/space_3dp"/>
+                android:layout_marginTop="@dimen/space_3dp"
+                android:background="@drawable/ic_baseline_query_builder_24" />
 
             <TextView
                 android:id="@+id/textTime"
@@ -77,8 +78,8 @@
                 android:id="@+id/priority_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/priority_flag"
-                android:layout_marginTop="@dimen/space_3dp"/>
+                android:layout_marginTop="@dimen/space_3dp"
+                app:srcCompat="@drawable/priority_flag" />
 
             <TextView
                 android:id="@+id/text_priority"
@@ -87,21 +88,21 @@
                 android:text="@string/priority_null_text"
                 android:textColor="@color/priority_null"
                 android:textSize="@dimen/text_size_18sp" />
+
             <TextView
                 android:id="@+id/priority_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_18sp"
                 android:text="0"
-                android:visibility="gone"
-                />
+                android:textSize="@dimen/text_size_18sp"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/label_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_baseline_local_offer_24"
-                android:layout_marginTop="@dimen/space_3dp"/>
+                android:layout_marginTop="@dimen/space_3dp"
+                android:background="@drawable/ic_baseline_local_offer_24" />
 
             <TextView
                 android:id="@+id/schedule_label"
@@ -112,19 +113,19 @@
                 android:singleLine="true"
                 android:textColor="@color/color_schedule_start"
                 android:textSize="@dimen/text_size_18sp" />
+
             <TextView
                 android:id="@+id/schedule_label_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/remind_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_baseline_add_alert_24"
-                android:layout_marginTop="@dimen/space_3dp"/>
+                android:layout_marginTop="@dimen/space_3dp"
+                android:background="@drawable/ic_baseline_add_alert_24" />
 
             <TextView
                 android:id="@+id/remind_text"
@@ -146,8 +147,7 @@
                 android:layout_width="@dimen/button_size_40dp"
                 android:layout_height="@dimen/button_size_40dp"
                 android:layout_gravity="end"
-                android:background="@drawable/ic_baseline_send_24"
-                />
+                android:background="@drawable/ic_baseline_send_24" />
 
         </LinearLayout>
 

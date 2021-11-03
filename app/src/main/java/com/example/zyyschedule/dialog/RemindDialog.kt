@@ -1,6 +1,10 @@
 package com.example.zyyschedule.dialog
 
+import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,17 +13,18 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.NotificationUtils
 import com.example.zyyschedule.R
 import com.example.zyyschedule.adapter.RemindAdapter
 import com.example.zyyschedule.databinding.RemindDialogBinding
 import com.example.zyyschedule.databinding.RemindListHeadBinding
 import com.example.zyyschedule.viewmodel.CalendarViewModel
 
-class RemindDialog: AppCompatDialogFragment() {
+class RemindDialog : AppCompatDialogFragment() {
     private lateinit var binding: RemindDialogBinding
     private lateinit var headBinding: RemindListHeadBinding
     private val remindAdapter = RemindAdapter()
-    private val vm:CalendarViewModel by activityViewModels()
+    private val vm: CalendarViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,9 +33,9 @@ class RemindDialog: AppCompatDialogFragment() {
     ): View {
         dialog?.setTitle(R.string.remind_dialog_title)
         dialog?.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
-        binding = DataBindingUtil.inflate(inflater, R.layout.remind_dialog,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.remind_dialog, container, false)
         binding.lifecycleOwner = this
-        headBinding = DataBindingUtil.inflate(inflater,R.layout.remind_list_head,container,false)
+        headBinding = DataBindingUtil.inflate(inflater, R.layout.remind_list_head, container, false)
         headBinding.lifecycleOwner = this
         return binding.root
     }
@@ -40,7 +45,7 @@ class RemindDialog: AppCompatDialogFragment() {
         initView()
     }
 
-    private fun initView(){
+    private fun initView() {
         val remindLayoutManager = LinearLayoutManager(context)
         remindLayoutManager.orientation = LinearLayoutManager.VERTICAL
         binding.remindChooseList.layoutManager = remindLayoutManager
@@ -76,10 +81,7 @@ class RemindDialog: AppCompatDialogFragment() {
 
     override fun onResume() {
         super.onResume()
-        dialog?.window?.setLayout(500,700)
+        dialog?.window?.setLayout(500, 700)
     }
-
-
-
 
 }

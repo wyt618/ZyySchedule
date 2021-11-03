@@ -20,9 +20,9 @@ import com.example.zyyschedule.databinding.LabbelItemFootBinding
 import com.example.zyyschedule.viewmodel.CalendarViewModel
 
 
-class LabelDialog : AppCompatDialogFragment(),View.OnClickListener {
+class LabelDialog : AppCompatDialogFragment(), View.OnClickListener {
     private lateinit var binding: AllLabelDialogBinding
-    private val vm :CalendarViewModel by activityViewModels()
+    private val vm: CalendarViewModel by activityViewModels()
     private var labelAdapter = LabelAdapter()
     private lateinit var footBinding: LabbelItemFootBinding
     override fun onCreateView(
@@ -32,9 +32,9 @@ class LabelDialog : AppCompatDialogFragment(),View.OnClickListener {
     ): View {
         dialog?.setTitle(R.string.label_dialog_title)
         dialog?.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
-        binding = DataBindingUtil.inflate(inflater, R.layout.all_label_dialog,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.all_label_dialog, container, false)
         binding.lifecycleOwner = this
-        footBinding = DataBindingUtil.inflate(inflater,R.layout.labbel_item_foot,container,false)
+        footBinding = DataBindingUtil.inflate(inflater, R.layout.labbel_item_foot, container, false)
         footBinding.lifecycleOwner = this
         return binding.root
     }
@@ -53,7 +53,7 @@ class LabelDialog : AppCompatDialogFragment(),View.OnClickListener {
         initView()
     }
 
-    private fun initView(){
+    private fun initView() {
         binding.okButton.setOnClickListener(this)
         binding.cancelButton.setOnClickListener(this)
         footBinding.insertLabelText.setOnClickListener(this)
@@ -100,21 +100,22 @@ class LabelDialog : AppCompatDialogFragment(),View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        dialog?.window?.setLayout(600,600)
+        dialog?.window?.setLayout(600, 600)
     }
 
     override fun onClick(v: View?) {
-       v?.let {
-           when(it.id){
-               R.id.to_cancel_all -> dialog?.dismiss()
-               R.id.ok_button -> {
-                   vm.updateLabelText(listOf(labelAdapter.labelTitles,labelAdapter.labelIds))
-                   dialog?.dismiss()
-               }
-               R.id.insert_label_text -> addLabel()
-               else -> {}
-           }
-       }
+        v?.let {
+            when (it.id) {
+                R.id.cancel_button -> dialog?.dismiss()
+                R.id.ok_button -> {
+                    vm.updateLabelText(listOf(labelAdapter.labelTitles, labelAdapter.labelIds))
+                    dialog?.dismiss()
+                }
+                R.id.insert_label_text -> addLabel()
+                else -> {
+                }
+            }
+        }
     }
 
     private fun addLabel() {
@@ -123,7 +124,5 @@ class LabelDialog : AppCompatDialogFragment(),View.OnClickListener {
         label.color = -0x98641c
         vm.insertLabel(label)
     }
-
-
 
 }

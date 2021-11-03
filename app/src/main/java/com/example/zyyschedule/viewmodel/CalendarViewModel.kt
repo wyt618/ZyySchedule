@@ -4,15 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.graphics.Color
-import android.hardware.biometrics.BiometricManager
 import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.zyyschedule.bean.PriorityBean
 import com.example.zyyschedule.R
+import com.example.zyyschedule.bean.PriorityBean
 import com.example.zyyschedule.bean.RemindBean
 import com.example.zyyschedule.bean.ScheduleTimeBean
 import com.example.zyyschedule.database.DataRepository
@@ -50,11 +49,11 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         _scheduleDate.postValue(date)
     }
 
-    private val _labelText = MutableLiveData(listOf("无标签","~0~"))
+    private val _labelText = MutableLiveData(listOf("无标签", "~0~"))
 
-    val labelText:LiveData<List<String>> = _labelText
+    val labelText: LiveData<List<String>> = _labelText
 
-    fun updateLabelText(label:List<String>){
+    fun updateLabelText(label: List<String>) {
         _labelText.postValue(label)
     }
 
