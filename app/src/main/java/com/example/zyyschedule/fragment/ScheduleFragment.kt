@@ -89,6 +89,8 @@ class ScheduleFragment : Fragment(), View.OnClickListener {
                 binding.scheduleTitleBarTitle.text = it.title
             }
         })
+
+
         LiveEventBus
             .get("pitchOnNumber", Int::class.java)
             .observe(viewLifecycleOwner, {

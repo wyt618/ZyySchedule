@@ -119,7 +119,6 @@ class AddLabelActivity : AppCompatActivity(), View.OnClickListener {
             }
             titleBlankDialog.show()
         }
-
     }
 
 }
