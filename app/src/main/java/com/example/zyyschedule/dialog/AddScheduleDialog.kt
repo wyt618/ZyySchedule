@@ -93,7 +93,6 @@ class AddScheduleDialog(selectYear: Int, selectMonth: Int, selectDay: Int) : Dia
         vm.remindText.postValue("无提醒")
         vm.updateLabelText(listOf("无标签", "~0~"))
         vm.updateScheduleDate(ScheduleTimeBean(date[Calendar.HOUR_OF_DAY], date[Calendar.MINUTE]))
-
         //更新优先级
         vm.priorityStyle.observe(viewLifecycleOwner) {
             binding.textPriority.setTextColor(it.priorityColor)
@@ -233,7 +232,8 @@ class AddScheduleDialog(selectYear: Int, selectMonth: Int, selectDay: Int) : Dia
                     .show()
             }
         }
-        if (binding.remindText.text != "无提醒") {
+
+        if(binding.remindText.text != "无提醒") {
             LiveEventBus
                 .get("AddScheduleF_CalendarF", String::class.java)
                 .post("check_Notification")
